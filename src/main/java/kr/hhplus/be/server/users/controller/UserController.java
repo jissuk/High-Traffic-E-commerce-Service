@@ -4,10 +4,7 @@ package kr.hhplus.be.server.users.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/Users")
@@ -16,13 +13,13 @@ public class UserController {
 
     @GetMapping("/{userId}/point")
     @Operation(summary = "포인트 조회", description = "유저는 자신이 보유한 포인트를 조회합니다")
-    public ResponseEntity<?> getUserPoints() {
+    public ResponseEntity<?> getUserPoints(@PathVariable int userId) {
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{userId}/pointCharge")
     @Operation(summary = "포인트 충전", description = "유저는 상품 구매를 위한 포인트를 충전합니다")
-    public ResponseEntity<?> chargeUserPoint() {
+    public ResponseEntity<?> chargeUserPoint(@PathVariable int userId) {
         return ResponseEntity.ok().build();
     }
 }

@@ -3,11 +3,9 @@ package kr.hhplus.be.server.order.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
@@ -22,7 +20,7 @@ public class OrderController {
 
     @GetMapping("{orderId}")
     @Operation(summary = "주문 조회", description = "유저는 단건 주문의 내용을 조회합니다.", tags = {"OrderController"})
-    public ResponseEntity<?> getOrder(){
+    public ResponseEntity<?> getOrder(@PathVariable int orderId){
         return ResponseEntity.ok().build();
     }
 
@@ -34,7 +32,7 @@ public class OrderController {
 
     @PostMapping("{orderId}/cancel")
     @Operation(summary = "주문 취소", description = "유저는 [결제전, 결제 완료, 배송전] 상태의 주문을 취소할 수 있습니다.", tags = {"OrderController"})
-    public ResponseEntity<?> cancelOrder(){
+    public ResponseEntity<?> cancelOrder(@PathVariable int orderId){
         return ResponseEntity.ok().build();
     }
 

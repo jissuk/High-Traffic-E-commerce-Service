@@ -3,10 +3,7 @@ package kr.hhplus.be.server.coupon.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/coupons")
@@ -21,7 +18,7 @@ public class CouponController {
 
     @PostMapping("/{couponId}/issue")
     @Operation(summary = "선착순 쿠폰 발급", description = "유저는 선착순으로 제공되는 쿠폰을 발급 받아 등록합니다.", tags = {"CouponController"})
-    public ResponseEntity<?> issueCoupon(){
+    public ResponseEntity<?> issueCoupon(@PathVariable int couponId){
         return ResponseEntity.ok().build();
     }
 

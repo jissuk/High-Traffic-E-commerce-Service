@@ -2,23 +2,28 @@ package kr.hhplus.be.server.payment.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import kr.hhplus.be.server.common.response.CommonResponse;
+import kr.hhplus.be.server.payment.facade.PaymentFacade;
+import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/payments")
 @Tag(name = "payment", description = "결제 관련 API")
 public class PaymentController {
 
-    @PostMapping
-    @Operation(summary = "결제 요청", description = "유저는 취소되지 않은 주문에 대해 포인트를 사용하여 결제를 요청할 수 있습니다.")
-    public ResponseEntity<?> requestPayment() {
-        return ResponseEntity.ok().build();
-    }
+    private final PaymentFacade paymentFacade;
 
-    @GetMapping("/{paymentId}")
-    @Operation(summary = "결제 조회", description = "유저는 주문의 결제 상태를 조회할 수 있습니다.")
-    public ResponseEntity<?> getPaymentById(@PathVariable int paymentId){
+    @PostMapping("/{userId}")
+    @Operation(summary = "결제 요청", description = "유저는 취소되지 않은 주문에 대해 포인트를 사용하여 결제를 요청할 수 있습니다.")
+    public ResponseEntity<CommonResponse> requestPayment(@RequestBody @Valid PaymentRequestDTO request) {
+
+        paymentFacade.requestPayment(request);
+
         return ResponseEntity.ok().build();
     }
 }

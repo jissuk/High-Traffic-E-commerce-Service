@@ -1,0 +1,69 @@
+package kr.hhplus.be.server.coupon.usecase;
+
+import kr.hhplus.be.server.coupon.domain.mapper.CouponMapper;
+import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
+import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
+import kr.hhplus.be.server.coupon.step.CouponStep;
+import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
+import kr.hhplus.be.server.user.domain.mapper.PointHistoryMapper;
+import kr.hhplus.be.server.user.exception.UserNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.*;
+
+@DisplayName("쿠폰 수량 체크 테스트")
+@ExtendWith(MockitoExtension.class)
+public class CheckCouponStockUseCaseTest {
+
+    private CheckCouponStockUseCase checkCouponStockUseCase;
+
+    @Mock
+    private CouponRepository couponRepository;
+
+    @BeforeEach
+    void setUp() {
+        CouponMapper couponMapper = Mappers.getMapper(CouponMapper.class);
+        checkCouponStockUseCase = new CheckCouponStockUseCase(
+                couponRepository,
+                couponMapper
+        );
+    }
+
+    @Nested
+    @DisplayName("성공 케이스")
+    class success{
+        @Test
+        void 쿠폰수량체크() {
+            // given
+            UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
+            when(couponRepository.findById(request.getCouponId())).thenReturn(CouponStep.기본쿠폰엔티티생성());
+
+            // when & then
+            assertDoesNotThrow(() -> checkCouponStockUseCase.execute(request));
+        }
+    }
+
+    @Nested
+    @DisplayName("실패 케이스")
+    class fail{
+        @Test
+        void 쿠폰수량체크_존재하지않는_쿠폰일_경우() {
+            // given
+            UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
+            when(couponRepository.findById(request.getCouponId())).thenReturn(null);
+
+            // when & then
+            assertThatThrownBy(() -> checkCouponStockUseCase.execute(request))
+                    .isInstanceOf(CouponNotFoundException.class);
+        }
+    }
+}

@@ -59,14 +59,14 @@ public class UseCouponUseCaseTest {
     @Nested
     @DisplayName("성공 케이스")
     class success{
+
         @Test
+        @DisplayName("쿠폰이 존재할 경우 해당 금액만큼 주문 상세의 총 금액이 차감된다.")
         void 쿠폰사용(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();
             when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(OrderStep.기본주문상세엔티티생성());
-            if(request.getCouponId() != null){
-                when(userCouponRepository.findById(request.getCouponId())).thenReturn(CouponStep.기본유저쿠폰엔티티생성());
-            }
+            when(userCouponRepository.findById(request.getCouponId())).thenReturn(CouponStep.기본유저쿠폰엔티티생성());
 
             // when
             useCouponUseCase.execute(request);
@@ -80,7 +80,9 @@ public class UseCouponUseCaseTest {
     @Nested
     @DisplayName("실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("존재하지 않는 주문상세일 경우 OrderItemNotFoundException이 발생한다.")
         void 쿠폰사용_존재하지않는_주문상세일_경우(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();
@@ -93,6 +95,7 @@ public class UseCouponUseCaseTest {
         }
 
         @Test
+        @DisplayName("존재하지않는 쿠폰일 경우 UserCouponNotFoundException이 발생한다.")
         void 쿠폰사용_존재하지않는_쿠폰일_경우(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();

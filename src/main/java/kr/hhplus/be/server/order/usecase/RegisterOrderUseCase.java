@@ -2,7 +2,6 @@ package kr.hhplus.be.server.order.usecase;
 
 import kr.hhplus.be.server.common.annotation.UseCase;
 import kr.hhplus.be.server.order.domain.mapper.OrderHistoryMapper;
-import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.Order;
 import kr.hhplus.be.server.order.domain.model.OrderHistory;
@@ -19,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
-public class CreateOrderUseCase {
+public class RegisterOrderUseCase {
 
     private final UserRepository userRepository;
 

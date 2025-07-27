@@ -46,9 +46,11 @@ public class CreateUserUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("유저 생성 성공 케이스")
     class success{
+
         @Test
+        @DisplayName("유저를 생성하면 유저와 포인트 내역이 등록이 된다.")
         void 유저생성(){
             // given
             UserRequestDTO request = UserStep.기본유저요청생성();

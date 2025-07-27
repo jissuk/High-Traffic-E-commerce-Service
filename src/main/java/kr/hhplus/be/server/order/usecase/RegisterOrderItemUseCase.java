@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
-public class CreateOrderItemUseCase {
+public class RegisterOrderItemUseCase {
 
     private final ProductRepository productRepository;
     private final OrderRepositroy orderRepositroy;

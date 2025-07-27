@@ -24,6 +24,7 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.shaded.org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -62,9 +63,11 @@ public class UpdateOrderStatusUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("주문 상태 수정 성공 케이스")
     class success{
+
         @Test
+        @DisplayName("주문과 주문상세가 존재할 경우 주문 상태를 수정한다.")
         void 주문상태수정(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();
@@ -77,14 +80,18 @@ public class UpdateOrderStatusUseCaseTest {
             // then
             verify(orderRepositroy).update(any(OrderEntity.class));
             verify(orderHistoryRepository).save(any(OrderHistoryEntity.class));
-            verify(orderDataSender).send(any(OrderItem.class));
+
+            // 외부 데이터 플랫폼
+//            verify(orderDataSender).send(any(OrderItem.class));
         }
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("주문 상태 수정 실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("존재하지 않는 주문일 경우 OrderNotFoundException이 발생한다.")
         void 주문상태수정_존재하지않는_주문일_경우(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();

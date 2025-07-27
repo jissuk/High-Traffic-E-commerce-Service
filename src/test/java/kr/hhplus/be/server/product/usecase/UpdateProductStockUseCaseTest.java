@@ -49,9 +49,11 @@ public class UpdateProductStockUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("상품 수량 변경 성공 케이스")
     class success{
+
         @Test
+        @DisplayName("상품과 주문이 존재할 경우 상품의 수량을 변경한다.")
         void 상품수량변경(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();
@@ -67,9 +69,11 @@ public class UpdateProductStockUseCaseTest {
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("상품 수량 변경 실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 상품수량변경_존재하지않는_상품일_경우(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();
@@ -81,6 +85,7 @@ public class UpdateProductStockUseCaseTest {
         }
 
         @Test
+        @DisplayName("존재하지 않는 주문일 경우 OrderItemNotFoundException 발생한다.")
         void 상품수량변경_존재하지않는_주문일_경우(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();

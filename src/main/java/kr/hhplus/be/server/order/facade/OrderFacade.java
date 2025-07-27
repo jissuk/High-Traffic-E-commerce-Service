@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.order.facade;
 
-import kr.hhplus.be.server.order.usecase.CreateOrderItemUseCase;
-import kr.hhplus.be.server.order.usecase.CreateOrderUseCase;
-import kr.hhplus.be.server.payment.usecase.CreatePaymentUseCase;
+import kr.hhplus.be.server.order.usecase.RegisterOrderItemUseCase;
+import kr.hhplus.be.server.order.usecase.RegisterOrderUseCase;
+import kr.hhplus.be.server.payment.usecase.RegisterPaymentUseCase;
 import kr.hhplus.be.server.product.usecase.CheckProductUseCase;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +18,10 @@ public class OrderFacade {
     * 3. 주문 상세 등록
     * 4. 결제 및 결제 내역 등록
     * */
-    private final CreateOrderUseCase createOrderUseCase;
+    private final RegisterOrderUseCase createOrderUseCase;
     private final CheckProductUseCase checkProductUseCase;
-    private final CreateOrderItemUseCase createOrderItemUseCase;
-    private final CreatePaymentUseCase createPaymentUseCase;
+    private final RegisterOrderItemUseCase createOrderItemUseCase;
+    private final RegisterPaymentUseCase createPaymentUseCase;
 
     public void createOrder(OrderItemRequestDTO request) {
 

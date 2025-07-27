@@ -5,8 +5,6 @@ import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
 import kr.hhplus.be.server.coupon.step.CouponStep;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
-import kr.hhplus.be.server.user.domain.mapper.PointHistoryMapper;
-import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -39,9 +37,11 @@ public class CheckCouponStockUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("쿠폰 수량 체크 성공 케이스")
     class success{
+
         @Test
+        @DisplayName("쿠폰의 수량이 남아있을 경우 예외가 발생되지 않는다.")
         void 쿠폰수량체크() {
             // given
             UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
@@ -53,9 +53,11 @@ public class CheckCouponStockUseCaseTest {
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("쿠폰 수량 체크 실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("존재하지 않는 쿠폰일 경우 CouponNotFoundException이 발생한다.")
         void 쿠폰수량체크_존재하지않는_쿠폰일_경우() {
             // given
             UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();

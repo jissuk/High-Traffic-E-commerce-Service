@@ -45,9 +45,11 @@ public class CouponFacadeTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("선착순 쿠폰 발급 성공 케이스")
     class success{
+
         @Test
+        @DisplayName("쿠폰의 발급 수량이 남아있으면 쿠폰 발급에 성공한다.")
         void 선착순쿠폰발급() {
             // given
             UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();

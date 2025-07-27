@@ -9,9 +9,7 @@ import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
 import kr.hhplus.be.server.payment.domain.mapper.PaymentHistoryMapper;
 import kr.hhplus.be.server.payment.domain.mapper.PaymentMapper;
 import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
-import kr.hhplus.be.server.payment.domain.model.PaymentHistory;
 import kr.hhplus.be.server.payment.domain.model.PaymentHistoryEntity;
-import kr.hhplus.be.server.user.domain.mapper.UserMapper;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
@@ -21,7 +19,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -30,11 +27,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("결제 생성 테스트")
+@DisplayName("결제 등록 테스트")
 @ExtendWith(MockitoExtension.class)
-public class CreatePaymentUseCaseTest {
+public class RegisterPaymentUseCaseTest {
 
-    CreatePaymentUseCase createPaymentUseCase;
+    RegisterPaymentUseCase registerPaymentUseCase;
 
     @Mock
     private UserRepository userRepository;
@@ -49,7 +46,7 @@ public class CreatePaymentUseCaseTest {
     void setUp() {
         PaymentMapper paymentMapper = Mappers.getMapper(PaymentMapper.class);
         PaymentHistoryMapper paymentHistoryMapper = Mappers.getMapper(PaymentHistoryMapper.class);
-        createPaymentUseCase = new CreatePaymentUseCase(
+        registerPaymentUseCase = new RegisterPaymentUseCase(
                 userRepository,
                 orderItemRepository,
                 paymentRepository,
@@ -60,10 +57,12 @@ public class CreatePaymentUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("결제 등록 성공 케이스")
     class success {
+
         @Test
-        void 결제생성(){
+        @DisplayName("유저와 주문상세가 존재할 경우 결제를 등록한다.")
+        void 결제등록(){
             // given
             long userId = 1L;
             OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
@@ -71,7 +70,7 @@ public class CreatePaymentUseCaseTest {
             when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(OrderStep.기본주문상세엔티티생성());
 
             // when
-            createPaymentUseCase.execute(request);
+            registerPaymentUseCase.execute(request);
 
             // then
             verify(paymentRepository).save(any(PaymentEntity.class));
@@ -80,22 +79,25 @@ public class CreatePaymentUseCaseTest {
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("결제 등록 실패 케이스")
     class fail{
+
         @Test
-        void 결제생성_존재하지않는_유저일_경우(){
+        @DisplayName("존재하지 유저일 경우 UserNotFoundException이 발생한다.")
+        void 결제등록_존재하지않는_유저일_경우(){
             // given
             long userId = 1L;
             OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
             when(userRepository.findById(userId)).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> createPaymentUseCase.execute(request))
+            assertThatThrownBy(() -> registerPaymentUseCase.execute(request))
                     .isInstanceOf(UserNotFoundException.class);
         }
 
         @Test
-        void 결제생성_존재하지않는_주문상세일_경우(){
+        @DisplayName("존재하지 않는 주문상세일 경우 OrderItemNotFoundException이 발생한다.")
+        void 결제등록_존재하지않는_주문상세일_경우(){
             // given
             long userId = 1L;
             OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
@@ -103,7 +105,7 @@ public class CreatePaymentUseCaseTest {
             when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> createPaymentUseCase.execute(request))
+            assertThatThrownBy(() -> registerPaymentUseCase.execute(request))
                     .isInstanceOf(OrderItemNotFoundException.class);
         }
     }

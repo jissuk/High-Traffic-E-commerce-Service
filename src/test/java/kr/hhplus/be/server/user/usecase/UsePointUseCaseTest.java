@@ -59,9 +59,11 @@ public class UsePointUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("포인트 사용 성공 케이스")
     class success{
+        
         @Test
+        @DisplayName("유저와 주문상세가 존재할 경우 포인트를 사용한다.")
         void 포인트사용(){
             // given
             long userId = 1L;
@@ -79,9 +81,11 @@ public class UsePointUseCaseTest {
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("포인트 사용실패 케이스")
     class fail{
+        
         @Test
+        @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 포인트사용_존재하지않는_유저일_경우(){
             // given
             long userId = 1L;
@@ -94,6 +98,7 @@ public class UsePointUseCaseTest {
         }
 
         @Test
+        @DisplayName("존재하지 않는 주문상세일 경우 OrderItemNotFoundException이 발생한다.")
         void 포인트사용_존재하지않는_주문상세일_경우(){
             // given
             long userId = 1L;

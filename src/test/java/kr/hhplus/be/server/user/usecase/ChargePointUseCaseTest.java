@@ -52,9 +52,11 @@ public class ChargePointUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("포인트 충전 성공 케이스")
     class success{
+
         @Test
+        @DisplayName("유저가 존재할 경우 유저의 포인트를 충전한다.")
         void 포인트충전(){
             // given
             long userId = 1L;
@@ -71,9 +73,11 @@ public class ChargePointUseCaseTest {
     }
     
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("포인트 충전 실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 포인트충전_존재하지않는_유저일_경우(){
             // given
             long userId = 1L;

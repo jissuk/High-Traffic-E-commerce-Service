@@ -49,9 +49,11 @@ public class UpdatePaymentStatusUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("결제 상태 수정 성공 케이스")
     class success{
+
         @Test
+        @DisplayName("결제가 존재할 경우 결제 상태를 수정한다.")
         void 결제상태수정(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();
@@ -67,9 +69,11 @@ public class UpdatePaymentStatusUseCaseTest {
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("결제 상태 수정 실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("존재하지 않는 주문일 경우 PaymentNotFoundException이 발생한다.")
         void 결제상태수정_존재하지않는_주문일_경우(){
             // given
             PaymentRequestDTO request = PaymentStep.기본결제요청생성();

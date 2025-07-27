@@ -38,9 +38,11 @@ public class CheckProductUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("상품 수량 확인 성공 케이스")
     class sucess{
+
         @Test
+        @DisplayName("주문한 수량이 부족하지 않으면 예외를 발생시키지 않는다.")
         void 상품수량확인(){
             // given
             OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
@@ -52,9 +54,11 @@ public class CheckProductUseCaseTest {
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("상품 수량 확인 실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 상품수량확인_존재하지않는_상품일_경우(){
             // given
             OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();

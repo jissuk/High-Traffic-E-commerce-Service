@@ -41,9 +41,11 @@ public class GetAllProductUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("전체 상품 조회 성공 케이스")
     class success{
+
         @Test
+        @DisplayName("상품이 존재 시 모든 상품 조회 시 예외가 발생하지 않는다.")
         void 전체상품조회 (){
             // given
             when(productRepository.findAll()).thenReturn(ProductStep.기본전체상품엔티티생성());
@@ -55,9 +57,11 @@ public class GetAllProductUseCaseTest {
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("전체 상품 조회 실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("상품이 존재하지 않을 경우 ProductNotFoundException이 발생한다.")
         void 전체상품조회_존재하지않는_상품일_경우(){
             // given
             when(productRepository.findAll()).thenReturn(null);

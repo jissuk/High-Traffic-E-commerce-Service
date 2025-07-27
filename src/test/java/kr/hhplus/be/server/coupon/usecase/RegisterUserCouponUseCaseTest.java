@@ -58,10 +58,11 @@ public class RegisterUserCouponUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("유저 쿠폰 등록 성공 케이스")
     class success{
 
         @Test
+        @DisplayName("유저와 쿠폰이 존재할 경우 쿠폰을 등록한다.")
         void 유저쿠폰등록() {
             // given
             UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
@@ -79,9 +80,11 @@ public class RegisterUserCouponUseCaseTest {
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("유저 쿠폰 등록 실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("존재하지 않는 쿠폰일 경우 CouponNotFoundException이 발생한다.")
         void 유저쿠폰등록_존재하지않는_쿠폰일_경우() {
             // given
             UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
@@ -93,6 +96,7 @@ public class RegisterUserCouponUseCaseTest {
         }
 
         @Test
+        @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 유저쿠폰등록_존재하지않는_유저일_경우() {
             // given
             UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();

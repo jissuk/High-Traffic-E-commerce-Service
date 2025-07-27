@@ -42,9 +42,11 @@ public class GetUserUseCaseTest {
     }
 
     @Nested
-    @DisplayName("성공 케이스")
+    @DisplayName("유저 조회 성공 케이스")
     class success{
+
         @Test
+        @DisplayName("유저가 존재하면 정상적으로 유저를 조회한다.")
         void 유저조회(){
             // given
             long userId = 1L;
@@ -56,9 +58,11 @@ public class GetUserUseCaseTest {
     }
 
     @Nested
-    @DisplayName("실패 케이스")
+    @DisplayName("유저 조회 실패 케이스")
     class fail{
+
         @Test
+        @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 유저조회_존재하지않는_유저일_경우(){
             // given
             long userId = 1L;

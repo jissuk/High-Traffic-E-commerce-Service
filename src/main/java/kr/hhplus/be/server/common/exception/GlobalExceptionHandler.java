@@ -113,16 +113,4 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("CouponOutOfStock", e.getMessage()));
     }
-
-    @ExceptionHandler(UserCouponNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserCouponNotFoundException(UserCouponNotFoundException e){
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse("UserCouponNotFoundException", e.getMessage()));
-    }
-
-
-
-
 }

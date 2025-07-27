@@ -18,6 +18,7 @@ public class PaymentStep {
                 .userId(1L)
                 .orderId(1L)
                 .orderItemId(1L)
+                .couponId(1L)
                 .productId(1L)
                 .build();
     }

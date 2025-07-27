@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
-public class CreatePaymentUseCase {
+public class RegisterPaymentUseCase {
 
     private final UserRepository userRepository;
     private final OrderItemRepository orderItemRepository;

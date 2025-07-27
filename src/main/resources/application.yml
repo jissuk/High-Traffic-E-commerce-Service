@@ -29,3 +29,11 @@ spring:
     url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
     username: application
     password: application
+
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs.yaml
+  swagger-ui:
+    enabled: true

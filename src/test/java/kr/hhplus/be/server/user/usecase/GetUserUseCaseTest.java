@@ -1,0 +1,72 @@
+package kr.hhplus.be.server.user.usecase;
+import kr.hhplus.be.server.user.domain.mapper.UserMapper;
+import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
+import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
+import kr.hhplus.be.server.user.domain.repository.UserRepository;
+import kr.hhplus.be.server.user.exception.UserNotFoundException;
+import kr.hhplus.be.server.user.step.UserStep;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.when;
+
+@DisplayName("유저 조회 테스트")
+@ExtendWith(MockitoExtension.class)
+public class GetUserUseCaseTest {
+
+    @InjectMocks
+    private GetUserUseCase getUserUseCase;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void setUp() {
+        UserMapper userMapper = Mappers.getMapper(UserMapper.class);;
+        UserResponseMapper userResponseMapper = Mappers.getMapper(UserResponseMapper.class);;
+
+        getUserUseCase = new GetUserUseCase(
+                userRepository,
+                userMapper,
+                userResponseMapper
+        );
+    }
+
+    @Nested
+    @DisplayName("성공 케이스")
+    class success{
+        @Test
+        void 유저조회(){
+            // given
+            long userId = 1L;
+            when(userRepository.findById(userId)).thenReturn(UserStep.기본유저엔티티생성());
+
+            // when & then
+            assertDoesNotThrow(() -> getUserUseCase.execute(userId));
+        }
+    }
+
+    @Nested
+    @DisplayName("실패 케이스")
+    class fail{
+        @Test
+        void 유저조회_존재하지않는_유저일_경우(){
+            // given
+            long userId = 1L;
+            when(userRepository.findById(userId)).thenReturn(null);
+
+            // when & then
+            assertThatThrownBy(() -> getUserUseCase.execute(userId))
+                    .isInstanceOf(UserNotFoundException.class);
+        }
+    }
+}

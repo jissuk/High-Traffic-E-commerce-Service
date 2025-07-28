@@ -6,6 +6,7 @@ import kr.hhplus.be.server.coupon.domain.model.Coupon;
 import kr.hhplus.be.server.coupon.domain.model.CouponEntity;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
+import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
 import lombok.RequiredArgsConstructor;
 
@@ -17,9 +18,9 @@ public class CheckCouponStockUseCase {
 
     private final CouponMapper couponMapper;
 
-    public void execute(UserCouponRequestDTO request) {
+    public void execute(UserCouponCommand commnad) {
 
-        CouponEntity couponEntity= findCouponOrThrow(request.getCouponId());
+        CouponEntity couponEntity= findCouponOrThrow(commnad.couponId());
 
         Coupon coupon = couponMapper.toDomain(couponEntity);
         coupon.checkQuantity();

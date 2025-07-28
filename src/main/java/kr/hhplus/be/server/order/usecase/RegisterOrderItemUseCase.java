@@ -8,6 +8,7 @@ import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
@@ -24,11 +25,11 @@ public class RegisterOrderItemUseCase {
 
     private final OrderItemMapper orderItemMapper;
 
-    public void execute(OrderItemRequestDTO request) {
-        ProductEntity product = findProductOrThrow(request.getProductId());
-        OrderEntity order = findOrderOrThrow(request.getOrderId());
+    public void execute(OrderItemCommand command) {
+        ProductEntity product = findProductOrThrow(command.productId());
+        OrderEntity order = findOrderOrThrow(command.orderId());
 
-        OrderItem orderItem = OrderItem.createBeforeOrderItem(request);
+        OrderItem orderItem = OrderItem.createBeforeOrderItem(command);
         OrderItemEntity orderItemEntity = orderItemMapper.toEntity(orderItem);
 
         orderItemEntity.setProduct(product);

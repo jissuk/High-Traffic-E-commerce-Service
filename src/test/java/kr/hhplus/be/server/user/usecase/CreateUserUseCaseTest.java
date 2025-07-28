@@ -6,7 +6,7 @@ import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
-import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
+import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -53,10 +53,10 @@ public class CreateUserUseCaseTest {
         @DisplayName("유저를 생성하면 유저와 포인트 내역이 등록이 된다.")
         void 유저생성(){
             // given
-            UserRequestDTO request = UserStep.기본유저요청생성();
+            UserCommand command = UserStep.유저커맨드_기본값();
 
             // when
-            createUserUseCase.execute(request);
+            createUserUseCase.execute(command);
 
             // then
             verify(userRepository).save(any(UserEntity.class));

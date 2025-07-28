@@ -3,6 +3,7 @@ package kr.hhplus.be.server.payment.usecase;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentHistoryRepository;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
@@ -65,12 +66,12 @@ public class RegisterPaymentUseCaseTest {
         void 결제등록(){
             // given
             long userId = 1L;
-            OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
-            when(userRepository.findById(userId)).thenReturn(UserStep.기본유저엔티티생성());
-            when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(OrderStep.기본주문상세엔티티생성());
+            OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
+            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
+            when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
 
             // when
-            registerPaymentUseCase.execute(request);
+            registerPaymentUseCase.execute(command);
 
             // then
             verify(paymentRepository).save(any(PaymentEntity.class));
@@ -87,11 +88,11 @@ public class RegisterPaymentUseCaseTest {
         void 결제등록_존재하지않는_유저일_경우(){
             // given
             long userId = 1L;
-            OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
+            OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
             when(userRepository.findById(userId)).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> registerPaymentUseCase.execute(request))
+            assertThatThrownBy(() -> registerPaymentUseCase.execute(command))
                     .isInstanceOf(UserNotFoundException.class);
         }
 
@@ -100,12 +101,12 @@ public class RegisterPaymentUseCaseTest {
         void 결제등록_존재하지않는_주문상세일_경우(){
             // given
             long userId = 1L;
-            OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
-            when(userRepository.findById(userId)).thenReturn(UserStep.기본유저엔티티생성());
-            when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(null);
+            OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
+            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
+            when(orderItemRepository.findById(command.orderItemId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> registerPaymentUseCase.execute(request))
+            assertThatThrownBy(() -> registerPaymentUseCase.execute(command))
                     .isInstanceOf(OrderItemNotFoundException.class);
         }
     }

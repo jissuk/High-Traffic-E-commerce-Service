@@ -2,6 +2,7 @@ package kr.hhplus.be.server.order.facade;
 
 import kr.hhplus.be.server.order.usecase.RegisterOrderItemUseCase;
 import kr.hhplus.be.server.order.usecase.RegisterOrderUseCase;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.payment.usecase.RegisterPaymentUseCase;
 import kr.hhplus.be.server.product.usecase.CheckProductUseCase;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
@@ -20,15 +21,15 @@ public class OrderFacade {
     * */
     private final RegisterOrderUseCase createOrderUseCase;
     private final CheckProductUseCase checkProductUseCase;
-    private final RegisterOrderItemUseCase createOrderItemUseCase;
-    private final RegisterPaymentUseCase createPaymentUseCase;
+    private final RegisterOrderItemUseCase registerOrderItemUseCase;
+    private final RegisterPaymentUseCase registerPaymentUseCase;
 
-    public void createOrder(OrderItemRequestDTO request) {
+    public void createOrder(OrderItemCommand command) {
 
-        createOrderUseCase.execute(request.getUserId());
-        checkProductUseCase.execute(request);
-        createOrderItemUseCase.execute(request);
-        createPaymentUseCase.execute(request);
+        createOrderUseCase.execute(command.userId());
+        checkProductUseCase.execute(command);
+        registerOrderItemUseCase.execute(command);
+        registerPaymentUseCase.execute(command);
     }
 
 }

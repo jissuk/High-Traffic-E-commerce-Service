@@ -12,6 +12,7 @@ import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
+import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import kr.hhplus.be.server.user.usecase.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +27,12 @@ public class ChargePointUseCase {
     private final PointHistoryMapper pointHistoryMapper;
     private final UserResponseMapper userResponseMapper;
 
-    public UserResponseDTO execute(UserRequestDTO request) {
+    public UserResponseDTO execute(UserCommand command) {
 
-        UserEntity userEntity = findUserOrThrow(request.getUserId());
+        UserEntity userEntity = findUserOrThrow(command.userId());
         User user = userMapper.toDomain(userEntity);
 
-        user.charegePoint(request.getPoint());
+        user.charegePoint(command.point());
         PointHistory pointHistory = PointHistory.charge(user);
 
         UserEntity updateUser = userMapper.toEntity(user);

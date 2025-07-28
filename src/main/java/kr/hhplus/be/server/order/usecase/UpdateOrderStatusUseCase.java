@@ -10,6 +10,7 @@ import kr.hhplus.be.server.order.domain.repository.OrderHistoryRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
+import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import lombok.RequiredArgsConstructor;
 
@@ -27,9 +28,9 @@ public class UpdateOrderStatusUseCase {
     private final OrderHistoryMapper orderHistoryMapper;
     private final OrderItemMapper orderItemMapper;
 
-    public void execute(PaymentRequestDTO request) {
+    public void execute(PaymentCommand command) {
 
-        OrderEntity orderEntity = findOrderOrThrow(request.getOrderId());
+        OrderEntity orderEntity = findOrderOrThrow(command.orderId());
         Order order = orderMapper.toDomain(orderEntity);
 
         order.complete();
@@ -42,7 +43,7 @@ public class UpdateOrderStatusUseCase {
         orderRepositroy.update(updateOrder);
         orderHistoryRepository.save(saveHistory);
 
-        OrderItemEntity orderItemEntity = orderItemRepository.findById(request.getOrderItemId());
+        OrderItemEntity orderItemEntity = orderItemRepository.findById(command.orderItemId());
         OrderItem orderItem = orderItemMapper.toDomain(orderItemEntity);
 
 //        orderDataSender.send(orderItem);

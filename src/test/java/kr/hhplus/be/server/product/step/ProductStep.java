@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class ProductStep {
 
-    public static ProductEntity 기본상품엔티티생성(){
+    public static ProductEntity 상품엔티티_기본값(){
 
         return ProductEntity.builder()
                         .productName("기본 상품")
@@ -16,7 +16,7 @@ public class ProductStep {
                         .build();
     }
 
-    public static Map<Long, ProductEntity> 기본전체상품엔티티생성(){
+    public static Map<Long, ProductEntity> 전체상품엔티티_기본값(){
         Map<Long, ProductEntity> productMap = new HashMap<>();
         ProductEntity product = ProductEntity.builder()
                                     .productName("기본 상품")

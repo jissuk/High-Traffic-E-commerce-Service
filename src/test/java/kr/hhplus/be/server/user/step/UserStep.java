@@ -2,6 +2,7 @@ package kr.hhplus.be.server.user.step;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
+import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,17 +16,14 @@ public class UserStep {
 
     private static String PATH_URL = "/user";
 
-    public static UserEntity 기본유저엔티티생성(){
+    public static UserEntity 유저엔티티_기본값(){
         return UserEntity.builder()
                 .point(10000L)
                 .build();
     }
 
-    public static UserRequestDTO 기본유저요청생성() {
-        return UserRequestDTO.builder()
-                                .userId(1L)
-                                .point(10000L)
-                                .build();
+    public static UserCommand 유저커맨드_기본값() {
+        return new UserCommand(1L, 10000L);
     }
 
     public static ResultActions 유저조회요청(MockMvc mockMvc, long userId) throws Exception {

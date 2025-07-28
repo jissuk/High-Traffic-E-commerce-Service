@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.user.usecase;
 import kr.hhplus.be.server.user.domain.mapper.UserMapper;
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
-import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
@@ -50,7 +49,7 @@ public class GetUserUseCaseTest {
         void 유저조회(){
             // given
             long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(UserStep.기본유저엔티티생성());
+            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
 
             // when & then
             assertDoesNotThrow(() -> getUserUseCase.execute(userId));

@@ -4,6 +4,7 @@ import kr.hhplus.be.server.common.annotation.UseCase;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentHistoryRepository;
 import kr.hhplus.be.server.payment.domain.mapper.PaymentHistoryMapper;
@@ -30,16 +31,16 @@ public class RegisterPaymentUseCase {
     private final PaymentMapper paymentMapper;
     private final PaymentHistoryMapper paymentHistoryMapper;
 
-    public void execute(OrderItemRequestDTO request) {
+    public void execute(OrderItemCommand command) {
 
-        Payment payment = Payment.createBeforePayment(request);
+        Payment payment = Payment.createBeforePayment(command);
         PaymentHistory paymentHistory = PaymentHistory.of(payment);
 
         PaymentEntity saveFayment = paymentMapper.toEntity(payment);
         PaymentHistoryEntity saveHistory = paymentHistoryMapper.toEntity(paymentHistory);
 
-        UserEntity user = findUserOrThrow(request.getUserId());
-        OrderItemEntity orderItem = findOrderItemOrThrow(request.getOrderItemId());
+        UserEntity user = findUserOrThrow(command.userId());
+        OrderItemEntity orderItem = findOrderItemOrThrow(command.orderItemId());
         saveFayment.setUser(user);
         saveFayment.setOrderItem(orderItem);
 

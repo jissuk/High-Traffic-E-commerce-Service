@@ -6,6 +6,7 @@ import kr.hhplus.be.server.order.domain.model.OrderItem;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
+import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import kr.hhplus.be.server.user.domain.mapper.PointHistoryMapper;
 import kr.hhplus.be.server.user.domain.mapper.UserMapper;
@@ -27,9 +28,9 @@ public class UsePointUseCase {
     private final OrderItemMapper orderItemMapper;
     private final PointHistoryMapper pointHistoryMapper;
 
-    public void execute(PaymentRequestDTO request) {
-        UserEntity userEntity = findUserOrThrow(request.getUserId());
-        OrderItemEntity orderItemEntity =findOrderItemOrThrow(request.getOrderItemId());
+    public void execute(PaymentCommand command) {
+        UserEntity userEntity = findUserOrThrow(command.userId());
+        OrderItemEntity orderItemEntity =findOrderItemOrThrow(command.orderItemId());
 
         User user = userMapper.toDomain(userEntity);
         OrderItem orderItem = orderItemMapper.toDomain(orderItemEntity);
@@ -60,23 +61,4 @@ public class UsePointUseCase {
         return orderItem;
     }
 
-    public void compensate(PaymentRequestDTO request) {
-        UserEntity userEntity = findUserOrThrow(request.getUserId());
-        OrderItemEntity orderItemEntity = findOrderItemOrThrow(request.getOrderItemId());
-
-        User user = userMapper.toDomain(userEntity);
-        OrderItem orderItem = orderItemMapper.toDomain(orderItemEntity);
-
-        user.charegePoint(orderItem.getTotalPrice());
-        PointHistory pointHistory = PointHistory.charge(user);
-
-        UserEntity updateUser = userMapper.toEntity(user);
-        PointHistoryEntity saveHistory = pointHistoryMapper.toEntity(pointHistory);
-
-        userRepository.update(updateUser);
-        pointHistoryRepository.save(saveHistory);
-
-        System.out.println("사용자 포인트 롤백 완료: userId=" + request.getUserId() + ", 복구 포인트: " + orderItem.getTotalPrice());
-        System.out.println("포인트 사용 내역 롤백 완료: userId=" + request.getUserId());
-    }
 }

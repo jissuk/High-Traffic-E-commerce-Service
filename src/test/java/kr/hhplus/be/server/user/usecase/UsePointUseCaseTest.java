@@ -4,6 +4,7 @@ import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.payment.step.PaymentStep;
+import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import kr.hhplus.be.server.user.domain.mapper.PointHistoryMapper;
 import kr.hhplus.be.server.user.domain.mapper.UserMapper;
@@ -66,13 +67,12 @@ public class UsePointUseCaseTest {
         @DisplayName("유저와 주문상세가 존재할 경우 포인트를 사용한다.")
         void 포인트사용(){
             // given
-            long userId = 1L;
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(userRepository.findById(request.getUserId())).thenReturn(UserStep.기본유저엔티티생성());
-            when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(OrderStep.기본주문상세엔티티생성());
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            when(userRepository.findById(command.userId())).thenReturn(UserStep.유저엔티티_기본값());
+            when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
 
             // when
-            usePointUseCase.execute(request);
+            usePointUseCase.execute(command);
 
             // then
             verify(userRepository).update(any(UserEntity.class));
@@ -88,12 +88,11 @@ public class UsePointUseCaseTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 포인트사용_존재하지않는_유저일_경우(){
             // given
-            long userId = 1L;
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(userRepository.findById(request.getUserId())).thenReturn(null);
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            when(userRepository.findById(command.userId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> usePointUseCase.execute(request))
+            assertThatThrownBy(() -> usePointUseCase.execute(command))
                     .isInstanceOf(UserNotFoundException.class);
         }
 
@@ -101,13 +100,12 @@ public class UsePointUseCaseTest {
         @DisplayName("존재하지 않는 주문상세일 경우 OrderItemNotFoundException이 발생한다.")
         void 포인트사용_존재하지않는_주문상세일_경우(){
             // given
-            long userId = 1L;
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(userRepository.findById(request.getUserId())).thenReturn(UserStep.기본유저엔티티생성());
-            when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(null);
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            when(userRepository.findById(command.userId())).thenReturn(UserStep.유저엔티티_기본값());
+            when(orderItemRepository.findById(command.orderItemId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> usePointUseCase.execute(request))
+            assertThatThrownBy(() -> usePointUseCase.execute(command))
                     .isInstanceOf(OrderItemNotFoundException.class);
         }
     }

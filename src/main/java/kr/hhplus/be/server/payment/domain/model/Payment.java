@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.payment.domain.model;
 
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import lombok.*;
@@ -21,9 +22,9 @@ public class Payment {
         this.paymentStatus = PaymentStatus.BEFORE_PAYMENT;
     }
 
-    public static Payment createBeforePayment(OrderItemRequestDTO request) {
+    public static Payment createBeforePayment(OrderItemCommand command) {
         return Payment.builder()
-                        .price(request.getPrice())
+                        .price(command.price())
                         .paymentStatus(PaymentStatus.BEFORE_PAYMENT).build();
     }
 

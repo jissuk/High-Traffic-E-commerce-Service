@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.product.usecase;
 
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
@@ -45,11 +46,11 @@ public class CheckProductUseCaseTest {
         @DisplayName("주문한 수량이 부족하지 않으면 예외를 발생시키지 않는다.")
         void 상품수량확인(){
             // given
-            OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
-            when(productRepository.findById(request.getProductId())).thenReturn(ProductStep.기본상품엔티티생성());
+            OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
+            when(productRepository.findById(command.productId())).thenReturn(ProductStep.상품엔티티_기본값());
 
             // when & then
-            assertDoesNotThrow(() -> checkProductUseCase.execute(request));
+            assertDoesNotThrow(() -> checkProductUseCase.execute(command));
         }
     }
 
@@ -61,12 +62,12 @@ public class CheckProductUseCaseTest {
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 상품수량확인_존재하지않는_상품일_경우(){
             // given
-            OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
-            when(productRepository.findById(request.getProductId())).thenReturn(null);
+            OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
+            when(productRepository.findById(command.productId())).thenReturn(null);
 
 
             // when & then
-            assertThatThrownBy(() -> checkProductUseCase.execute(request))
+            assertThatThrownBy(() -> checkProductUseCase.execute(command))
                     .isInstanceOf(ProductNotFoundException.class);
         }
     }

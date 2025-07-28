@@ -63,7 +63,7 @@ public class RegisterOrderUseCaseTest {
         void 주문등록(){
             // given
             long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(UserStep.기본유저엔티티생성());
+            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
 
             // when
             registerOrderUseCase.execute(userId);

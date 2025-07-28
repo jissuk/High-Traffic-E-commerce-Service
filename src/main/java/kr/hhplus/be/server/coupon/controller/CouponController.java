@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.common.response.CommonResponse;
 import kr.hhplus.be.server.coupon.facade.CouponFacade;
+import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,8 @@ public class CouponController {
     @Operation(summary = "선착순 쿠폰 발급", description = "유저는 선착순으로 제공되는 쿠폰을 발급 받아 등록합니다.", tags = {"CouponController"})
     public ResponseEntity<CommonResponse> issueCoupon(@RequestBody @Valid UserCouponRequestDTO request) {
 
-        couponFacade.issueCoupon(request);
+        UserCouponCommand command = UserCouponCommand.from(request);
+        couponFacade.issueCoupon(command);
 
         return ResponseEntity
                 .ok()

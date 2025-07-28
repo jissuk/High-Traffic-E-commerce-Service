@@ -14,10 +14,10 @@ public class UserRequestDTO {
 
     @NotNull(message = "유저 ID는 필수입니다.")
     @Min( value = 1, message ="유저 ID는 1 이상이어야 합니다.")
-    Long userId;
+    private Long userId;
 
     @Min( value = 0, message ="포인트는 0 이상이어야 합니다.")
-    Long point;
+    private Long point;
 
 
     public UserRequestDTO() {

@@ -8,6 +8,7 @@ import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.payment.domain.model.PaymentHistoryEntity;
 import kr.hhplus.be.server.payment.exception.PaymentNotFoundException;
 import kr.hhplus.be.server.payment.step.PaymentStep;
+import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -56,11 +56,11 @@ public class UpdatePaymentStatusUseCaseTest {
         @DisplayName("결제가 존재할 경우 결제 상태를 수정한다.")
         void 결제상태수정(){
             // given
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(paymentRepository.findById(request.getPaymentId())).thenReturn(PaymentStep.기본결제엔티티생성());
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            when(paymentRepository.findById(command.paymentId())).thenReturn(PaymentStep.결제엔티티_기본값());
 
             // when
-            updatePaymentStatusUseCase.execute(request);
+            updatePaymentStatusUseCase.execute(command);
 
             // then
             verify(paymentRepository).update(any(PaymentEntity.class));
@@ -76,11 +76,11 @@ public class UpdatePaymentStatusUseCaseTest {
         @DisplayName("존재하지 않는 주문일 경우 PaymentNotFoundException이 발생한다.")
         void 결제상태수정_존재하지않는_주문일_경우(){
             // given
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(paymentRepository.findById(request.getPaymentId())).thenReturn(null);
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            when(paymentRepository.findById(command.paymentId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> updatePaymentStatusUseCase.execute(request))
+            assertThatThrownBy(() -> updatePaymentStatusUseCase.execute(command))
                     .isInstanceOf(PaymentNotFoundException.class);
         }
     }

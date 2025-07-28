@@ -7,6 +7,7 @@ import kr.hhplus.be.server.payment.domain.mapper.PaymentHistoryMapper;
 import kr.hhplus.be.server.payment.domain.mapper.PaymentMapper;
 import kr.hhplus.be.server.payment.domain.model.*;
 import kr.hhplus.be.server.payment.exception.PaymentNotFoundException;
+import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import lombok.RequiredArgsConstructor;
 
@@ -19,8 +20,8 @@ public class UpdatePaymentStatusUseCase {
     private final PaymentMapper paymentMapper;
     private final PaymentHistoryMapper paymentHistoryMapper;
 
-    public void execute(PaymentRequestDTO request) {
-        PaymentEntity paymentEntity = findPaymentOrThrow(request.getPaymentId());
+    public void execute(PaymentCommand command) {
+        PaymentEntity paymentEntity = findPaymentOrThrow(command.paymentId());
         Payment payment = paymentMapper.toDomain(paymentEntity);
 
         payment.complete();
@@ -38,17 +39,5 @@ public class UpdatePaymentStatusUseCase {
             throw new PaymentNotFoundException();
         }
         return payment;
-    }
-
-    public void compensate(PaymentRequestDTO request) {
-
-        PaymentEntity paymentEntity = findPaymentOrThrow(request.getUserId());
-
-        Payment payment = paymentMapper.toDomain(paymentEntity);
-        payment.beforePayment();
-
-        PaymentEntity updatePayment = paymentMapper.toEntity(payment);
-        paymentRepository.update(updatePayment);
-        System.out.println("결제 상태 롤백 완료: paymentId=" + request.getPaymentId() + ", paymentStatus=" + payment.getPaymentStatus());
     }
 }

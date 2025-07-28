@@ -2,16 +2,13 @@ package kr.hhplus.be.server.coupon.usecase;
 
 import kr.hhplus.be.server.coupon.domain.mapper.CouponMapper;
 import kr.hhplus.be.server.coupon.domain.mapper.UserCouponMapper;
-import kr.hhplus.be.server.coupon.domain.model.Coupon;
 import kr.hhplus.be.server.coupon.domain.model.CouponEntity;
-import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
 import kr.hhplus.be.server.coupon.step.CouponStep;
+import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
-import kr.hhplus.be.server.user.domain.model.PointHistoryEntity;
-import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
@@ -65,12 +62,12 @@ public class RegisterUserCouponUseCaseTest {
         @DisplayName("유저와 쿠폰이 존재할 경우 쿠폰을 등록한다.")
         void 유저쿠폰등록() {
             // given
-            UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
-            when(couponRepository.findById(request.getCouponId())).thenReturn(CouponStep.기본쿠폰엔티티생성());
-            when(userRepository.findById(request.getCouponId())).thenReturn(UserStep.기본유저엔티티생성());
+            UserCouponCommand command = CouponStep.유저쿠폰커맨드_기본값();
+            when(couponRepository.findById(command.couponId())).thenReturn(CouponStep.쿠폰엔티티_기본값());
+            when(userRepository.findById(command.userId())).thenReturn(UserStep.유저엔티티_기본값());
 
             // when
-            registerUserCouponUseCase.execute(request);
+            registerUserCouponUseCase.execute(command);
 
             // then
             verify(couponRepository).update(any(CouponEntity.class));
@@ -87,11 +84,11 @@ public class RegisterUserCouponUseCaseTest {
         @DisplayName("존재하지 않는 쿠폰일 경우 CouponNotFoundException이 발생한다.")
         void 유저쿠폰등록_존재하지않는_쿠폰일_경우() {
             // given
-            UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
-            when(couponRepository.findById(request.getCouponId())).thenReturn(null);
+            UserCouponCommand command = CouponStep.유저쿠폰커맨드_기본값();
+            when(couponRepository.findById(command.couponId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> registerUserCouponUseCase.execute(request))
+            assertThatThrownBy(() -> registerUserCouponUseCase.execute(command))
                     .isInstanceOf(CouponNotFoundException.class);
         }
 
@@ -99,12 +96,12 @@ public class RegisterUserCouponUseCaseTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 유저쿠폰등록_존재하지않는_유저일_경우() {
             // given
-            UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
-            when(couponRepository.findById(request.getCouponId())).thenReturn(CouponStep.기본쿠폰엔티티생성());
-            when(userRepository.findById(request.getCouponId())).thenReturn(null);
+            UserCouponCommand command = CouponStep.유저쿠폰커맨드_기본값();
+            when(couponRepository.findById(command.couponId())).thenReturn(CouponStep.쿠폰엔티티_기본값());
+            when(userRepository.findById(command.userId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> registerUserCouponUseCase.execute(request))
+            assertThatThrownBy(() -> registerUserCouponUseCase.execute(command))
                     .isInstanceOf(UserNotFoundException.class);
         }
     }

@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.product.usecase;
 
 import kr.hhplus.be.server.common.annotation.UseCase;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
@@ -16,10 +17,10 @@ public class CheckProductUseCase {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
-    public void execute(OrderItemRequestDTO request) {
-        ProductEntity productEntity = findProductOrThrow(request.getProductId());
+    public void execute(OrderItemCommand command) {
+        ProductEntity productEntity = findProductOrThrow(command.productId());
         Product product = productMapper.toDomain(productEntity);
-        product.checkQuantity(request.getQuantity());
+        product.checkQuantity(command.quantity());
     }
 
     private ProductEntity findProductOrThrow(long id) {

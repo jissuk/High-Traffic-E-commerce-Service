@@ -2,10 +2,10 @@ package kr.hhplus.be.server.order.facade;
 
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
-import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,9 +46,9 @@ public class OrderFacadeTest {
     }
 
     private void initTestData() {
-        userRepository.save(UserStep.기본유저엔티티생성());
-        productRepository.save(ProductStep.기본상품엔티티생성());
-        orderItemRepository.save(OrderStep.기본주문상세엔티티생성());
+        userRepository.save(UserStep.유저엔티티_기본값());
+        productRepository.save(ProductStep.상품엔티티_기본값());
+        orderItemRepository.save(OrderStep.주문상세엔티티_기본값());
     }
 
     @Nested
@@ -57,10 +57,10 @@ public class OrderFacadeTest {
         @Test
         void 주문() {
             // given
-            OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
+            OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
 
             // when & then
-            assertDoesNotThrow(() -> orderFacade.createOrder(request));
+            assertDoesNotThrow(() -> orderFacade.createOrder(command));
         }
     }
 

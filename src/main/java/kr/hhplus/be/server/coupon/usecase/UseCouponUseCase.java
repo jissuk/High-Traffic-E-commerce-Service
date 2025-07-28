@@ -9,6 +9,7 @@ import kr.hhplus.be.server.order.domain.model.OrderItem;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
+import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import kr.hhplus.be.server.user.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.coupon.domain.service.UserCouponDomainService;
@@ -26,10 +27,10 @@ public class UseCouponUseCase {
     private final OrderItemMapper orderItemMapper;
     private final UserCouponMapper userCouponMapper;
 
-    public void execute(PaymentRequestDTO request) {
+    public void execute(PaymentCommand command) {
 
-        OrderItemEntity orderItemEntity = findOrderItemOrThrow(request.getOrderItemId());
-        UserCouponEntity userCouponEntity = findUserCouponOrThrow(request.getCouponId());
+        OrderItemEntity orderItemEntity = findOrderItemOrThrow(command.orderItemId());
+        UserCouponEntity userCouponEntity = findUserCouponOrThrow(command.couponId());
 
         OrderItem orderItem = orderItemMapper.toDomain(orderItemEntity);
         UserCoupon userCoupon = userCouponMapper.toDomain(userCouponEntity);
@@ -58,23 +59,5 @@ public class UseCouponUseCase {
             throw new UserCouponNotFoundException();
         }
         return userCoupon;
-    }
-
-    public void compensate(PaymentRequestDTO request) {
-
-        OrderItemEntity orderItemEntity = findOrderItemOrThrow(request.getOrderItemId());
-        UserCouponEntity userCouponEntity = findUserCouponOrThrow(request.getCouponId());
-
-        OrderItem orderItem = orderItemMapper.toDomain(orderItemEntity);
-        UserCoupon userCoupon = userCouponMapper.toDomain(userCouponEntity);
-
-        userCouponDomainService.withdrawCoupon(orderItem, userCoupon);
-
-        OrderItemEntity updateOrderItem = orderItemMapper.toEntity(orderItem);
-        UserCouponEntity saveUserCoupon = userCouponMapper.toEntity(userCoupon);
-
-        orderItemRepository.update(updateOrderItem);
-        userCouponRepository.save(saveUserCoupon);
-        System.out.println("쿠폰 사용 롤백 완료: couponId=" + request.getCouponId());
     }
 }

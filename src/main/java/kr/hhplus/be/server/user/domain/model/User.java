@@ -3,6 +3,7 @@ package kr.hhplus.be.server.user.domain.model;
 import kr.hhplus.be.server.user.exception.InsufficientPointBalanceException;
 import kr.hhplus.be.server.user.exception.InvalidPointAmountException;
 import kr.hhplus.be.server.user.exception.PointLimitExceededException;
+import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import lombok.*;
 
@@ -44,9 +45,9 @@ public class User {
 
     }
 
-    public static User createBeforeUser(UserRequestDTO request) {
+    public static User createBeforeUser(UserCommand command) {
         return User.builder()
-                .point(request.getPoint())
+                .point(command.point())
                 .build();
     }
 

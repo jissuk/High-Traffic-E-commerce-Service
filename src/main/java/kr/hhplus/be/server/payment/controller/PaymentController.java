@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.common.response.CommonResponse;
 import kr.hhplus.be.server.payment.facade.PaymentFacade;
+import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,9 @@ public class PaymentController {
     @Operation(summary = "결제 요청", description = "유저는 취소되지 않은 주문에 대해 포인트를 사용하여 결제를 요청할 수 있습니다.")
     public ResponseEntity<CommonResponse> requestPayment(@RequestBody @Valid PaymentRequestDTO request) {
 
-        paymentFacade.requestPayment(request);
+        PaymentCommand command = PaymentCommand.from(request);
+
+        paymentFacade.requestPayment(command);
 
         return ResponseEntity.ok().build();
     }

@@ -5,6 +5,7 @@ import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.payment.step.PaymentStep;
+import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
@@ -56,12 +57,12 @@ public class UpdateProductStockUseCaseTest {
         @DisplayName("상품과 주문이 존재할 경우 상품의 수량을 변경한다.")
         void 상품수량변경(){
             // given
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(productRepository.findById(request.getProductId())).thenReturn(ProductStep.기본상품엔티티생성());
-            when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(OrderStep.기본주문상세엔티티생성());
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            when(productRepository.findById(command.productId())).thenReturn(ProductStep.상품엔티티_기본값());
+            when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
 
             // when
-            updateProductStockUseCase.execute(request);
+            updateProductStockUseCase.execute(command);
 
             // then
             verify(productRepository).update(any(ProductEntity.class));
@@ -76,11 +77,11 @@ public class UpdateProductStockUseCaseTest {
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 상품수량변경_존재하지않는_상품일_경우(){
             // given
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(productRepository.findById(request.getProductId())).thenReturn(null);
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            when(productRepository.findById(command.productId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> updateProductStockUseCase.execute(request))
+            assertThatThrownBy(() -> updateProductStockUseCase.execute(command))
                     .isInstanceOf(ProductNotFoundException.class);
         }
 
@@ -88,12 +89,12 @@ public class UpdateProductStockUseCaseTest {
         @DisplayName("존재하지 않는 주문일 경우 OrderItemNotFoundException 발생한다.")
         void 상품수량변경_존재하지않는_주문일_경우(){
             // given
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(productRepository.findById(request.getProductId())).thenReturn(ProductStep.기본상품엔티티생성());
-            when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(null);
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            when(productRepository.findById(command.productId())).thenReturn(ProductStep.상품엔티티_기본값());
+            when(orderItemRepository.findById(command.orderItemId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> updateProductStockUseCase.execute(request))
+            assertThatThrownBy(() -> updateProductStockUseCase.execute(command))
                     .isInstanceOf(OrderItemNotFoundException.class);
         }
     }

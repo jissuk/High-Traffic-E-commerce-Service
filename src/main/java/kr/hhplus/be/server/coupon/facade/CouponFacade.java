@@ -2,6 +2,7 @@ package kr.hhplus.be.server.coupon.facade;
 
 import kr.hhplus.be.server.coupon.usecase.CheckCouponStockUseCase;
 import kr.hhplus.be.server.coupon.usecase.RegisterUserCouponUseCase;
+import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,9 +14,9 @@ public class CouponFacade {
     private final CheckCouponStockUseCase checkCouponStockUseCase;
     private final RegisterUserCouponUseCase registerUserCouponUseCase;
 
-    public void issueCoupon(UserCouponRequestDTO request){
+    public void issueCoupon(UserCouponCommand command){
 
-        checkCouponStockUseCase.execute(request);
-        registerUserCouponUseCase.execute(request);
+        checkCouponStockUseCase.execute(command);
+        registerUserCouponUseCase.execute(command);
     }
 }

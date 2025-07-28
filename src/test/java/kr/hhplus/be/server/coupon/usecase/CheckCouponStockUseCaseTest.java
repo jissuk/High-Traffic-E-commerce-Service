@@ -4,6 +4,7 @@ import kr.hhplus.be.server.coupon.domain.mapper.CouponMapper;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
 import kr.hhplus.be.server.coupon.step.CouponStep;
+import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,11 +45,11 @@ public class CheckCouponStockUseCaseTest {
         @DisplayName("쿠폰의 수량이 남아있을 경우 예외가 발생되지 않는다.")
         void 쿠폰수량체크() {
             // given
-            UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
-            when(couponRepository.findById(request.getCouponId())).thenReturn(CouponStep.기본쿠폰엔티티생성());
+            UserCouponCommand commnad = CouponStep.유저쿠폰커맨드_기본값();
+            when(couponRepository.findById(commnad.couponId())).thenReturn(CouponStep.쿠폰엔티티_기본값());
 
             // when & then
-            assertDoesNotThrow(() -> checkCouponStockUseCase.execute(request));
+            assertDoesNotThrow(() -> checkCouponStockUseCase.execute(commnad));
         }
     }
 
@@ -60,11 +61,11 @@ public class CheckCouponStockUseCaseTest {
         @DisplayName("존재하지 않는 쿠폰일 경우 CouponNotFoundException이 발생한다.")
         void 쿠폰수량체크_존재하지않는_쿠폰일_경우() {
             // given
-            UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
-            when(couponRepository.findById(request.getCouponId())).thenReturn(null);
+            UserCouponCommand commnad = CouponStep.유저쿠폰커맨드_기본값();
+            when(couponRepository.findById(commnad.couponId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> checkCouponStockUseCase.execute(request))
+            assertThatThrownBy(() -> checkCouponStockUseCase.execute(commnad))
                     .isInstanceOf(CouponNotFoundException.class);
         }
     }

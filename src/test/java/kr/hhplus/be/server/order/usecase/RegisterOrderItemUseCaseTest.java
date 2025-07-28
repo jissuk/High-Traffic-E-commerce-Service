@@ -6,6 +6,7 @@ import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
@@ -56,12 +57,12 @@ public class RegisterOrderItemUseCaseTest {
         @DisplayName("주문과 상품이 존재할 경우 주문 상세를 등록한다.")
         void 주문상세등록(){
             // given
-            OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
-            when(orderRepositroy.findById(request.getOrderId())).thenReturn(OrderStep.기본주문엔티티생성());
-            when(productRepository.findById(request.getProductId())).thenReturn(ProductStep.기본상품엔티티생성());
+            OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
+            when(orderRepositroy.findById(command.orderId())).thenReturn(OrderStep.주문엔티티_기본값());
+            when(productRepository.findById(command.productId())).thenReturn(ProductStep.상품엔티티_기본값());
 
             // when
-            registerOrderItemUseCase.execute(request);
+            registerOrderItemUseCase.execute(command);
 
             // then
             verify(orderItemRepository).save(any(OrderItemEntity.class));
@@ -76,11 +77,11 @@ public class RegisterOrderItemUseCaseTest {
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 주문상세등록_존재하지않는_상품일_경우(){
             // given
-            OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
-            when(productRepository.findById(request.getProductId())).thenReturn(null);
+            OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
+            when(productRepository.findById(command.productId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> registerOrderItemUseCase.execute(request))
+            assertThatThrownBy(() -> registerOrderItemUseCase.execute(command))
                     .isInstanceOf(ProductNotFoundException.class);
         }
 
@@ -88,12 +89,12 @@ public class RegisterOrderItemUseCaseTest {
         @DisplayName("존재하지 않는 주문일 경우 OrderNotFoundException이 발생한다.")
         void 주문상세등록_존재하지않는_주문일_경우(){
             // given
-            OrderItemRequestDTO request = OrderStep.기본주문상세요청생성();
-            when(productRepository.findById(request.getProductId())).thenReturn(ProductStep.기본상품엔티티생성());
-            when(orderRepositroy.findById(request.getOrderId())).thenReturn(null);
+            OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
+            when(productRepository.findById(command.productId())).thenReturn(ProductStep.상품엔티티_기본값());
+            when(orderRepositroy.findById(command.orderId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> registerOrderItemUseCase.execute(request))
+            assertThatThrownBy(() -> registerOrderItemUseCase.execute(command))
                     .isInstanceOf(OrderNotFoundException.class);
         }
     }

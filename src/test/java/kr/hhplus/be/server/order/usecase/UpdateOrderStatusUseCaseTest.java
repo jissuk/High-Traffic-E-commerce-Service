@@ -6,14 +6,13 @@ import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
 import kr.hhplus.be.server.order.domain.model.OrderHistoryEntity;
-import kr.hhplus.be.server.order.domain.model.OrderItem;
-import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderHistoryRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.payment.step.PaymentStep;
+import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,10 +20,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.testcontainers.shaded.org.checkerframework.checker.signature.qual.DotSeparatedIdentifiers;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -70,12 +67,13 @@ public class UpdateOrderStatusUseCaseTest {
         @DisplayName("주문과 주문상세가 존재할 경우 주문 상태를 수정한다.")
         void 주문상태수정(){
             // given
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(orderRepositroy.findById(request.getOrderId())).thenReturn(OrderStep.기본주문엔티티생성());
-            when(orderItemRepository.findById(request.getOrderItemId())).thenReturn(OrderStep.기본주문상세엔티티생성());
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+
+            when(orderRepositroy.findById(command.orderId())).thenReturn(OrderStep.주문엔티티_기본값());
+            when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
 
             // when
-            updateOrderStatusUseCase.execute(request);
+            updateOrderStatusUseCase.execute(command);
 
             // then
             verify(orderRepositroy).update(any(OrderEntity.class));
@@ -94,11 +92,11 @@ public class UpdateOrderStatusUseCaseTest {
         @DisplayName("존재하지 않는 주문일 경우 OrderNotFoundException이 발생한다.")
         void 주문상태수정_존재하지않는_주문일_경우(){
             // given
-            PaymentRequestDTO request = PaymentStep.기본결제요청생성();
-            when(orderRepositroy.findById(request.getOrderId())).thenReturn(null);
+            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            when(orderRepositroy.findById(command.orderId())).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> updateOrderStatusUseCase.execute(request))
+            assertThatThrownBy(() -> updateOrderStatusUseCase.execute(command))
                     .isInstanceOf(OrderNotFoundException.class);
         }
     }

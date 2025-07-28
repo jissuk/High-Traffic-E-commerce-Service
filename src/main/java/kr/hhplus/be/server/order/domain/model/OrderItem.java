@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.order.domain.model;
 
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import lombok.*;
 
@@ -25,11 +26,11 @@ public class OrderItem {
         this.totalPrice += discount;
     }
 
-    public static OrderItem createBeforeOrderItem(OrderItemRequestDTO request) {
+    public static OrderItem createBeforeOrderItem(OrderItemCommand command) {
         return OrderItem.builder()
-                .quantity(request.getQuantity())
-                .price(request.getPrice())
-                .totalPrice(request.getPrice() * request.getQuantity())
+                .quantity(command.quantity())
+                .price(command.price())
+                .totalPrice(command.price() * command.quantity())
                 .build();
     }
 

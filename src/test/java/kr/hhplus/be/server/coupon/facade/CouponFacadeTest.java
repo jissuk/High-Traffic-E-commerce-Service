@@ -2,6 +2,7 @@ package kr.hhplus.be.server.coupon.facade;
 
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.step.CouponStep;
+import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
@@ -40,8 +41,8 @@ public class CouponFacadeTest {
     }
 
     private void initTestData() {
-        couponRepository.save(CouponStep.기본쿠폰엔티티생성());
-        userRepository.save(UserStep.기본유저엔티티생성());
+        couponRepository.save(CouponStep.쿠폰엔티티_기본값());
+        userRepository.save(UserStep.유저엔티티_기본값());
     }
 
     @Nested
@@ -52,10 +53,10 @@ public class CouponFacadeTest {
         @DisplayName("쿠폰의 발급 수량이 남아있으면 쿠폰 발급에 성공한다.")
         void 선착순쿠폰발급() {
             // given
-            UserCouponRequestDTO request = CouponStep.기본유저쿠폰요청생성();
+            UserCouponCommand commnad = CouponStep.유저쿠폰커맨드_기본값();
 
             // when & then
-            assertDoesNotThrow(() -> couponFacade.issueCoupon(request));
+            assertDoesNotThrow(() -> couponFacade.issueCoupon(commnad));
         }
     }
 }

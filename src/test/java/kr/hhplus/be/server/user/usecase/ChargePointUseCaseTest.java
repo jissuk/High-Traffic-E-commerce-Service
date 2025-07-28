@@ -8,7 +8,7 @@ import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
-import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
+import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -60,11 +60,11 @@ public class ChargePointUseCaseTest {
         void 포인트충전(){
             // given
             long userId = 1L;
-            UserRequestDTO request = UserStep.기본유저요청생성();
-            when(userRepository.findById(userId)).thenReturn(UserStep.기본유저엔티티생성());
+            UserCommand command = UserStep.유저커맨드_기본값();
+            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
     
             // when
-            chargePointUseCase.execute(request);
+            chargePointUseCase.execute(command);
     
             // then
             verify(userRepository).update(any(UserEntity.class));
@@ -81,11 +81,11 @@ public class ChargePointUseCaseTest {
         void 포인트충전_존재하지않는_유저일_경우(){
             // given
             long userId = 1L;
-            UserRequestDTO request = UserStep.기본유저요청생성();
+            UserCommand command = UserStep.유저커맨드_기본값();
             when(userRepository.findById(userId)).thenReturn(null);
 
             // when & then
-            assertThatThrownBy(() -> chargePointUseCase.execute(request))
+            assertThatThrownBy(() -> chargePointUseCase.execute(command))
                     .isInstanceOf(UserNotFoundException.class);
         }
     }

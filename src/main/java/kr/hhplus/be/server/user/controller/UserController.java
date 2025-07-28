@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.common.response.CommonResponse;
 import kr.hhplus.be.server.user.usecase.ChargePointUseCase;
+import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,10 @@ public class UserController {
     @Operation(summary = "포인트 충전", description = "유저는 상품 구매를 위한 포인트를 충전합니다")
     public ResponseEntity<CommonResponse> chargeUserPoint(@RequestBody @Valid UserRequestDTO request) {
 
+        UserCommand command = UserCommand.from(request);
+
         return ResponseEntity
                         .ok()
-                        .body(new CommonResponse(HttpStatus.CREATED, "success", chargePointUseCase.execute(request)));
+                        .body(new CommonResponse(HttpStatus.CREATED, "success", chargePointUseCase.execute(command)));
     }
 }

@@ -48,7 +48,7 @@ public class GetProductUseCaseTest {
         void 상품조회(){
             // given
             long  productId = 1L;
-            when(productRepository.findById(productId)).thenReturn(ProductStep.기본상품엔티티생성());
+            when(productRepository.findById(productId)).thenReturn(ProductStep.상품엔티티_기본값());
 
             // when
             getProductUseCase.execute(productId);

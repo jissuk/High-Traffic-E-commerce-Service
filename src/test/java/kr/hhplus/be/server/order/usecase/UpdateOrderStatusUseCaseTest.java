@@ -1,12 +1,9 @@
 package kr.hhplus.be.server.order.usecase;
 
 import kr.hhplus.be.server.common.sender.OrderDataSender;
-import kr.hhplus.be.server.order.domain.mapper.OrderHistoryMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
-import kr.hhplus.be.server.order.domain.model.OrderHistoryEntity;
-import kr.hhplus.be.server.order.domain.repository.OrderHistoryRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
@@ -37,8 +34,6 @@ public class UpdateOrderStatusUseCaseTest {
     @Mock
     private OrderRepositroy orderRepositroy;
     @Mock
-    private OrderHistoryRepository orderHistoryRepository;
-    @Mock
     OrderItemRepository orderItemRepository;
     @Mock
     OrderDataSender orderDataSender;
@@ -46,15 +41,12 @@ public class UpdateOrderStatusUseCaseTest {
     @BeforeEach
     void setUp() {
         OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
-        OrderHistoryMapper orderHistoryMapper = Mappers.getMapper(OrderHistoryMapper.class);
         OrderItemMapper orderItemMapper = Mappers.getMapper(OrderItemMapper.class);
         updateOrderStatusUseCase = new UpdateOrderStatusUseCase(
                 orderRepositroy,
-                orderHistoryRepository,
                 orderItemRepository,
                 orderDataSender,
                 orderMapper,
-                orderHistoryMapper,
                 orderItemMapper
         );
     }
@@ -77,7 +69,6 @@ public class UpdateOrderStatusUseCaseTest {
 
             // then
             verify(orderRepositroy).update(any(OrderEntity.class));
-            verify(orderHistoryRepository).save(any(OrderHistoryEntity.class));
 
             // 외부 데이터 플랫폼
 //            verify(orderDataSender).send(any(OrderItem.class));

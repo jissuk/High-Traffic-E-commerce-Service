@@ -6,13 +6,16 @@ import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
 public class Payment {
-    long id;
-    long price;
-    PaymentStatus paymentStatus;
+    private long id;
+    private long price;
+    private PaymentStatus paymentStatus;
+    private LocalDateTime createdAt;
 
     public void complete() {
         this.paymentStatus = PaymentStatus.COMPLETED;
@@ -25,16 +28,19 @@ public class Payment {
     public static Payment createBeforePayment(OrderItemCommand command) {
         return Payment.builder()
                         .price(command.price())
-                        .paymentStatus(PaymentStatus.BEFORE_PAYMENT).build();
+                        .paymentStatus(PaymentStatus.BEFORE_PAYMENT)
+                        .createdAt(LocalDateTime.now())
+                        .build();
     }
 
     public Payment() {
     }
 
-    public Payment(long id, long price, PaymentStatus paymentStatus) {
+    public Payment(long id, long price, PaymentStatus paymentStatus, LocalDateTime createdAt) {
         this.id = id;
         this.price = price;
         this.paymentStatus = paymentStatus;
+        this.createdAt = createdAt;
     }
 
     @Override

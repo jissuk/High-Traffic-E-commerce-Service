@@ -4,13 +4,9 @@ import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
-import kr.hhplus.be.server.payment.domain.Repository.PaymentHistoryRepository;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
-import kr.hhplus.be.server.payment.domain.mapper.PaymentHistoryMapper;
 import kr.hhplus.be.server.payment.domain.mapper.PaymentMapper;
 import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
-import kr.hhplus.be.server.payment.domain.model.PaymentHistoryEntity;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
@@ -40,20 +36,15 @@ public class RegisterPaymentUseCaseTest {
     private OrderItemRepository orderItemRepository;
     @Mock
     private PaymentRepository paymentRepository;
-    @Mock
-    private PaymentHistoryRepository paymentHistoryRepository;
 
     @BeforeEach
     void setUp() {
         PaymentMapper paymentMapper = Mappers.getMapper(PaymentMapper.class);
-        PaymentHistoryMapper paymentHistoryMapper = Mappers.getMapper(PaymentHistoryMapper.class);
         registerPaymentUseCase = new RegisterPaymentUseCase(
                 userRepository,
                 orderItemRepository,
                 paymentRepository,
-                paymentHistoryRepository,
-                paymentMapper,
-                paymentHistoryMapper
+                paymentMapper
         );
     }
 
@@ -75,7 +66,6 @@ public class RegisterPaymentUseCaseTest {
 
             // then
             verify(paymentRepository).save(any(PaymentEntity.class));
-            verify(paymentHistoryRepository).save(any(PaymentHistoryEntity.class));
         }
     }
 

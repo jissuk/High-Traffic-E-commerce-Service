@@ -1,10 +1,7 @@
 package kr.hhplus.be.server.order.usecase;
 
-import kr.hhplus.be.server.order.domain.mapper.OrderHistoryMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
-import kr.hhplus.be.server.order.domain.model.OrderHistoryEntity;
-import kr.hhplus.be.server.order.domain.repository.OrderHistoryRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
 import kr.hhplus.be.server.user.domain.mapper.UserMapper;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
@@ -35,22 +32,17 @@ public class RegisterOrderUseCaseTest {
     private UserRepository userRepository;
     @Mock
     private OrderRepositroy orderRepositroy;
-    @Mock
-    private OrderHistoryRepository orderHistoryRepository;
 
     @BeforeEach
     void setUp() {
         UserMapper userMapper = Mappers.getMapper(UserMapper.class);
         OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
-        OrderHistoryMapper orderHistoryMapper = Mappers.getMapper(OrderHistoryMapper.class);
 
         registerOrderUseCase = new RegisterOrderUseCase(
                 userRepository,
                 orderRepositroy,
-                orderHistoryRepository,
                 userMapper,
-                orderMapper,
-                orderHistoryMapper
+                orderMapper
         );
     }
 
@@ -70,7 +62,6 @@ public class RegisterOrderUseCaseTest {
 
             // then
             verify(orderRepositroy).save(any(OrderEntity.class));
-            verify(orderHistoryRepository).save(any(OrderHistoryEntity.class));
         }
     }
     @Nested

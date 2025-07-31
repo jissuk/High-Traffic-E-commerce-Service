@@ -2,7 +2,7 @@ package kr.hhplus.be.server.order.usecase;
 
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
-import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
+import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.user.domain.mapper.UserMapper;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
@@ -31,7 +31,7 @@ public class RegisterOrderUseCaseTest {
     @Mock
     private UserRepository userRepository;
     @Mock
-    private OrderRepositroy orderRepositroy;
+    private OrderRepository orderRepositroy;
 
     @BeforeEach
     void setUp() {

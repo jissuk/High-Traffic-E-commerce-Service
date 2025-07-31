@@ -5,12 +5,11 @@ import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
-import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
+import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +31,7 @@ public class UpdateOrderStatusUseCaseTest {
     UpdateOrderStatusUseCase updateOrderStatusUseCase;
 
     @Mock
-    private OrderRepositroy orderRepositroy;
+    private OrderRepository orderRepositroy;
     @Mock
     OrderItemRepository orderItemRepository;
     @Mock
@@ -68,7 +67,7 @@ public class UpdateOrderStatusUseCaseTest {
             updateOrderStatusUseCase.execute(command);
 
             // then
-            verify(orderRepositroy).update(any(OrderEntity.class));
+            verify(orderRepositroy).save(any(OrderEntity.class));
 
             // 외부 데이터 플랫폼
 //            verify(orderDataSender).send(any(OrderItem.class));

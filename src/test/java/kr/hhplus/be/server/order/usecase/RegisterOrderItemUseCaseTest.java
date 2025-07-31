@@ -3,11 +3,10 @@ package kr.hhplus.be.server.order.usecase;
 import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
-import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
+import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.step.ProductStep;
@@ -34,7 +33,7 @@ public class RegisterOrderItemUseCaseTest {
     @Mock
     private ProductRepository productRepository;
     @Mock
-    private OrderRepositroy orderRepositroy;
+    private OrderRepository orderRepositroy;
     @Mock
     private OrderItemRepository orderItemRepository;
 

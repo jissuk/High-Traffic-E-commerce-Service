@@ -9,8 +9,7 @@ import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
-import kr.hhplus.be.server.user.domain.repository.UserCouponRepository;
+import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.coupon.domain.service.UserCouponDomainService;
 import kr.hhplus.be.server.coupon.exception.UserCouponNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,7 +72,7 @@ public class UseCouponUseCaseTest {
 
             // then
             verify(userCouponRepository).save(any(UserCouponEntity.class));
-            verify(orderItemRepository).update(any(OrderItemEntity.class));
+            verify(orderItemRepository).save(any(OrderItemEntity.class));
         }
     }
 

@@ -8,8 +8,7 @@ import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
 import kr.hhplus.be.server.coupon.step.CouponStep;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
-import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
-import kr.hhplus.be.server.user.domain.repository.UserCouponRepository;
+import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
@@ -70,7 +69,7 @@ public class RegisterUserCouponUseCaseTest {
             registerUserCouponUseCase.execute(command);
 
             // then
-            verify(couponRepository).update(any(CouponEntity.class));
+            verify(couponRepository).save(any(CouponEntity.class));
             verify(userCouponRepository).save(any(UserCouponEntity.class));
 
         }

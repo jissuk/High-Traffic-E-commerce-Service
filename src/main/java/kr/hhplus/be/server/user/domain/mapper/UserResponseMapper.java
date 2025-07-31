@@ -5,7 +5,7 @@ import kr.hhplus.be.server.user.usecase.dto.UserResponseDTO;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
+@Mapper(componentModel = "spring")
 public interface UserResponseMapper {
     UserResponseDTO toDto(User user);
 }

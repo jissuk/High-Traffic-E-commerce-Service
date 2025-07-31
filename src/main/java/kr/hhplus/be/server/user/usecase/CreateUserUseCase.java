@@ -10,7 +10,6 @@ import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
-import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import lombok.RequiredArgsConstructor;
 
 @UseCase
@@ -19,13 +18,11 @@ public class CreateUserUseCase {
 
     private final UserRepository userRepository;
     private final PointHistoryRepository pointHistoryRepository;
-
     private final UserMapper userMapper;
     private final PointHistoryMapper pointHistoryMapper;
 
 
     public void execute(UserCommand command) {
-
         User user = User.createBeforeUser(command);
         PointHistory pointHistory = PointHistory.charge(user);
 

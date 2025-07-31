@@ -8,6 +8,7 @@ import kr.hhplus.be.server.product.usecase.CheckProductUseCase;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class OrderFacade {
     private final RegisterOrderItemUseCase registerOrderItemUseCase;
     private final RegisterPaymentUseCase registerPaymentUseCase;
 
+    @Transactional
     public void createOrder(OrderItemCommand command) {
 
         createOrderUseCase.execute(command.userId());

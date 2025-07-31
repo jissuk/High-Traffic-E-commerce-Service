@@ -1,40 +1,35 @@
 package kr.hhplus.be.server.coupon.domain.model;
 
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "TBL_COUPON")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class CouponEntity {
 
-    long id;
-    long discount;
-    String description;
-    long remainingQuantity;
-    LocalDateTime expiredAt;
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    public CouponEntity() {
-    }
+    @Column
+    private long discount;
 
-    public CouponEntity(long id, long discount, String description, long remainingQuantity, LocalDateTime expiredAt) {
-        this.id = id;
-        this.discount = discount;
-        this.description = description;
-        this.remainingQuantity = remainingQuantity;
-        this.expiredAt = expiredAt;
-    }
+    @Column
+    private long quantity;
 
-    @Override
-    public String toString() {
-        return "CouponEntity{" +
-                "id=" + id +
-                ", discount=" + discount +
-                ", description='" + description + '\'' +
-                ", remainingQuantity=" + remainingQuantity +
-                ", expiredAt=" + expiredAt +
-                '}';
-    }
+    @Column
+    private String description;
+
+    @Column
+    private LocalDateTime expiredAt;
+
 
 }

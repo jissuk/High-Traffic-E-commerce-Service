@@ -1,28 +1,33 @@
 package kr.hhplus.be.server.coupon.infrastructure;
 
 import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
-import kr.hhplus.be.server.user.domain.repository.UserCouponRepository;
+import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
+import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Repository
 public class UserCouponRepositoryImpl implements UserCouponRepository {
 
-    private final Map<Long, UserCouponEntity> userCouponTable = new HashMap<>();
+    private final JpaUserCouponRepository jpaUserCouponRepository;
+
+    public UserCouponRepositoryImpl(JpaUserCouponRepository jpaUserCouponRepository) {
+        this.jpaUserCouponRepository = jpaUserCouponRepository;
+    }
 
     @Override
     public UserCouponEntity findById(long couponId) {
-        return userCouponTable.get(couponId);
+
+        return jpaUserCouponRepository.findById(couponId);
     }
 
     @Override
     public UserCouponEntity save(UserCouponEntity userCoupon) {
-        long sequence = 0L;
-        sequence++;
+        return jpaUserCouponRepository.save(userCoupon);
+    }
 
-        return userCouponTable.put(sequence, userCoupon);
+    @Override
+    public UserCouponEntity findByCouponId(long id) {
+        return jpaUserCouponRepository.findByCouponId(id);
     }
 
 }

@@ -7,7 +7,6 @@ import kr.hhplus.be.server.coupon.domain.model.CouponEntity;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
-import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
 import lombok.RequiredArgsConstructor;
 
 @UseCase

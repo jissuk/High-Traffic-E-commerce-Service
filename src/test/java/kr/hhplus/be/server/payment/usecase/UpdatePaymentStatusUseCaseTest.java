@@ -54,7 +54,7 @@ public class UpdatePaymentStatusUseCaseTest {
             updatePaymentStatusUseCase.execute(command);
 
             // then
-            verify(paymentRepository).update(any(PaymentEntity.class));
+            verify(paymentRepository).save(any(PaymentEntity.class));
         }
     }
 

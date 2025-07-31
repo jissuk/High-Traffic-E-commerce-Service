@@ -4,11 +4,8 @@ import kr.hhplus.be.server.user.domain.model.UserEntity;
 
 public interface UserRepository {
 
-    UserEntity save(UserEntity user);
-
     UserEntity findById(long id);
 
-    UserEntity update(UserEntity user);
+    UserEntity save(UserEntity user);
 
-    void clear();
 }

@@ -1,32 +1,23 @@
 package kr.hhplus.be.server.user.domain.model;
 
-import kr.hhplus.be.server.user.exception.InsufficientPointBalanceException;
-import kr.hhplus.be.server.user.exception.InvalidPointAmountException;
-import kr.hhplus.be.server.user.exception.PointLimitExceededException;
-import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
+import jakarta.persistence.*;
 import lombok.*;
 
+@Entity
+@Table(name = "TBL_USER")
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity {
 
-    long userId;
-    long point;
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    public UserEntity() {
-    }
+    @Column
+    private long point;
 
-    public UserEntity(long userId, long point) {
-        this.userId = userId;
-        this.point = point;
-    }
-
-    @Override
-    public String toString() {
-        return "UserEntity{" +
-                "userId=" + userId +
-                ", point=" + point +
-                '}';
-    }
 }

@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final ChargePointUseCase chargePointUseCase;
-
     @PostMapping("/chargePoint")
     @Operation(summary = "포인트 충전", description = "유저는 상품 구매를 위한 포인트를 충전합니다")
     public ResponseEntity<CommonResponse> chargeUserPoint(@RequestBody @Valid UserRequestDTO request) {

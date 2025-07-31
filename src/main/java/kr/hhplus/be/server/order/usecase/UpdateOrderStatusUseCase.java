@@ -6,17 +6,16 @@ import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.*;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
-import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
+import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
 public class UpdateOrderStatusUseCase {
 
-    private final OrderRepositroy orderRepositroy;
+    private final OrderRepository orderRepositroy;
     private final OrderItemRepository orderItemRepository;
 
     private final OrderDataSender orderDataSender;
@@ -33,8 +32,7 @@ public class UpdateOrderStatusUseCase {
 
         OrderEntity updateOrder = orderMapper.toEntity(order);
 
-
-        orderRepositroy.update(updateOrder);
+        orderRepositroy.save(updateOrder);
 
         OrderItemEntity orderItemEntity = orderItemRepository.findById(command.orderItemId());
         OrderItem orderItem = orderItemMapper.toDomain(orderItemEntity);

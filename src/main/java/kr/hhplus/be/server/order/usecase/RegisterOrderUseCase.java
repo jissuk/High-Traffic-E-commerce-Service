@@ -7,7 +7,7 @@ import kr.hhplus.be.server.user.domain.mapper.UserMapper;
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
-import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
+import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class RegisterOrderUseCase {
 
     private final UserRepository userRepository;
 
-    private final OrderRepositroy orderRepositroy;
+    private final OrderRepository orderRepositroy;
 
     private final UserMapper userMapper;
     private final OrderMapper orderMapper;

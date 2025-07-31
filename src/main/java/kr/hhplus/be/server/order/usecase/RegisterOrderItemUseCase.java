@@ -6,10 +6,9 @@ import kr.hhplus.be.server.order.domain.model.OrderEntity;
 import kr.hhplus.be.server.order.domain.model.OrderItem;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
-import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
+import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
@@ -20,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class RegisterOrderItemUseCase {
 
     private final ProductRepository productRepository;
-    private final OrderRepositroy orderRepositroy;
+    private final OrderRepository orderRepositroy;
     private final OrderItemRepository orderItemRepository;
 
     private final OrderItemMapper orderItemMapper;

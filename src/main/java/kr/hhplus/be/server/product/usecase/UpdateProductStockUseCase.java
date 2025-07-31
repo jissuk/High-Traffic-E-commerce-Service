@@ -30,7 +30,7 @@ public class UpdateProductStockUseCase {
         product.checkQuantity(orderItemEntity.getQuantity());
 
         ProductEntity updateProduct = productMapper.toEntity(product);
-        productRepository.update(updateProduct);
+        productRepository.save(updateProduct);
     }
 
     private ProductEntity findProductOrThrow(long id) {

@@ -2,42 +2,33 @@ package kr.hhplus.be.server.product.infrastructure;
 
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
+import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
 
-    private final Map<Long, ProductEntity> productTable = new HashMap<>();
+    private final JpaProductRepository jpaProductRepository;
+
+    public ProductRepositoryImpl(JpaProductRepository jpaProductRepository) {
+        this.jpaProductRepository = jpaProductRepository;
+    }
 
     @Override
     public ProductEntity save(ProductEntity product) {
-        long sequence = 0L;
-        sequence++;
-        return productTable.put(sequence, product);
+        return jpaProductRepository.save(product);
     }
 
     @Override
     public ProductEntity findById(long productId) {
-        return productTable.get(productId);
+        return jpaProductRepository.findById(productId);
+
     }
 
     @Override
-    public ProductEntity update(ProductEntity product) {
-
-        return productTable.put(product.getId(), product);
+    public List<ProductEntity> findAll() {
+        return jpaProductRepository.findAll();
     }
-
-    @Override
-    public Map<Long, ProductEntity> findAll() {
-        return productTable;
-    }
-
-    @Override
-    public void clear() {
-        productTable.clear();
-    }
-
 }

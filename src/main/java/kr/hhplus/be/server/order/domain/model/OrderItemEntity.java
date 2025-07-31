@@ -1,42 +1,38 @@
 package kr.hhplus.be.server.order.domain.model;
 
+import jakarta.persistence.*;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import lombok.*;
 
+@Entity
+@Table(name = "TBL_ORDER_ITEM")
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderItemEntity {
 
-    long id;
-    long quantity;
-    long price;
-    long totalPrice;
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
+    @Column
+    private long quantity;
+
+    @Column
+    private long price;
+
+    @Column
+    private long totalPrice;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     OrderEntity order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     ProductEntity product;
 
-    public OrderItemEntity() {
-    }
-
-    public OrderItemEntity(long id, long quantity, long price, long totalPrice, OrderEntity order, ProductEntity product) {
-        this.id = id;
-        this.quantity = quantity;
-        this.price = price;
-        this.totalPrice = totalPrice;
-        this.order = order;
-        this.product = product;
-    }
-
-    @Override
-    public String toString() {
-        return "OrderItemEntity{" +
-                "id=" + id +
-                ", quantity=" + quantity +
-                ", price=" + price +
-                ", totalPrice=" + totalPrice +
-                ", order=" + order +
-                ", product=" + product +
-                '}';
-    }
 }

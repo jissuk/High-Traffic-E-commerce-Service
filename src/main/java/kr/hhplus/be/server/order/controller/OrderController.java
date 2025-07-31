@@ -20,7 +20,7 @@ public class OrderController {
 
     private final OrderFacade orderFacade;
 
-    @PostMapping()
+    @PostMapping
     @Operation(summary = "상품 주문", description = "유저는 아직 재고가 남아있는 상품을 주문합니다.", tags = {"OrderController"})
     public ResponseEntity<CommonResponse> createOrder(@RequestBody @Valid OrderItemRequestDTO request) {
 

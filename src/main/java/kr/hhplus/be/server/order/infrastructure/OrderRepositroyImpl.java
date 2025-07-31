@@ -1,36 +1,28 @@
 package kr.hhplus.be.server.order.infrastructure;
 
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
-import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
+import kr.hhplus.be.server.order.domain.repository.OrderRepository;
+import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepositroy;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Repository
-public class OrderRepositroyImpl implements OrderRepositroy {
+public class OrderRepositroyImpl implements OrderRepository {
 
-    private final Map<Long, OrderEntity> orderTable = new HashMap<>();
+    private final JpaOrderRepositroy jpaOrderRepositroy;
+
+    public OrderRepositroyImpl(JpaOrderRepositroy jpaOrderRepositroy) {
+        this.jpaOrderRepositroy = jpaOrderRepositroy;
+    }
 
     @Override
     public OrderEntity findById(long orderId) {
-        return orderTable.get(orderId);
+
+        return jpaOrderRepositroy.findById(orderId);
     }
 
     @Override
     public OrderEntity save(OrderEntity order) {
-        long sequence = 0L;
-        sequence++;
-        return orderTable.put(sequence, order);
+        return jpaOrderRepositroy.save(order);
     }
 
-    @Override
-    public OrderEntity update(OrderEntity order) {
-        return orderTable.put(order.getId(), order);
-    }
-
-    @Override
-    public void clear() {
-        orderTable.clear();
-    }
 }

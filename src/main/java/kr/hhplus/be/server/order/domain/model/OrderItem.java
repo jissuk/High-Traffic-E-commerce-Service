@@ -6,13 +6,18 @@ import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class OrderItem {
 
-    long id;
-    long quantity;
-    long price;
-    long totalPrice;
+    private long id;
+
+    private long quantity;
+
+    private long price;
+
+    private long totalPrice;
 
     public void deductCouponAmount(long discount) {
         this.totalPrice -= discount;
@@ -20,10 +25,6 @@ public class OrderItem {
         if(this.totalPrice <= 0) {
             this.totalPrice = 0;
         }
-    }
-
-    public void withdrawCouponAmount(long discount) {
-        this.totalPrice += discount;
     }
 
     public static OrderItem createBeforeOrderItem(OrderItemCommand command) {
@@ -34,24 +35,5 @@ public class OrderItem {
                 .build();
     }
 
-    public OrderItem() {
-    }
-
-    public OrderItem(long totalPrice, long price, long quantity, long id) {
-        this.totalPrice = totalPrice;
-        this.price = price;
-        this.quantity = quantity;
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "OrderItem{" +
-                "id=" + id +
-                ", quantity=" + quantity +
-                ", price=" + price +
-                ", totalPrice=" + totalPrice +
-                '}';
-    }
 
 }

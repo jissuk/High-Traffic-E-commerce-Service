@@ -35,6 +35,7 @@ public class RegisterPaymentUseCase {
 
         UserEntity user = findUserOrThrow(command.userId());
         OrderItemEntity orderItem = findOrderItemOrThrow(command.orderItemId());
+
         saveFayment.setUser(user);
         saveFayment.setOrderItem(orderItem);
 

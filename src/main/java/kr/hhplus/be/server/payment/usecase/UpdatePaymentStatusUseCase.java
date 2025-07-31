@@ -22,7 +22,7 @@ public class UpdatePaymentStatusUseCase {
         payment.complete();
 
         PaymentEntity updatePayment = paymentMapper.toEntity(payment);
-        paymentRepository.update(updatePayment);
+        paymentRepository.save(updatePayment);
     }
 
     private PaymentEntity findPaymentOrThrow(long id) {

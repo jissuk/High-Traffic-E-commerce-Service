@@ -6,8 +6,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 
+
 @Entity
-@Table(name = "TBL_POINT_HISTORY")
+@Table(name = "POINT_HISTORY")
 @Getter
 @Setter
 @Builder

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "TBL_ORDER")
+@Table(name = "ORDER")
 @Getter
 @Setter
 @Builder

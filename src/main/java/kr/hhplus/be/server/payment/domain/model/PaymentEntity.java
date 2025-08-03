@@ -9,7 +9,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "TBL_PAYMENT")
+@Table(name = "PAYMENT")
 @Getter
 @Setter
 @Builder

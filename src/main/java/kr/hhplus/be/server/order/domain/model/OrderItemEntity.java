@@ -5,7 +5,7 @@ import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import lombok.*;
 
 @Entity
-@Table(name = "TBL_ORDER_ITEM")
+@Table(name = "ORDER_ITEM")
 @Getter
 @Setter
 @Builder

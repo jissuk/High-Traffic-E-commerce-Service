@@ -5,7 +5,7 @@ import kr.hhplus.be.server.user.domain.model.UserEntity;
 import lombok.*;
 
 @Entity
-@Table(name = "TBL_USER_COUPON")
+@Table(name = "USER_COUPON")
 @Getter
 @Setter
 @NoArgsConstructor

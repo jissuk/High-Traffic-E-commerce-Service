@@ -2,30 +2,25 @@ package kr.hhplus.be.server.order.usecase;
 
 import kr.hhplus.be.server.common.annotation.UseCase;
 import kr.hhplus.be.server.common.sender.OrderDataSender;
-import kr.hhplus.be.server.order.domain.mapper.OrderHistoryMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.*;
-import kr.hhplus.be.server.order.domain.repository.OrderHistoryRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
-import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
+import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
 public class UpdateOrderStatusUseCase {
 
-    private final OrderRepositroy orderRepositroy;
-    private final OrderHistoryRepository orderHistoryRepository;
+    private final OrderRepository orderRepositroy;
     private final OrderItemRepository orderItemRepository;
 
     private final OrderDataSender orderDataSender;
 
     private final OrderMapper orderMapper;
-    private final OrderHistoryMapper orderHistoryMapper;
     private final OrderItemMapper orderItemMapper;
 
     public void execute(PaymentCommand command) {
@@ -34,14 +29,10 @@ public class UpdateOrderStatusUseCase {
         Order order = orderMapper.toDomain(orderEntity);
 
         order.complete();
-        OrderHistory orderHistory = OrderHistory.of(order);
 
         OrderEntity updateOrder = orderMapper.toEntity(order);
-        OrderHistoryEntity saveHistory = orderHistoryMapper.toEntity(orderHistory);
 
-
-        orderRepositroy.update(updateOrder);
-        orderHistoryRepository.save(saveHistory);
+        orderRepositroy.save(updateOrder);
 
         OrderItemEntity orderItemEntity = orderItemRepository.findById(command.orderItemId());
         OrderItem orderItem = orderItemMapper.toDomain(orderItemEntity);

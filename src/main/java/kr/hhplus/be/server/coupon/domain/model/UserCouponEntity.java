@@ -1,43 +1,37 @@
 package kr.hhplus.be.server.coupon.domain.model;
 
+import jakarta.persistence.*;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@Entity
+@Table(name = "TBL_USER_COUPON")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class UserCouponEntity {
-    long id;
-    long discount;
-    CouponStatus couponStatus;
-    String description;
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-    CouponEntity coupon;
-    UserEntity user;
+    @Column
+    private long discount;
 
-    public UserCouponEntity() {
-    }
+    @Column
+    private CouponStatus couponStatus;
 
-    public UserCouponEntity(long id, long discount, CouponStatus couponStatus, String description, CouponEntity coupon, UserEntity user) {
-        this.id = id;
-        this.discount = discount;
-        this.couponStatus = couponStatus;
-        this.description = description;
-        this.coupon = coupon;
-        this.user = user;
-    }
+    @Column
+    private String description;
 
-    @Override
-    public String toString() {
-        return "UserCouponEntity{" +
-                "id=" + id +
-                ", discount=" + discount +
-                ", couponStatus=" + couponStatus +
-                ", description='" + description + '\'' +
-                ", coupon=" + coupon +
-                ", user=" + user +
-                '}';
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coupon_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private CouponEntity coupon;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private UserEntity user;
+
 }

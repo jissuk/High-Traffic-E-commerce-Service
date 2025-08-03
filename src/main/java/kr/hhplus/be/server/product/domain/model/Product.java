@@ -8,10 +8,10 @@ import lombok.*;
 @Builder
 public class Product {
 
-    long id;
-    String productName;
-    long price;
-    long quantity;
+    private long id;
+    private String productName;
+    private long price;
+    private long quantity;
 
     public void checkQuantity(long quantity) {
         this.quantity -= quantity;

@@ -4,12 +4,14 @@ import kr.hhplus.be.server.user.exception.InsufficientPointBalanceException;
 import kr.hhplus.be.server.user.exception.InvalidPointAmountException;
 import kr.hhplus.be.server.user.exception.PointLimitExceededException;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
-import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
+@ToString
 public class User {
 
     /*
@@ -21,8 +23,8 @@ public class User {
      * 3. 0원 이하의 포인트 충전은 불가능합니다.
      * */
 
-    long userId;
-    long point;
+    private long userId;
+    private long point;
 
     public void charegePoint(long amount) {
         this.point += amount;
@@ -51,19 +53,4 @@ public class User {
                 .build();
     }
 
-    public User() {
-    }
-
-    public User(long userId, long point) {
-        this.userId = userId;
-        this.point = point;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", point=" + point +
-                '}';
-    }
 }

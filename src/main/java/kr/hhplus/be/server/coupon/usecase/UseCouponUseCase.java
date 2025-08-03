@@ -10,8 +10,7 @@ import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
-import kr.hhplus.be.server.user.domain.repository.UserCouponRepository;
+import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.coupon.domain.service.UserCouponDomainService;
 import kr.hhplus.be.server.coupon.exception.UserCouponNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +39,8 @@ public class UseCouponUseCase {
         OrderItemEntity updateOrderItem = orderItemMapper.toEntity(orderItem);
         UserCouponEntity saveUserCoupon = userCouponMapper.toEntity(userCoupon);
 
-        orderItemRepository.update(updateOrderItem);
         userCouponRepository.save(saveUserCoupon);
+        orderItemRepository.save(updateOrderItem);
     }
 
 
@@ -54,7 +53,7 @@ public class UseCouponUseCase {
     }
 
     private UserCouponEntity findUserCouponOrThrow(long id) {
-        UserCouponEntity userCoupon = userCouponRepository.findById(id);
+        UserCouponEntity userCoupon = userCouponRepository.findByCouponId(id);
         if (userCoupon == null) {
             throw new UserCouponNotFoundException();
         }

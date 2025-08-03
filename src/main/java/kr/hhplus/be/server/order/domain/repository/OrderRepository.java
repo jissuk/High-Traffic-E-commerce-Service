@@ -3,9 +3,7 @@ package kr.hhplus.be.server.order.domain.repository;
 
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
 
-public interface OrderRepositroy {
+public interface OrderRepository {
     OrderEntity findById(long orderId);
     OrderEntity save(OrderEntity order);
-    OrderEntity update(OrderEntity order);
-    void clear();
 }

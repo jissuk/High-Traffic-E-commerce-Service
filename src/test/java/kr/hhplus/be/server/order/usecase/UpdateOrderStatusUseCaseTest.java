@@ -1,19 +1,15 @@
 package kr.hhplus.be.server.order.usecase;
 
 import kr.hhplus.be.server.common.sender.OrderDataSender;
-import kr.hhplus.be.server.order.domain.mapper.OrderHistoryMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
-import kr.hhplus.be.server.order.domain.model.OrderHistoryEntity;
-import kr.hhplus.be.server.order.domain.repository.OrderHistoryRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
-import kr.hhplus.be.server.order.domain.repository.OrderRepositroy;
+import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,9 +31,7 @@ public class UpdateOrderStatusUseCaseTest {
     UpdateOrderStatusUseCase updateOrderStatusUseCase;
 
     @Mock
-    private OrderRepositroy orderRepositroy;
-    @Mock
-    private OrderHistoryRepository orderHistoryRepository;
+    private OrderRepository orderRepositroy;
     @Mock
     OrderItemRepository orderItemRepository;
     @Mock
@@ -46,15 +40,12 @@ public class UpdateOrderStatusUseCaseTest {
     @BeforeEach
     void setUp() {
         OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
-        OrderHistoryMapper orderHistoryMapper = Mappers.getMapper(OrderHistoryMapper.class);
         OrderItemMapper orderItemMapper = Mappers.getMapper(OrderItemMapper.class);
         updateOrderStatusUseCase = new UpdateOrderStatusUseCase(
                 orderRepositroy,
-                orderHistoryRepository,
                 orderItemRepository,
                 orderDataSender,
                 orderMapper,
-                orderHistoryMapper,
                 orderItemMapper
         );
     }
@@ -76,8 +67,7 @@ public class UpdateOrderStatusUseCaseTest {
             updateOrderStatusUseCase.execute(command);
 
             // then
-            verify(orderRepositroy).update(any(OrderEntity.class));
-            verify(orderHistoryRepository).save(any(OrderHistoryEntity.class));
+            verify(orderRepositroy).save(any(OrderEntity.class));
 
             // 외부 데이터 플랫폼
 //            verify(orderDataSender).send(any(OrderItem.class));

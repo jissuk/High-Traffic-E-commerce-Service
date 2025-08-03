@@ -1,11 +1,8 @@
 package kr.hhplus.be.server.payment.usecase;
 
-import kr.hhplus.be.server.payment.domain.Repository.PaymentHistoryRepository;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
-import kr.hhplus.be.server.payment.domain.mapper.PaymentHistoryMapper;
 import kr.hhplus.be.server.payment.domain.mapper.PaymentMapper;
 import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
-import kr.hhplus.be.server.payment.domain.model.PaymentHistoryEntity;
 import kr.hhplus.be.server.payment.exception.PaymentNotFoundException;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
@@ -33,18 +30,12 @@ public class UpdatePaymentStatusUseCaseTest {
     @Mock
     private PaymentRepository paymentRepository;
 
-    @Mock
-    private PaymentHistoryRepository paymentHistoryRepository;
-
     @BeforeEach
     void setUp() {
         PaymentMapper paymentMapper = Mappers.getMapper(PaymentMapper.class);
-        PaymentHistoryMapper  paymentHistoryMapper = Mappers.getMapper(PaymentHistoryMapper.class);
         updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
                 paymentRepository,
-                paymentHistoryRepository,
-                paymentMapper,
-                paymentHistoryMapper
+                paymentMapper
         );
     }
 
@@ -63,8 +54,7 @@ public class UpdatePaymentStatusUseCaseTest {
             updatePaymentStatusUseCase.execute(command);
 
             // then
-            verify(paymentRepository).update(any(PaymentEntity.class));
-            verify(paymentHistoryRepository).save(any(PaymentHistoryEntity.class));
+            verify(paymentRepository).save(any(PaymentEntity.class));
         }
     }
 
@@ -84,5 +74,4 @@ public class UpdatePaymentStatusUseCaseTest {
                     .isInstanceOf(PaymentNotFoundException.class);
         }
     }
-
 }

@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 @Builder
 public class PointHistory {
 
-    long id;
-    long point;
-    PointHistoryType pointHistoryType;
-    LocalDateTime createdAt;
+    private long id;
+    private long point;
+    private PointHistoryType pointHistoryType;
+    private LocalDateTime createdAt;
 
     public static PointHistory charge(User user) {
         return PointHistory.builder()

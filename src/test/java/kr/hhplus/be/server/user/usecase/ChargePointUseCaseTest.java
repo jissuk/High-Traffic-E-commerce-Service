@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 @DisplayName("포인트 충전 테스트")
 @ExtendWith(MockitoExtension.class)
 public class ChargePointUseCaseTest {
@@ -62,16 +63,16 @@ public class ChargePointUseCaseTest {
             long userId = 1L;
             UserCommand command = UserStep.유저커맨드_기본값();
             when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
-    
+
             // when
             chargePointUseCase.execute(command);
-    
+
             // then
-            verify(userRepository).update(any(UserEntity.class));
+            verify(userRepository).save(any(UserEntity.class));
             verify(pointHistoryRepository).save(any(PointHistoryEntity.class));
         }
     }
-    
+
     @Nested
     @DisplayName("포인트 충전 실패 케이스")
     class fail{

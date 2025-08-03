@@ -10,9 +10,7 @@ import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.usecase.dto.ProductResponseDTO;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @UseCase
@@ -25,12 +23,11 @@ public class GetAllProductUseCase {
 
     public List<ProductResponseDTO> execute() {
 
-        Map<Long, ProductEntity> productMap = findProductOrThrow();
-        List<ProductEntity> entityList = new ArrayList<>(productMap.values());
+        List<ProductEntity> productEntityList = findProductOrThrow();
 
-        List<Product> domainList = entityList.stream()
+        List<Product> domainList = productEntityList.stream()
                                                 .map(product -> domainMapper.toDomain(product))
-                                                .collect(Collectors.toList());
+                                                .toList();
 
 
         List<ProductResponseDTO> response = domainList.stream()
@@ -40,12 +37,12 @@ public class GetAllProductUseCase {
         return response;
     }
 
-    private Map<Long, ProductEntity> findProductOrThrow() {
-        Map<Long, ProductEntity> productMap = productRepository.findAll();
-        if (productMap == null) {
+    private List<ProductEntity> findProductOrThrow() {
+        List<ProductEntity> productEntityList = productRepository.findAll();
+        if (productEntityList.isEmpty()) {
             throw new ProductNotFoundException();
         }
-        return productMap;
+        return productEntityList;
     }
 
 }

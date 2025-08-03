@@ -1,20 +1,34 @@
 package kr.hhplus.be.server.user.domain.model;
 
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
+
+@Entity
+@Table(name = "TBL_POINT_HISTORY")
 @Getter
 @Setter
 @Builder
 public class PointHistoryEntity {
 
-    long id;
-    long point;
-    PointHistoryType pointHistoryType;
-    LocalDateTime createdAt;
+    @Id
+    @Column
+    private long id;
 
-    UserEntity user;
+    @Column
+    private long point;
+
+    @Column
+    private PointHistoryType pointHistoryType;
+
+    @Column
+    private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private UserEntity user;
 
     public PointHistoryEntity() {
     }
@@ -27,14 +41,4 @@ public class PointHistoryEntity {
         this.user = user;
     }
 
-    @Override
-    public String toString() {
-        return "PointHistoryEntity{" +
-                "id=" + id +
-                ", point=" + point +
-                ", pointHistoryType=" + pointHistoryType +
-                ", createdAt=" + createdAt +
-                ", user=" + user +
-                '}';
-    }
 }

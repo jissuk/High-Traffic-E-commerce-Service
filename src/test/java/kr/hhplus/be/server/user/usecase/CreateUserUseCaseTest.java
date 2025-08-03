@@ -16,10 +16,12 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
+@Testcontainers
 @DisplayName("유저 생성 테스트")
 @ExtendWith(MockitoExtension.class)
 public class CreateUserUseCaseTest {

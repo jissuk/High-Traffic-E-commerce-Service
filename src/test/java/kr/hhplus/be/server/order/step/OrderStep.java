@@ -6,6 +6,7 @@ import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.model.OrderStatus;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
+import kr.hhplus.be.server.user.domain.model.UserEntity;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -30,12 +31,29 @@ public class OrderStep {
                     .build();
     }
 
+    public static OrderEntity 주문엔티티_기본값(UserEntity user){
+        return OrderEntity.builder()
+                .orderStatus(OrderStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .build();
+    }
+
     public static OrderItemEntity 주문상세엔티티_기본값(){
         return OrderItemEntity.builder()
-                        .quantity(2L)
-                        .price(3000L)
-                        .totalPrice(6000L)
-                        .build();
+                                .quantity(2L)
+                                .price(3000L)
+                                .totalPrice(6000L)
+                                .build();
+    }
+
+    public static OrderItemEntity 주문상세엔티티_기본값(OrderEntity order){
+        return OrderItemEntity.builder()
+                .quantity(2L)
+                .price(3000L)
+                .totalPrice(6000L)
+                .order(order)
+                .build();
     }
 
     public static OrderItemRequestDTO 주문상세요청_기본값(){
@@ -50,8 +68,8 @@ public class OrderStep {
     }
 
 
-    public static ResultActions 주문요청(MockMvc mockMvc, ObjectMapper objectMapper, OrderItemRequestDTO request, long userId) throws Exception {
-        return mockMvc.perform(post(PATH_URL+"/{userId}", userId)
+    public static ResultActions 주문요청(MockMvc mockMvc, ObjectMapper objectMapper, OrderItemRequestDTO request) throws Exception {
+        return mockMvc.perform(post(PATH_URL)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                         .andDo(print());

@@ -6,7 +6,6 @@ import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
@@ -65,7 +64,7 @@ public class UpdateProductStockUseCaseTest {
             updateProductStockUseCase.execute(command);
 
             // then
-            verify(productRepository).update(any(ProductEntity.class));
+            verify(productRepository).save(any(ProductEntity.class));
         }
     }
 

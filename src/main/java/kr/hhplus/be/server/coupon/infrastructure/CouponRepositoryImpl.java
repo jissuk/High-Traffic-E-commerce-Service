@@ -2,37 +2,26 @@ package kr.hhplus.be.server.coupon.infrastructure;
 
 import kr.hhplus.be.server.coupon.domain.model.CouponEntity;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
+import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.HashMap;
-import java.util.Map;
-
 
 @Repository
 public class CouponRepositoryImpl implements CouponRepository {
 
-    private final Map<Long, CouponEntity> couponTable = new HashMap<>();
+    private final JpaCouponRepository jpaCouponRepository;
 
-    @Override
-    public CouponEntity findById(Long couponId) {
-        return couponTable.get(couponId);
+    public CouponRepositoryImpl(JpaCouponRepository jpaCouponRepository) {
+        this.jpaCouponRepository = jpaCouponRepository;
     }
 
     @Override
-    public void update(CouponEntity updateCoupon) {
-        couponTable.put(updateCoupon.getId(), updateCoupon);
+    public CouponEntity findById(Long couponId) {
+
+        return jpaCouponRepository.findById(couponId);
     }
 
     @Override
     public CouponEntity save(CouponEntity coupon) {
-        long sequence = 0L;
-        sequence++;
-        return couponTable.put(sequence, coupon);
+        return jpaCouponRepository.save(coupon);
     }
-
-    @Override
-    public void clear() {
-        couponTable.clear();
-    }
-
 }

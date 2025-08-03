@@ -8,11 +8,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
 
-    long id;
-    OrderStatus orderStatus;
-    LocalDateTime createdAt;
+    private long id;
+    private OrderStatus orderStatus;
+    private LocalDateTime createdAt;
 
     public void complete() {
         this.orderStatus = OrderStatus.COMPLETED;
@@ -23,21 +25,4 @@ public class Order {
                 .orderStatus(OrderStatus.PENDING).build();
     }
 
-    public Order() {
-    }
-
-    public Order(long id, OrderStatus orderStatus, LocalDateTime createdAt) {
-        this.id = id;
-        this.orderStatus = orderStatus;
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", orderStatus=" + orderStatus +
-                ", createdAt=" + createdAt +
-                '}';
-    }
 }

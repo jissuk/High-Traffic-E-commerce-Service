@@ -41,7 +41,7 @@ public class UsePointUseCase {
         UserEntity updateUser = userMapper.toEntity(user);
         PointHistoryEntity saveHistory = pointHistoryMapper.toEntity(pointHistory);
 
-        userRepository.update(updateUser);
+        userRepository.save(updateUser);
         pointHistoryRepository.save(saveHistory);
     }
 

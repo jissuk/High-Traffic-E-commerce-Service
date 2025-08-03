@@ -14,8 +14,4 @@ public class UserCouponDomainService {
         userCoupon.setCouponStatus(CouponStatus.USED);
     }
 
-    public void withdrawCoupon(OrderItem orderItem, UserCoupon userCoupon) {
-        orderItem.withdrawCouponAmount(userCoupon.getDiscount());
-        userCoupon.setCouponStatus(CouponStatus.ISSUED);
-    }
 }

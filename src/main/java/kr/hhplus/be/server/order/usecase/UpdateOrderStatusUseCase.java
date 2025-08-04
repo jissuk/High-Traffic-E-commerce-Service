@@ -7,7 +7,8 @@ import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.*;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
-import kr.hhplus.be.server.order.exception.OrderNotFoundException;
+import kr.hhplus.be.server.order.usecase.reader.OrderItemReader;
+import kr.hhplus.be.server.order.usecase.reader.OrderReader;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import lombok.RequiredArgsConstructor;
 
@@ -15,36 +16,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UpdateOrderStatusUseCase {
 
+    private final OrderReader orderReader;
+    private final OrderItemReader orderItemReader;
+
     private final OrderRepository orderRepositroy;
-    private final OrderItemRepository orderItemRepository;
+    private final OrderMapper orderMapper;
 
     private final OrderDataSender orderDataSender;
 
-    private final OrderMapper orderMapper;
-    private final OrderItemMapper orderItemMapper;
-
     public void execute(PaymentCommand command) {
 
-        OrderEntity orderEntity = findOrderOrThrow(command.orderId());
-        Order order = orderMapper.toDomain(orderEntity);
-
+        Order order = orderReader.findOrderOrThrow(command.orderItemId());
         order.complete();
 
         OrderEntity updateOrder = orderMapper.toEntity(order);
-
         orderRepositroy.save(updateOrder);
 
-        OrderItemEntity orderItemEntity = orderItemRepository.findById(command.orderItemId());
-        OrderItem orderItem = orderItemMapper.toDomain(orderItemEntity);
-
+        OrderItem orderItem = orderItemReader.findOrderItemOrThrow(command.orderItemId());
 //        orderDataSender.send(orderItem);
-    }
-
-    private OrderEntity findOrderOrThrow(long id) {
-        OrderEntity order = orderRepositroy.findById(id);
-        if (order == null) {
-            throw new OrderNotFoundException();
-        }
-        return order;
     }
 }

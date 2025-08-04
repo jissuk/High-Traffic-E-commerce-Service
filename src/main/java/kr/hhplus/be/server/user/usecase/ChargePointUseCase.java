@@ -15,12 +15,13 @@ import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import kr.hhplus.be.server.user.usecase.dto.UserResponseDTO;
+import kr.hhplus.be.server.user.usecase.reader.UserReader;
 import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
 public class ChargePointUseCase {
-
+    private final UserReader userReader;
     private final UserRepository userRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final UserMapper userMapper;
@@ -28,11 +29,9 @@ public class ChargePointUseCase {
     private final UserResponseMapper userResponseMapper;
 
     public UserResponseDTO execute(UserCommand command) {
-
-        UserEntity userEntity = findUserOrThrow(command.userId());
-        User user = userMapper.toDomain(userEntity);
-
+        User user = userReader.findUserOrThrow(command.userId());
         user.charegePoint(command.point());
+
         PointHistory pointHistory = PointHistory.charge(user);
 
         UserEntity updateUser = userMapper.toEntity(user);
@@ -44,11 +43,4 @@ public class ChargePointUseCase {
         return userResponseMapper.toDto(user);
     }
 
-    private UserEntity findUserOrThrow(long id) {
-        UserEntity user = userRepository.findById(id);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-        return user;
-    }
 }

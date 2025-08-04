@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,7 +29,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("결제 등록 테스트")
 @ExtendWith(MockitoExtension.class)
 public class RegisterPaymentUseCaseTest {
-
+    @InjectMocks
     RegisterPaymentUseCase registerPaymentUseCase;
 
     @Mock
@@ -36,17 +38,8 @@ public class RegisterPaymentUseCaseTest {
     private OrderItemRepository orderItemRepository;
     @Mock
     private PaymentRepository paymentRepository;
-
-    @BeforeEach
-    void setUp() {
-        PaymentMapper paymentMapper = Mappers.getMapper(PaymentMapper.class);
-        registerPaymentUseCase = new RegisterPaymentUseCase(
-                userRepository,
-                orderItemRepository,
-                paymentRepository,
-                paymentMapper
-        );
-    }
+    @Spy
+    private PaymentMapper paymentMapper;
 
     @Nested
     @DisplayName("결제 등록 성공 케이스")

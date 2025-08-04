@@ -5,6 +5,8 @@ import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class UserCouponRepositoryImpl implements UserCouponRepository {
 
@@ -15,7 +17,7 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     }
 
     @Override
-    public UserCouponEntity findById(long couponId) {
+    public Optional<UserCouponEntity> findById(long couponId) {
 
         return jpaUserCouponRepository.findById(couponId);
     }
@@ -26,7 +28,7 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     }
 
     @Override
-    public UserCouponEntity findByCouponId(long id) {
+    public Optional<UserCouponEntity> findByCouponId(long id) {
         return jpaUserCouponRepository.findByCouponId(id);
     }
 

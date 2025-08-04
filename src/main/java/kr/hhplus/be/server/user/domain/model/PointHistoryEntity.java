@@ -27,8 +27,7 @@ public class PointHistoryEntity {
     @Column
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private UserEntity user;
+    @Column
+    private long userId;
 
 }

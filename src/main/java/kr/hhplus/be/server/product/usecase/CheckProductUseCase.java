@@ -8,26 +8,17 @@ import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
+import kr.hhplus.be.server.product.usecase.reader.ProductReader;
 import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
 public class CheckProductUseCase {
-
-    private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
+    private final ProductReader productReader;
 
     public void execute(OrderItemCommand command) {
-        ProductEntity productEntity = findProductOrThrow(command.productId());
-        Product product = productMapper.toDomain(productEntity);
-        product.checkQuantity(command.quantity());
-    }
+        Product product = productReader.findProductOrThrow(command.productId());
 
-    private ProductEntity findProductOrThrow(long id) {
-        ProductEntity product = productRepository.findById(id);
-        if (product == null) {
-            throw new ProductNotFoundException();
-        }
-        return product;
+        product.checkQuantity(command.quantity());
     }
 }

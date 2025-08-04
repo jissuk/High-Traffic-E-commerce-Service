@@ -27,12 +27,11 @@ public class OrderItemEntity {
     @Column
     private long totalPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    OrderEntity order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    ProductEntity product;
+    @Column
+    private long orderId;
+
+    @Column
+    private long productId;
 
 }

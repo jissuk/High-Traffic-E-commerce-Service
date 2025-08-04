@@ -5,6 +5,8 @@ import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
 import kr.hhplus.be.server.payment.infrastructure.jpa.JpaPaymentRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 
 @Repository
 public class PaymentRepositoryImpl implements PaymentRepository {
@@ -16,7 +18,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public PaymentEntity findById(long paymentId) {
+    public Optional<PaymentEntity> findById(long paymentId) {
 
         return jpaPaymentRepository.findById(paymentId);
     }

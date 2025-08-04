@@ -4,11 +4,13 @@ import kr.hhplus.be.server.common.annotation.UseCase;
 import kr.hhplus.be.server.coupon.domain.mapper.UserCouponMapper;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
+import kr.hhplus.be.server.coupon.usecase.reader.UserCouponReader;
 import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.model.OrderItem;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
+import kr.hhplus.be.server.order.usecase.reader.OrderItemReader;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.coupon.domain.service.UserCouponDomainService;
@@ -19,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UseCouponUseCase {
 
+    private final UserCouponReader userCouponReader;
+    private final OrderItemReader orderItemReader;
+
     private final UserCouponRepository userCouponRepository;
     private final OrderItemRepository orderItemRepository;
     private final UserCouponDomainService userCouponDomainService;
@@ -28,11 +33,8 @@ public class UseCouponUseCase {
 
     public void execute(PaymentCommand command) {
 
-        OrderItemEntity orderItemEntity = findOrderItemOrThrow(command.orderItemId());
-        UserCouponEntity userCouponEntity = findUserCouponOrThrow(command.couponId());
-
-        OrderItem orderItem = orderItemMapper.toDomain(orderItemEntity);
-        UserCoupon userCoupon = userCouponMapper.toDomain(userCouponEntity);
+        OrderItem orderItem = orderItemReader.findOrderItemOrThrow(command.orderItemId());
+        UserCoupon userCoupon = userCouponReader.findByCouponIdUserCouponOrThrow(command.couponId());
 
         userCouponDomainService.applyCoupon(orderItem, userCoupon);
 
@@ -43,20 +45,4 @@ public class UseCouponUseCase {
         orderItemRepository.save(updateOrderItem);
     }
 
-
-    private OrderItemEntity findOrderItemOrThrow(long id) {
-        OrderItemEntity orderItem = orderItemRepository.findById(id);
-        if (orderItem == null) {
-            throw new OrderItemNotFoundException();
-        }
-        return orderItem;
-    }
-
-    private UserCouponEntity findUserCouponOrThrow(long id) {
-        UserCouponEntity userCoupon = userCouponRepository.findByCouponId(id);
-        if (userCoupon == null) {
-            throw new UserCouponNotFoundException();
-        }
-        return userCoupon;
-    }
 }

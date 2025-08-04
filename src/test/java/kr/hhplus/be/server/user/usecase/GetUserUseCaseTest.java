@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -28,17 +29,12 @@ public class GetUserUseCaseTest {
     @Mock
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        UserMapper userMapper = Mappers.getMapper(UserMapper.class);;
-        UserResponseMapper userResponseMapper = Mappers.getMapper(UserResponseMapper.class);;
+    @Spy
+    private UserMapper userMapper;
 
-        getUserUseCase = new GetUserUseCase(
-                userRepository,
-                userMapper,
-                userResponseMapper
-        );
-    }
+    @Spy
+    private UserResponseMapper userResponseMapper;
+
 
     @Nested
     @DisplayName("유저 조회 성공 케이스")

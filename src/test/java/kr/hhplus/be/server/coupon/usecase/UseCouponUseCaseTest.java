@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -40,20 +41,10 @@ public class UseCouponUseCaseTest {
     private OrderItemRepository orderItemRepository;
     @Mock
     private UserCouponDomainService userCouponDomainService;
-
-    @BeforeEach
-    void setUp() {
-        OrderItemMapper orderItemMapper = Mappers.getMapper(OrderItemMapper.class);;
-        UserCouponMapper userCouponMapper = Mappers.getMapper(UserCouponMapper.class);;
-
-        useCouponUseCase = new UseCouponUseCase(
-                userCouponRepository,
-                orderItemRepository,
-                userCouponDomainService,
-                orderItemMapper,
-                userCouponMapper
-        );
-    }
+    @Spy
+    OrderItemMapper orderItemMapper;
+    @Spy
+    UserCouponMapper userCouponMapper;
 
     @Nested
     @DisplayName("쿠폰 사용 성공 케이스")
@@ -65,7 +56,7 @@ public class UseCouponUseCaseTest {
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
             when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
-            when(userCouponRepository.findById(command.couponId())).thenReturn(CouponStep.유저쿠폰엔티티_기본값());
+            when(userCouponRepository.findByCouponId(command.couponId())).thenReturn(CouponStep.유저쿠폰엔티티_기본값());
 
             // when
             useCouponUseCase.execute(command);
@@ -98,15 +89,13 @@ public class UseCouponUseCaseTest {
         void 쿠폰사용_존재하지않는_쿠폰일_경우(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            if (command.couponId() != null) {
-                when(userCouponRepository.findById(command.couponId())).thenReturn(null);
-            }
+
             when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
+            when(userCouponRepository.findByCouponId(command.couponId())).thenReturn(null);
 
             // when & then
             assertThatThrownBy(() -> useCouponUseCase.execute(command))
                     .isInstanceOf(UserCouponNotFoundException.class);
-
         }
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class OrderItemRepositoryImpl implements OrderItemRepository {
@@ -17,7 +18,7 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
         this.jpaOrderItemRepository = jpaOrderItemRepository;
     }
     @Override
-    public OrderItemEntity findById(long orderItemId) {
+    public Optional<OrderItemEntity> findById(long orderItemId) {
 
         return jpaOrderItemRepository.findById(orderItemId);
     }

@@ -22,7 +22,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,21 +45,12 @@ public class UsePointUseCaseTest {
     @Mock
     private OrderItemRepository orderItemRepository;
 
-    @BeforeEach
-    void setUp() {
-        UserMapper userMapper = Mappers.getMapper(UserMapper.class);;
-        OrderItemMapper orderItemMapper = Mappers.getMapper(OrderItemMapper.class);;
-        PointHistoryMapper pointHistoryMapper = Mappers.getMapper(PointHistoryMapper.class);;
-
-        usePointUseCase = new  UsePointUseCase(
-                userRepository,
-                pointHistoryRepository,
-                orderItemRepository,
-                userMapper,
-                orderItemMapper,
-                pointHistoryMapper
-        );
-    }
+    @Spy
+    private UserMapper userMapper;
+    @Spy
+    private OrderItemMapper orderItemMapper;
+    @Spy
+    private PointHistoryMapper pointHistoryMapper;
 
     @Nested
     @DisplayName("포인트 사용 성공 케이스")

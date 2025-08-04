@@ -10,57 +10,46 @@ import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
+import kr.hhplus.be.server.coupon.usecase.reader.CouponReader;
+import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
+import kr.hhplus.be.server.user.usecase.reader.UserReader;
 import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
 public class RegisterUserCouponUseCase {
 
+    private final CouponReader couponReader;
+    private final UserReader userReader;
+
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
-    private final UserRepository userRepository;
 
     private final CouponMapper couponMapper;
     private final UserCouponMapper userCouponMapper;
 
     public void execute(UserCouponCommand command) {
-        CouponEntity couponEntity = findCouponOrThrow(command.couponId());
-        UserEntity userEntity = findUserOrThrow(command.userId());
 
-        Coupon coupon = couponMapper.toDomain(couponEntity);
+        User user = userReader.findUserOrThrow(command.userId());
+        Coupon coupon = couponReader.findCouponOrThrow(command.couponId());
+
         coupon.decreaseQuantity();
 
         UserCoupon userCoupon = UserCoupon.createBeforeUserCoupon(coupon);
+        UserCouponEntity saveUserCoupon = userCouponMapper.toEntity(userCoupon);
+        saveUserCoupon.setUserId(user.getId());
+        saveUserCoupon.setCouponId(coupon.getId());
 
         CouponEntity updateCoupon = couponMapper.toEntity(coupon);
-        UserCouponEntity saveUserCoupon = userCouponMapper.toEntity(userCoupon);
 
-        saveUserCoupon.setUser(userEntity);
-        saveUserCoupon.setCoupon(couponEntity);
-
-        couponRepository.save(updateCoupon);
         userCouponRepository.save(saveUserCoupon);
+        couponRepository.save(updateCoupon);
     }
 
-    private CouponEntity findCouponOrThrow(long id) {
-        CouponEntity couponEntity = couponRepository.findById(id);
-        if (couponEntity == null) {
-            throw new CouponNotFoundException();
-        }
-        return couponEntity;
-    }
-
-    private UserEntity findUserOrThrow(long id) {
-        UserEntity userEntity = userRepository.findById(id);
-        if (userEntity == null) {
-            throw new UserNotFoundException();
-        }
-        return userEntity;
-    }
 }
 
 

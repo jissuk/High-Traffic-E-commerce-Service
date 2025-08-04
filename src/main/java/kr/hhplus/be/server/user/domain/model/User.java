@@ -20,7 +20,7 @@ public class User {
      * 3. 0원 이하의 포인트 충전은 불가능합니다.
      * */
 
-    private long userId;
+    private long id;
     private long point;
 
     public void charegePoint(long amount) {
@@ -46,8 +46,8 @@ public class User {
 
     public static User createBeforeUser(UserCommand command) {
         return User.builder()
-                .point(command.point())
-                .build();
+                    .point(command.point())
+                    .build();
     }
 
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class UserResponseMapper {
     public UserResponseDTO toDto(User user){
         return UserResponseDTO.builder()
-                                .userId(user.getUserId())
+                                .userId(user.getId())
                                 .point(user.getPoint())
                                 .build();
     };

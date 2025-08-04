@@ -12,8 +12,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -23,19 +27,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class CheckCouponStockUseCaseTest {
 
+    @InjectMocks
     private CheckCouponStockUseCase checkCouponStockUseCase;
 
-    @Mock
+    @Spy
     private CouponRepository couponRepository;
 
-    @BeforeEach
-    void setUp() {
-        CouponMapper couponMapper = Mappers.getMapper(CouponMapper.class);
-        checkCouponStockUseCase = new CheckCouponStockUseCase(
-                couponRepository,
-                couponMapper
-        );
-    }
+    @Spy
+    private CouponMapper couponMapper;
 
     @Nested
     @DisplayName("쿠폰 수량 체크 성공 케이스")
@@ -46,7 +45,7 @@ public class CheckCouponStockUseCaseTest {
         void 쿠폰수량체크() {
             // given
             UserCouponCommand commnad = CouponStep.유저쿠폰커맨드_기본값();
-            when(couponRepository.findById(commnad.couponId())).thenReturn(CouponStep.쿠폰엔티티_기본값());
+            when(couponRepository.findById(commnad.couponId())).thenReturn(Optional.of(CouponStep.쿠폰엔티티_기본값()));
 
             // when & then
             assertDoesNotThrow(() -> checkCouponStockUseCase.execute(commnad));

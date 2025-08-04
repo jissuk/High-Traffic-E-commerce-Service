@@ -9,6 +9,7 @@ import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
+import kr.hhplus.be.server.user.usecase.dto.UserResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,8 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -36,21 +39,12 @@ public class ChargePointUseCaseTest {
     private UserRepository userRepository;
     @Mock
     private PointHistoryRepository pointHistoryRepository;
-
-    @BeforeEach
-    void setUp() {
-        UserMapper userMapper = Mappers.getMapper(UserMapper.class);;
-        PointHistoryMapper pointHistoryMapper = Mappers.getMapper(PointHistoryMapper.class);;
-        UserResponseMapper userResponseMapper = Mappers.getMapper(UserResponseMapper.class);;
-
-        chargePointUseCase = new ChargePointUseCase(
-                userRepository,
-                pointHistoryRepository,
-                userMapper,
-                pointHistoryMapper,
-                userResponseMapper
-        );
-    }
+    @Spy
+    private UserMapper userMapper;
+    @Spy
+    private PointHistoryMapper pointHistoryMapper;
+    @Spy
+    private UserResponseMapper userResponseMapper;
 
     @Nested
     @DisplayName("포인트 충전 성공 케이스")
@@ -62,14 +56,16 @@ public class ChargePointUseCaseTest {
             // given
             long userId = 1L;
             UserCommand command = UserStep.유저커맨드_기본값();
-            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
+            UserEntity user = UserStep.유저엔티티_기본값();
+            when(userRepository.findById(userId)).thenReturn(user);
 
             // when
-            chargePointUseCase.execute(command);
+            UserResponseDTO result = chargePointUseCase.execute(command);
 
             // then
             verify(userRepository).save(any(UserEntity.class));
             verify(pointHistoryRepository).save(any(PointHistoryEntity.class));
+            assertThat(result.getPoint()).isEqualTo(command.point() + user.getPoint());
         }
     }
 

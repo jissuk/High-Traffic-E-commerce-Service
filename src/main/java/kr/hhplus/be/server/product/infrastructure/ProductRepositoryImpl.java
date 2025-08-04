@@ -6,6 +6,7 @@ import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
@@ -22,7 +23,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public ProductEntity findById(long productId) {
+    public Optional<ProductEntity> findById(long productId) {
         return jpaProductRepository.findById(productId);
 
     }

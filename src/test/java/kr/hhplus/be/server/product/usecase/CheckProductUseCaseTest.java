@@ -13,7 +13,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -23,20 +25,14 @@ import static org.mockito.Mockito.*;
 @DisplayName("상품 수량 확인 테스트")
 @ExtendWith(MockitoExtension.class)
 public class CheckProductUseCaseTest {
-
+    @InjectMocks
     private CheckProductUseCase checkProductUseCase;
 
     @Mock
     private ProductRepository productRepository;
 
-    @BeforeEach
-    void setUp() {
-        ProductMapper productMapper = Mappers.getMapper(ProductMapper.class);
-        checkProductUseCase = new CheckProductUseCase(
-                productRepository,
-                productMapper
-        );
-    }
+    @Spy
+    private ProductMapper productMapper;
 
     @Nested
     @DisplayName("상품 수량 확인 성공 케이스")

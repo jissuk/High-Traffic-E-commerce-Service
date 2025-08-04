@@ -10,12 +10,15 @@ import kr.hhplus.be.server.order.domain.model.OrderEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
+import kr.hhplus.be.server.user.usecase.reader.UserReader;
 import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
 public class RegisterOrderUseCase {
 
+    private final UserReader userReader;
+    
     private final UserRepository userRepository;
 
     private final OrderRepository orderRepositroy;
@@ -25,21 +28,11 @@ public class RegisterOrderUseCase {
 
     public void execute(long userId) {
 
-        UserEntity userEntity = findUserOrThrow(userId);
-        User user = userMapper.toDomain(userEntity);
+        User user = userReader.findUserOrThrow(userId);
 
         Order order = Order.createBeforeOrder(user);
-
         OrderEntity orderEntity = orderMapper.toEntity(order);
 
         orderRepositroy.save(orderEntity);
-    }
-
-    private UserEntity findUserOrThrow(long id) {
-        UserEntity user = userRepository.findById(id);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-        return user;
     }
 }

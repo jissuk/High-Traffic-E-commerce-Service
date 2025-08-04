@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
     public User toDomain(UserEntity userEntity){
         return User.builder()
-                    .userId(userEntity.getId())
+                    .id(userEntity.getId())
                     .point(userEntity.getPoint())
                     .build();
     };
 
     public UserEntity toEntity(User user){
         return UserEntity.builder()
-                            .id(user.getUserId())
+                            .id(user.getId())
                             .point(user.getPoint())
                             .build();
     }

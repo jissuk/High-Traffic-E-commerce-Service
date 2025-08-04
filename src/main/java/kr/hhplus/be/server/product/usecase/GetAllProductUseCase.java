@@ -23,26 +23,20 @@ public class GetAllProductUseCase {
 
     public List<ProductResponseDTO> execute() {
 
-        List<ProductEntity> productEntityList = findProductOrThrow();
+        List<ProductEntity> productEntityList = productRepository.findAll();
+
+        if (productEntityList == null) {
+            throw new ProductNotFoundException();
+        }
 
         List<Product> domainList = productEntityList.stream()
-                                                .map(product -> domainMapper.toDomain(product))
+                                                .map(domainMapper::toDomain)
                                                 .toList();
 
-
         List<ProductResponseDTO> response = domainList.stream()
-                                            .map(product -> responseMapper.toDto(product))
+                                            .map(responseMapper::toDto)
                                             .collect(Collectors.toList());
 
         return response;
     }
-
-    private List<ProductEntity> findProductOrThrow() {
-        List<ProductEntity> productEntityList = productRepository.findAll();
-        if (productEntityList.isEmpty()) {
-            throw new ProductNotFoundException();
-        }
-        return productEntityList;
-    }
-
 }

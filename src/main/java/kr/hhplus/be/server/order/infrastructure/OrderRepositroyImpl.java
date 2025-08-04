@@ -5,6 +5,8 @@ import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepositroy;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class OrderRepositroyImpl implements OrderRepository {
 
@@ -15,7 +17,7 @@ public class OrderRepositroyImpl implements OrderRepository {
     }
 
     @Override
-    public OrderEntity findById(long orderId) {
+    public Optional<OrderEntity> findById(long orderId) {
 
         return jpaOrderRepositroy.findById(orderId);
     }

@@ -26,9 +26,9 @@ public class UserCoupon {
 
     public static UserCoupon createBeforeUserCoupon(Coupon coupon) {
         return UserCoupon.builder()
-                .discount(coupon.getDiscount())
-                .couponStatus(CouponStatus.ISSUED)
-                .description(coupon.getDescription())
-                .build();
+                            .discount(coupon.getDiscount())
+                            .couponStatus(CouponStatus.ISSUED)
+                            .description(coupon.getDescription())
+                            .build();
     }
 }

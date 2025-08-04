@@ -28,18 +28,12 @@ public class PaymentEntity {
     private PaymentStatus paymentStatus;
     @Column
     private LocalDateTime createAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    UserEntity user;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    CouponEntity coupon;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_item_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    OrderItemEntity orderItem;
+    @Column
+    private long userId;
+    @Column
+    private long couponId;
+    @Column
+    private long orderItemId;
 
 
 

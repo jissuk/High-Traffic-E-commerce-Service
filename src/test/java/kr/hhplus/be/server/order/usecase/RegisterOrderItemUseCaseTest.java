@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.*;
@@ -27,7 +29,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("주문상세 등록 테스트")
 @ExtendWith(MockitoExtension.class)
 public class RegisterOrderItemUseCaseTest {
-
+    @InjectMocks
     RegisterOrderItemUseCase registerOrderItemUseCase;
 
     @Mock
@@ -36,17 +38,8 @@ public class RegisterOrderItemUseCaseTest {
     private OrderRepository orderRepositroy;
     @Mock
     private OrderItemRepository orderItemRepository;
-
-    @BeforeEach
-    void setUp() {
-        OrderItemMapper OrderItemMapper = Mappers.getMapper(OrderItemMapper.class);
-        registerOrderItemUseCase = new RegisterOrderItemUseCase(
-                productRepository,
-                orderRepositroy,
-                orderItemRepository,
-                OrderItemMapper
-        );
-    }
+    @Spy
+    private OrderItemMapper OrderItemMapper;
 
     @Nested
     @DisplayName("주문상세 등록 성공 케이스")

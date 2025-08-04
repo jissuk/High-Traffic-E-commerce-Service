@@ -18,8 +18,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +33,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("유저 쿠폰 등록 테스트")
 @ExtendWith(MockitoExtension.class)
 public class RegisterUserCouponUseCaseTest {
-
+    @InjectMocks
     private RegisterUserCouponUseCase registerUserCouponUseCase;
 
     @Mock
@@ -39,19 +43,10 @@ public class RegisterUserCouponUseCaseTest {
     @Mock
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        CouponMapper couponMapper = Mappers.getMapper(CouponMapper.class);
-        UserCouponMapper userCouponMapper = Mappers.getMapper(UserCouponMapper.class);
-
-        registerUserCouponUseCase = new RegisterUserCouponUseCase(
-                couponRepository,
-                userCouponRepository,
-                userRepository,
-                couponMapper,
-                userCouponMapper
-        );
-    }
+    @Spy
+    private CouponMapper couponMapper;
+    @Spy
+    private UserCouponMapper userCouponMapper;
 
     @Nested
     @DisplayName("유저 쿠폰 등록 성공 케이스")
@@ -62,7 +57,7 @@ public class RegisterUserCouponUseCaseTest {
         void 유저쿠폰등록() {
             // given
             UserCouponCommand command = CouponStep.유저쿠폰커맨드_기본값();
-            when(couponRepository.findById(command.couponId())).thenReturn(CouponStep.쿠폰엔티티_기본값());
+            when(couponRepository.findById(command.couponId())).thenReturn(Optional.of(CouponStep.쿠폰엔티티_기본값()));
             when(userRepository.findById(command.userId())).thenReturn(UserStep.유저엔티티_기본값());
 
             // when
@@ -96,7 +91,7 @@ public class RegisterUserCouponUseCaseTest {
         void 유저쿠폰등록_존재하지않는_유저일_경우() {
             // given
             UserCouponCommand command = CouponStep.유저쿠폰커맨드_기본값();
-            when(couponRepository.findById(command.couponId())).thenReturn(CouponStep.쿠폰엔티티_기본값());
+            when(couponRepository.findById(command.couponId())).thenReturn(Optional.of(CouponStep.쿠폰엔티티_기본값()));
             when(userRepository.findById(command.userId())).thenReturn(null);
 
             // when & then

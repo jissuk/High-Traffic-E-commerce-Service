@@ -5,6 +5,8 @@ import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
@@ -15,7 +17,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserEntity findById(long id) {
+    public Optional<UserEntity> findById(long id) {
         return jpaUserRepository.findById(id);
     }
     @Override

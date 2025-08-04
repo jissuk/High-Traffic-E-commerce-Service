@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
@@ -23,21 +25,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class GetAllProductUseCaseTest {
 
+    @InjectMocks
     private GetAllProductUseCase getAllProductUseCase;
 
     @Mock
     private ProductRepository productRepository;
 
-    @BeforeEach
-    void setUp() {
-        ProductMapper productMapper = Mappers.getMapper(ProductMapper.class);
-        ProductRseponseMapper productRseponseMapper = Mappers.getMapper(ProductRseponseMapper.class);
-        getAllProductUseCase = new GetAllProductUseCase(
-                productRepository,
-                productMapper,
-                productRseponseMapper
-        );
-    }
+    @Spy
+    private ProductRseponseMapper productRseponseMapper;
+    @Spy
+    private ProductMapper productMapper;
 
     @Nested
     @DisplayName("전체 상품 조회 성공 케이스")

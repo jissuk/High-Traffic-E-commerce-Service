@@ -15,6 +15,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -60,10 +62,10 @@ public class CouponRepositoryTest {
             CouponEntity saved = couponRepository.save(CouponStep.쿠폰엔티티_기본값());
 
             // when
-            CouponEntity found = couponRepository.findById(saved.getId());
+            Optional<CouponEntity> found = couponRepository.findById(saved.getId());
 
             // then
-            assertThat(found).isEqualTo(saved);
+            assertThat(found.get()).isEqualTo(saved);
         }
 
     }

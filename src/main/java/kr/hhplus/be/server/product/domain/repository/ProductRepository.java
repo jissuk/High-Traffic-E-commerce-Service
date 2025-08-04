@@ -4,10 +4,11 @@ import kr.hhplus.be.server.product.domain.model.ProductEntity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface ProductRepository {
-    ProductEntity save(ProductEntity product);
-    ProductEntity findById(long productId);
+    Optional<ProductEntity> findById(long productId);
     List<ProductEntity> findAll();
+    ProductEntity save(ProductEntity product);
 }
 

@@ -19,17 +19,12 @@ public class RegisterOrderUseCase {
 
     private final UserReader userReader;
     
-    private final UserRepository userRepository;
-
     private final OrderRepository orderRepositroy;
 
-    private final UserMapper userMapper;
     private final OrderMapper orderMapper;
 
     public void execute(long userId) {
-
         User user = userReader.findUserOrThrow(userId);
-
         Order order = Order.createBeforeOrder(user);
         OrderEntity orderEntity = orderMapper.toEntity(order);
 

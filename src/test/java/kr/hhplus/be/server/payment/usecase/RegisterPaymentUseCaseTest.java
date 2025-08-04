@@ -4,12 +4,14 @@ import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
+import kr.hhplus.be.server.order.usecase.reader.OrderItemReader;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
 import kr.hhplus.be.server.payment.domain.mapper.PaymentMapper;
 import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
+import kr.hhplus.be.server.user.usecase.reader.UserReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -31,13 +35,14 @@ import static org.mockito.Mockito.when;
 public class RegisterPaymentUseCaseTest {
     @InjectMocks
     RegisterPaymentUseCase registerPaymentUseCase;
-
+    
     @Mock
-    private UserRepository userRepository;
+    private UserReader userReader;
     @Mock
-    private OrderItemRepository orderItemRepository;
+    private OrderItemReader orderItemReader;
     @Mock
     private PaymentRepository paymentRepository;
+
     @Spy
     private PaymentMapper paymentMapper;
 
@@ -51,8 +56,8 @@ public class RegisterPaymentUseCaseTest {
             // given
             long userId = 1L;
             OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
-            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
-            when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
+            when(userReader.findUserOrThrow(userId)).thenReturn(UserStep.유저_기본값());
+            when(orderItemReader.findOrderItemOrThrow(command.orderItemId())).thenReturn(OrderStep.주문상세_기본값());
 
             // when
             registerPaymentUseCase.execute(command);
@@ -72,7 +77,7 @@ public class RegisterPaymentUseCaseTest {
             // given
             long userId = 1L;
             OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
-            when(userRepository.findById(userId)).thenReturn(null);
+            when(userReader.findUserOrThrow(userId)).thenThrow(new UserNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> registerPaymentUseCase.execute(command))
@@ -85,8 +90,8 @@ public class RegisterPaymentUseCaseTest {
             // given
             long userId = 1L;
             OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
-            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
-            when(orderItemRepository.findById(command.orderItemId())).thenReturn(null);
+            when(userReader.findUserOrThrow(userId)).thenReturn(UserStep.유저_기본값());
+            when(orderItemReader.findOrderItemOrThrow(command.orderItemId())).thenThrow(new OrderItemNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> registerPaymentUseCase.execute(command))

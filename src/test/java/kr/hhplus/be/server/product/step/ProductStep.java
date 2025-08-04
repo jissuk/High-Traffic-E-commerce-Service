@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.product.step;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import org.springframework.http.MediaType;
@@ -19,6 +20,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 public class ProductStep {
 
     private static String PATH_URL = "/products";
+
+    public static Product 상품_기본값(){
+
+        return Product.builder()
+                .productName("기본 상품")
+                .price(2000L)
+                .quantity(5L)
+                .build();
+    }
 
     public static ProductEntity 상품엔티티_기본값(){
 

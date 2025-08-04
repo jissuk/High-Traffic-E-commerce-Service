@@ -3,6 +3,7 @@ package kr.hhplus.be.server.payment.step;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
+import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.payment.domain.model.PaymentStatus;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
@@ -13,6 +14,8 @@ import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -25,6 +28,12 @@ public class PaymentStep {
         return new PaymentCommand(1L, 1L, 1L, 1L, 1L, 1L);
     }
 
+    public static Payment 결제_기본값(){
+        return Payment.builder()
+                .price(3000L)
+                .paymentStatus(PaymentStatus.BEFORE_PAYMENT)
+                .build();
+    }
     public static PaymentEntity 결제엔티티_기본값(){
         return PaymentEntity.builder()
                         .price(3000L)
@@ -35,7 +44,7 @@ public class PaymentStep {
         return PaymentEntity.builder()
                 .price(3000L)
                 .paymentStatus(PaymentStatus.BEFORE_PAYMENT)
-                .user(user)
+                .userId(user.getId())
                 .build();
     }
 

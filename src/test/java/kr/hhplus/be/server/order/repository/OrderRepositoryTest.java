@@ -61,7 +61,7 @@ public class OrderRepositoryTest {
             OrderEntity saved = orderRepositroy.save(OrderStep.주문엔티티_기본값());
 
             // when
-            OrderEntity found = orderRepositroy.findById(saved.getId());
+            OrderEntity found = orderRepositroy.findById(saved.getId()).get();
 
             // then
             assertThat(found).isEqualTo(saved);

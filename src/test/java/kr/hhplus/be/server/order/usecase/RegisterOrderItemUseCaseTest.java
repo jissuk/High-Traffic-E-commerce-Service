@@ -7,9 +7,11 @@ import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
+import kr.hhplus.be.server.order.usecase.reader.OrderReader;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.step.ProductStep;
+import kr.hhplus.be.server.product.usecase.reader.ProductReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -31,6 +35,11 @@ import static org.mockito.Mockito.when;
 public class RegisterOrderItemUseCaseTest {
     @InjectMocks
     RegisterOrderItemUseCase registerOrderItemUseCase;
+
+    @Mock
+    private OrderReader orderReader;
+    @Mock
+    private ProductReader productReader;
 
     @Mock
     private ProductRepository productRepository;
@@ -50,8 +59,8 @@ public class RegisterOrderItemUseCaseTest {
         void 주문상세등록(){
             // given
             OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
-            when(orderRepositroy.findById(command.orderId())).thenReturn(OrderStep.주문엔티티_기본값());
-            when(productRepository.findById(command.productId())).thenReturn(ProductStep.상품엔티티_기본값());
+            when(productReader.findProductOrThrow(command.productId())).thenReturn(ProductStep.상품_기본값());
+            when(orderReader.findOrderOrThrow(command.orderId())).thenReturn(OrderStep.주문_기본값());
 
             // when
             registerOrderItemUseCase.execute(command);
@@ -70,7 +79,9 @@ public class RegisterOrderItemUseCaseTest {
         void 주문상세등록_존재하지않는_상품일_경우(){
             // given
             OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
-            when(productRepository.findById(command.productId())).thenReturn(null);
+            when(productReader.findProductOrThrow(command.productId())).thenThrow(new ProductNotFoundException());
+
+
 
             // when & then
             assertThatThrownBy(() -> registerOrderItemUseCase.execute(command))
@@ -82,8 +93,8 @@ public class RegisterOrderItemUseCaseTest {
         void 주문상세등록_존재하지않는_주문일_경우(){
             // given
             OrderItemCommand command = OrderStep.주문상세커맨드_기본값();
-            when(productRepository.findById(command.productId())).thenReturn(ProductStep.상품엔티티_기본값());
-            when(orderRepositroy.findById(command.orderId())).thenReturn(null);
+            when(productReader.findProductOrThrow(command.productId())).thenReturn(ProductStep.상품_기본값());
+            when(orderReader.findOrderOrThrow(command.orderId())).thenThrow(new OrderNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> registerOrderItemUseCase.execute(command))

@@ -64,8 +64,6 @@ public class UserCouponRepositoryTest {
 
             // then
             assertThat(saved.getId()).isNotNull();
-            assertThat(saved.getCoupon().getId()).isNotNull();
-            assertThat(saved.getUser().getId()).isNotNull();
         }
 
         @Test
@@ -76,12 +74,10 @@ public class UserCouponRepositoryTest {
             UserCouponEntity saved = userCouponRepository.save(CouponStep.유저쿠폰엔티티_기본값(user, coupon));
 
             // when
-            UserCouponEntity found = userCouponRepository.findById(saved.getId());
+            UserCouponEntity found = userCouponRepository.findById(saved.getId()).get();
 
             // then
             assertThat(found).isNotNull();
-            assertThat(found.getCoupon()).isEqualTo(coupon);
-            assertThat(found.getUser()).isEqualTo(user);
         }
 
         @Test
@@ -92,12 +88,10 @@ public class UserCouponRepositoryTest {
             UserCouponEntity saved = userCouponRepository.save(CouponStep.유저쿠폰엔티티_기본값(user, coupon));
 
             // when
-            UserCouponEntity found = userCouponRepository.findByCouponId(saved.getCoupon().getId());
+            UserCouponEntity found = userCouponRepository.findByCouponId(coupon.getId()).get();
 
             // then
             assertThat(found).isNotNull();
-            assertThat(found.getCoupon()).isEqualTo(coupon);
-            assertThat(found.getUser()).isEqualTo(user);
         }
 
     }

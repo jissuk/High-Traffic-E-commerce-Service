@@ -55,7 +55,6 @@ public class PaymentRepositoryTest {
 
             // then
             assertThat(saved).isNotNull();
-            assertThat(saved.getUser()).isNotNull();
         }
 
         @Test
@@ -65,11 +64,10 @@ public class PaymentRepositoryTest {
             PaymentEntity saved = paymentRepository.save(PaymentStep.결제엔티티_기본값(user));
 
             // when
-            PaymentEntity found = paymentRepository.findById(saved.getId());
+            PaymentEntity found = paymentRepository.findById(saved.getId()).get();
 
             // then
             assertThat(found).isEqualTo(saved);
-            assertThat(found.getUser()).isEqualTo(user);
         }
     }
 }

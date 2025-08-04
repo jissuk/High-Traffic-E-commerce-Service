@@ -6,6 +6,7 @@ import kr.hhplus.be.server.product.domain.mapper.ProductRseponseMapper;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.step.ProductStep;
+import kr.hhplus.be.server.product.usecase.reader.ProductReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -29,10 +32,8 @@ public class GetProductUseCaseTest {
     private GetProductUseCase getProductUseCase;
 
     @Mock
-    private ProductRepository productRepository;
+    private ProductReader productReader;
 
-    @Spy
-    private ProductMapper productMapper;
     @Spy
     private ProductRseponseMapper productRseponseMapper;
 
@@ -46,7 +47,7 @@ public class GetProductUseCaseTest {
         void 상품조회(){
             // given
             long  productId = 1L;
-            when(productRepository.findById(productId)).thenReturn(ProductStep.상품엔티티_기본값());
+            when(productReader.findProductOrThrow(productId)).thenReturn(ProductStep.상품_기본값());
 
             // when
             getProductUseCase.execute(productId);
@@ -65,7 +66,7 @@ public class GetProductUseCaseTest {
         void 상품조회_존재하지않는_상품일_경우() {
             // given
             long productId = 1L;
-            when(productRepository.findById(productId)).thenReturn(null);
+            when(productReader.findProductOrThrow(productId)).thenThrow(new ProductNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> getProductUseCase.execute(productId))

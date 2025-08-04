@@ -1,19 +1,17 @@
 package kr.hhplus.be.server.user.usecase;
-import kr.hhplus.be.server.user.domain.mapper.UserMapper;
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
-import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
-import org.junit.jupiter.api.BeforeEach;
+import kr.hhplus.be.server.user.usecase.reader.UserReader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -27,14 +25,10 @@ public class GetUserUseCaseTest {
     private GetUserUseCase getUserUseCase;
 
     @Mock
-    private UserRepository userRepository;
-
-    @Spy
-    private UserMapper userMapper;
+    private UserReader userReader;
 
     @Spy
     private UserResponseMapper userResponseMapper;
-
 
     @Nested
     @DisplayName("유저 조회 성공 케이스")
@@ -45,7 +39,7 @@ public class GetUserUseCaseTest {
         void 유저조회(){
             // given
             long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
+            when(userReader.findUserOrThrow(userId)).thenReturn(UserStep.유저_기본값());
 
             // when & then
             assertDoesNotThrow(() -> getUserUseCase.execute(userId));
@@ -61,7 +55,7 @@ public class GetUserUseCaseTest {
         void 유저조회_존재하지않는_유저일_경우(){
             // given
             long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(null);
+            when(userReader.findUserOrThrow(userId)).thenThrow(new UserNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> getUserUseCase.execute(userId))

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -34,18 +35,10 @@ public class CreateUserUseCaseTest {
     @Mock
     private PointHistoryRepository pointHistoryRepository;
 
-    @BeforeEach
-    void setUp() {
-        UserMapper userMapper = Mappers.getMapper(UserMapper.class);;
-        PointHistoryMapper pointHistoryMapper = Mappers.getMapper(PointHistoryMapper.class);;
-
-        createUserUseCase = new CreateUserUseCase(
-                userRepository,
-                pointHistoryRepository,
-                userMapper,
-                pointHistoryMapper
-        );
-    }
+    @Spy
+    private UserMapper userMapper;
+    @Spy
+    private PointHistoryMapper pointHistoryMapper;
 
     @Nested
     @DisplayName("유저 생성 성공 케이스")

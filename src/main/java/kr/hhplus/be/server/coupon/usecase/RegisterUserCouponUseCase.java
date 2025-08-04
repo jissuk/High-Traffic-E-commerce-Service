@@ -34,20 +34,20 @@ public class RegisterUserCouponUseCase {
 
     public void execute(UserCouponCommand command) {
 
-        User user = userReader.findUserOrThrow(command.userId());
         Coupon coupon = couponReader.findCouponOrThrow(command.couponId());
+        User user = userReader.findUserOrThrow(command.userId());
 
         coupon.decreaseQuantity();
+
+        CouponEntity updateCoupon = couponMapper.toEntity(coupon);
 
         UserCoupon userCoupon = UserCoupon.createBeforeUserCoupon(coupon);
         UserCouponEntity saveUserCoupon = userCouponMapper.toEntity(userCoupon);
         saveUserCoupon.setUserId(user.getId());
         saveUserCoupon.setCouponId(coupon.getId());
 
-        CouponEntity updateCoupon = couponMapper.toEntity(coupon);
-
-        userCouponRepository.save(saveUserCoupon);
         couponRepository.save(updateCoupon);
+        userCouponRepository.save(saveUserCoupon);
     }
 
 }

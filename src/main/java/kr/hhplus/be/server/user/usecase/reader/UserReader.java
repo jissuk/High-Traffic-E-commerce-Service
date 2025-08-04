@@ -6,6 +6,7 @@ import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

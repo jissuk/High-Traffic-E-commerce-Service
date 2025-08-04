@@ -7,13 +7,16 @@ import kr.hhplus.be.server.payment.exception.PaymentNotFoundException;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
+import kr.hhplus.be.server.payment.usecase.reader.PaymentReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -25,19 +28,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class UpdatePaymentStatusUseCaseTest {
 
+    @InjectMocks
     private UpdatePaymentStatusUseCase updatePaymentStatusUseCase;
 
     @Mock
     private PaymentRepository paymentRepository;
+    @Mock
+    private PaymentReader paymentReader;
 
-    @BeforeEach
-    void setUp() {
-        PaymentMapper paymentMapper = Mappers.getMapper(PaymentMapper.class);
-        updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
-                paymentRepository,
-                paymentMapper
-        );
-    }
+    @Spy
+    private PaymentMapper paymentMapper;
 
     @Nested
     @DisplayName("결제 상태 수정 성공 케이스")
@@ -48,7 +48,7 @@ public class UpdatePaymentStatusUseCaseTest {
         void 결제상태수정(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            when(paymentRepository.findById(command.paymentId())).thenReturn(PaymentStep.결제엔티티_기본값());
+            when(paymentReader.findPaymentOrThrow(command.paymentId())).thenReturn(PaymentStep.결제_기본값());
 
             // when
             updatePaymentStatusUseCase.execute(command);
@@ -67,7 +67,7 @@ public class UpdatePaymentStatusUseCaseTest {
         void 결제상태수정_존재하지않는_주문일_경우(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            when(paymentRepository.findById(command.paymentId())).thenReturn(null);
+            when(paymentReader.findPaymentOrThrow(command.paymentId())).thenThrow(new PaymentNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> updatePaymentStatusUseCase.execute(command))

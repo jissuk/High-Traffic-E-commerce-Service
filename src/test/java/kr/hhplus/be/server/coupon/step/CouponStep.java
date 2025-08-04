@@ -28,6 +28,23 @@ public class CouponStep {
                 .couponId(1L)
                 .build();
     }
+    public static Coupon 쿠폰_기본값(){
+        return Coupon.builder()
+                        .discount(2000L)
+                        .description("여름특별할인쿠폰")
+                        .quantity(500L)
+                        .expiredAt(LocalDateTime.now().plusMonths(3))
+                        .build();
+    }
+
+    public static UserCoupon 유저쿠폰_기본값(){
+        return UserCoupon.builder()
+                .discount(3000L)
+                .couponStatus(CouponStatus.ISSUED)
+                .description("여름 특별 할인 쿠폰")
+                .build();
+    }
+
 
     public static CouponEntity 쿠폰엔티티_기본값(){
         return CouponEntity.builder()
@@ -51,8 +68,8 @@ public class CouponStep {
                 .discount(3000L)
                 .couponStatus(CouponStatus.ISSUED)
                 .description("여름 특별 할인 쿠폰")
-                .coupon(coupon)
-                .user(user)
+                .couponId(coupon.getId())
+                .userId(user.getId())
                 .build();
     }
 

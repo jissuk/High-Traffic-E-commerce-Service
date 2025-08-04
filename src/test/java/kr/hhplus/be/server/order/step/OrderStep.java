@@ -1,9 +1,7 @@
 package kr.hhplus.be.server.order.step;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.order.domain.model.OrderEntity;
-import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
-import kr.hhplus.be.server.order.domain.model.OrderStatus;
+import kr.hhplus.be.server.order.domain.model.*;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
@@ -24,6 +22,21 @@ public class OrderStep {
         return new OrderItemCommand(1L, 1L, 1L, 1L, 2L, 3000L, 6000L);
     }
 
+    public static Order 주문_기본값(){
+        return Order.builder()
+                .orderStatus(OrderStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static OrderItem 주문상세_기본값(){
+        return OrderItem.builder()
+                .quantity(2L)
+                .price(3000L)
+                .totalPrice(6000L)
+                .build();
+    }
+
     public static OrderEntity 주문엔티티_기본값(){
         return OrderEntity.builder()
                     .orderStatus(OrderStatus.PENDING)
@@ -35,7 +48,7 @@ public class OrderStep {
         return OrderEntity.builder()
                 .orderStatus(OrderStatus.PENDING)
                 .createdAt(LocalDateTime.now())
-                .user(user)
+                .userId(user.getId())
                 .build();
     }
 
@@ -52,7 +65,7 @@ public class OrderStep {
                 .quantity(2L)
                 .price(3000L)
                 .totalPrice(6000L)
-                .order(order)
+                .orderId(order.getId())
                 .build();
     }
 

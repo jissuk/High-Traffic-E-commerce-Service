@@ -2,11 +2,13 @@ package kr.hhplus.be.server.coupon.usecase;
 import kr.hhplus.be.server.coupon.domain.mapper.UserCouponMapper;
 import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
 import kr.hhplus.be.server.coupon.step.CouponStep;
+import kr.hhplus.be.server.coupon.usecase.reader.UserCouponReader;
 import kr.hhplus.be.server.order.domain.mapper.OrderItemMapper;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.order.usecase.reader.OrderItemReader;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
@@ -23,6 +25,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -36,9 +40,15 @@ public class UseCouponUseCaseTest {
     UseCouponUseCase useCouponUseCase;
 
     @Mock
+    private OrderItemReader orderItemReader;
+    @Mock
+    private UserCouponReader userCouponReader;
+
+    @Mock
     private UserCouponRepository userCouponRepository;
     @Mock
     private OrderItemRepository orderItemRepository;
+
     @Mock
     private UserCouponDomainService userCouponDomainService;
     @Spy
@@ -55,8 +65,8 @@ public class UseCouponUseCaseTest {
         void 쿠폰사용(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
-            when(userCouponRepository.findByCouponId(command.couponId())).thenReturn(CouponStep.유저쿠폰엔티티_기본값());
+            when(orderItemReader.findOrderItemOrThrow(command.orderItemId())).thenReturn(OrderStep.주문상세_기본값());
+            when(userCouponReader.findByCouponIdUserCouponOrThrow(command.couponId())).thenReturn(CouponStep.유저쿠폰_기본값());
 
             // when
             useCouponUseCase.execute(command);
@@ -76,7 +86,7 @@ public class UseCouponUseCaseTest {
         void 쿠폰사용_존재하지않는_주문상세일_경우(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            when(orderItemRepository.findById(command.orderItemId())).thenReturn(null);
+            when(orderItemReader.findOrderItemOrThrow(command.orderItemId())).thenThrow(new OrderItemNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> useCouponUseCase.execute(command))
@@ -89,9 +99,8 @@ public class UseCouponUseCaseTest {
         void 쿠폰사용_존재하지않는_쿠폰일_경우(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-
-            when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
-            when(userCouponRepository.findByCouponId(command.couponId())).thenReturn(null);
+            when(orderItemReader.findOrderItemOrThrow(command.orderItemId())).thenReturn(OrderStep.주문상세_기본값());
+            when(userCouponReader.findByCouponIdUserCouponOrThrow(command.couponId())).thenThrow(new UserCouponNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> useCouponUseCase.execute(command))

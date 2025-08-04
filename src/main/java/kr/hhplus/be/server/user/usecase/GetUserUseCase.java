@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 public class GetUserUseCase {
 
     private final UserReader userReader;
-
     private final UserResponseMapper userResponseMapper;
 
     public UserResponseDTO execute(long userId) {

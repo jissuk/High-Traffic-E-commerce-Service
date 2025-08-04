@@ -17,6 +17,7 @@ public class UpdatePaymentStatusUseCase {
 
     public void execute(PaymentCommand command) {
         Payment payment = paymentReader.findPaymentOrThrow(command.paymentId());
+        System.out.println("payment :  " + payment.getPrice());
         payment.complete();
 
         PaymentEntity updatePayment = paymentMapper.toEntity(payment);

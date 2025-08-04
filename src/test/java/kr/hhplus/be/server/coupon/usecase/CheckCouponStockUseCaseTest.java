@@ -6,6 +6,7 @@ import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
 import kr.hhplus.be.server.coupon.step.CouponStep;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
+import kr.hhplus.be.server.coupon.usecase.reader.CouponReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,11 +31,8 @@ public class CheckCouponStockUseCaseTest {
     @InjectMocks
     private CheckCouponStockUseCase checkCouponStockUseCase;
 
-    @Spy
-    private CouponRepository couponRepository;
-
-    @Spy
-    private CouponMapper couponMapper;
+    @Mock
+    private CouponReader couponReader;
 
     @Nested
     @DisplayName("쿠폰 수량 체크 성공 케이스")
@@ -45,7 +43,7 @@ public class CheckCouponStockUseCaseTest {
         void 쿠폰수량체크() {
             // given
             UserCouponCommand commnad = CouponStep.유저쿠폰커맨드_기본값();
-            when(couponRepository.findById(commnad.couponId())).thenReturn(Optional.of(CouponStep.쿠폰엔티티_기본값()));
+            when(couponReader.findCouponOrThrow(commnad.couponId())).thenReturn(CouponStep.쿠폰_기본값());
 
             // when & then
             assertDoesNotThrow(() -> checkCouponStockUseCase.execute(commnad));
@@ -61,7 +59,7 @@ public class CheckCouponStockUseCaseTest {
         void 쿠폰수량체크_존재하지않는_쿠폰일_경우() {
             // given
             UserCouponCommand commnad = CouponStep.유저쿠폰커맨드_기본값();
-            when(couponRepository.findById(commnad.couponId())).thenReturn(null);
+            when(couponReader.findCouponOrThrow(commnad.couponId())).thenThrow(new CouponNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> checkCouponStockUseCase.execute(commnad))

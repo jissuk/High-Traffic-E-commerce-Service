@@ -61,7 +61,7 @@ public class UserRepositoryTest {
             UserEntity saved = userRepository.save(UserStep.유저엔티티_기본값());
 
             // when
-            UserEntity found = userRepository.findById(saved.getId());
+            UserEntity found = userRepository.findById(saved.getId()).get();
 
             // then
             assertThat(found).isEqualTo(saved);

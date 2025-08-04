@@ -7,14 +7,19 @@ import kr.hhplus.be.server.user.domain.mapper.UserMapper;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
+import kr.hhplus.be.server.user.usecase.reader.UserReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,25 +31,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class RegisterOrderUseCaseTest {
 
+    @InjectMocks
     private RegisterOrderUseCase registerOrderUseCase;
 
     @Mock
-    private UserRepository userRepository;
+    private UserReader userReader;
     @Mock
     private OrderRepository orderRepositroy;
 
-    @BeforeEach
-    void setUp() {
-        UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-        OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
-
-        registerOrderUseCase = new RegisterOrderUseCase(
-                userRepository,
-                orderRepositroy,
-                userMapper,
-                orderMapper
-        );
-    }
+    @Spy
+    private OrderMapper orderMapper;
 
     @Nested
     @DisplayName("주문 등록 성공 케이스")
@@ -55,7 +51,7 @@ public class RegisterOrderUseCaseTest {
         void 주문등록(){
             // given
             long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(UserStep.유저엔티티_기본값());
+            when(userReader.findUserOrThrow(userId)).thenReturn(UserStep.유저_기본값());
 
             // when
             registerOrderUseCase.execute(userId);
@@ -74,7 +70,7 @@ public class RegisterOrderUseCaseTest {
 
             // given
             long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(null);
+            when(userReader.findUserOrThrow(userId)).thenThrow(new UserNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> registerOrderUseCase.execute(userId))

@@ -63,7 +63,7 @@ public class ProductRepositoryTest {
             ProductEntity saved = productRepository.save(ProductStep.상품엔티티_기본값());
             
             // when
-            ProductEntity found = productRepository.findById(saved.getId());
+            ProductEntity found = productRepository.findById(saved.getId()).get();
 
             // then
             assertThat(found).isEqualTo(saved);

@@ -8,6 +8,8 @@ import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.order.usecase.reader.OrderItemReader;
+import kr.hhplus.be.server.order.usecase.reader.OrderReader;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +18,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,9 +33,12 @@ import static org.mockito.Mockito.when;
 @DisplayName("주문 상태 수정 테스트")
 @ExtendWith(MockitoExtension.class)
 public class UpdateOrderStatusUseCaseTest {
-
+    @InjectMocks
     UpdateOrderStatusUseCase updateOrderStatusUseCase;
-
+    @Mock
+    private OrderReader orderReader;
+    @Mock
+    private OrderItemReader orderItemReader;
     @Mock
     private OrderRepository orderRepositroy;
     @Mock
@@ -37,18 +46,10 @@ public class UpdateOrderStatusUseCaseTest {
     @Mock
     OrderDataSender orderDataSender;
 
-    @BeforeEach
-    void setUp() {
-        OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
-        OrderItemMapper orderItemMapper = Mappers.getMapper(OrderItemMapper.class);
-        updateOrderStatusUseCase = new UpdateOrderStatusUseCase(
-                orderRepositroy,
-                orderItemRepository,
-                orderDataSender,
-                orderMapper,
-                orderItemMapper
-        );
-    }
+    @Spy
+    private OrderMapper orderMapper;
+    @Spy
+    private OrderItemMapper orderItemMapper;
 
     @Nested
     @DisplayName("주문 상태 수정 성공 케이스")
@@ -59,9 +60,8 @@ public class UpdateOrderStatusUseCaseTest {
         void 주문상태수정(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-
-            when(orderRepositroy.findById(command.orderId())).thenReturn(OrderStep.주문엔티티_기본값());
-            when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
+            when(orderReader.findOrderOrThrow(command.orderId())).thenReturn(OrderStep.주문_기본값());
+            when(orderItemReader.findOrderItemOrThrow(command.orderItemId())).thenReturn(OrderStep.주문상세_기본값());
 
             // when
             updateOrderStatusUseCase.execute(command);
@@ -83,7 +83,7 @@ public class UpdateOrderStatusUseCaseTest {
         void 주문상태수정_존재하지않는_주문일_경우(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            when(orderRepositroy.findById(command.orderId())).thenReturn(null);
+            when(orderReader.findOrderOrThrow(command.orderId())).thenThrow(new OrderNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> updateOrderStatusUseCase.execute(command))

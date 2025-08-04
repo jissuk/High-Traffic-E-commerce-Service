@@ -10,6 +10,7 @@ import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.usecase.dto.UserResponseDTO;
+import kr.hhplus.be.server.user.usecase.reader.UserReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,6 +21,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -34,7 +37,8 @@ public class ChargePointUseCaseTest {
 
     @InjectMocks
     private ChargePointUseCase chargePointUseCase;
-
+    @Mock
+    private UserReader userReader;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -54,18 +58,15 @@ public class ChargePointUseCaseTest {
         @DisplayName("유저가 존재할 경우 유저의 포인트를 충전한다.")
         void 포인트충전(){
             // given
-            long userId = 1L;
             UserCommand command = UserStep.유저커맨드_기본값();
-            UserEntity user = UserStep.유저엔티티_기본값();
-            when(userRepository.findById(userId)).thenReturn(user);
+            when(userReader.findUserOrThrow(command.userId())).thenReturn(UserStep.유저_기본값());
 
             // when
-            UserResponseDTO result = chargePointUseCase.execute(command);
+            chargePointUseCase.execute(command);
 
             // then
             verify(userRepository).save(any(UserEntity.class));
             verify(pointHistoryRepository).save(any(PointHistoryEntity.class));
-            assertThat(result.getPoint()).isEqualTo(command.point() + user.getPoint());
         }
     }
 
@@ -77,9 +78,8 @@ public class ChargePointUseCaseTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 포인트충전_존재하지않는_유저일_경우(){
             // given
-            long userId = 1L;
             UserCommand command = UserStep.유저커맨드_기본값();
-            when(userRepository.findById(userId)).thenReturn(null);
+            when(userReader.findUserOrThrow(command.userId())).thenThrow(new UserNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> chargePointUseCase.execute(command))

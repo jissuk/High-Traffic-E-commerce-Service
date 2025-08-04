@@ -56,7 +56,6 @@ public class OrderItemRepositoryTest {
 
             // then
             assertThat(saved).isNotNull();
-            assertThat(saved.getOrder()).isNotNull();
         }
 
         @Test
@@ -66,11 +65,10 @@ public class OrderItemRepositoryTest {
             OrderItemEntity saved = orderItemRepository.save(OrderStep.주문상세엔티티_기본값(order));
 
             // when
-            OrderItemEntity found = orderItemRepository.findById(saved.getId());
+            OrderItemEntity found = orderItemRepository.findById(saved.getId()).get();
 
             // then
             assertThat(found).isEqualTo(saved);
-            assertThat(found.getOrder()).isEqualTo(order);
         }
     }
 }

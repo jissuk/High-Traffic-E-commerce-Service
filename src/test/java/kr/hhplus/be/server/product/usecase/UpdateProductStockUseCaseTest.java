@@ -4,6 +4,7 @@ package kr.hhplus.be.server.product.usecase;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.order.usecase.reader.OrderItemReader;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
@@ -11,6 +12,7 @@ import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.step.ProductStep;
+import kr.hhplus.be.server.product.usecase.reader.ProductReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +23,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,9 +39,11 @@ public class UpdateProductStockUseCaseTest {
     private UpdateProductStockUseCase updateProductStockUseCase;
 
     @Mock
-    private ProductRepository productRepository;
+    private ProductReader productReader;
     @Mock
-    private OrderItemRepository orderItemRepository;
+    private OrderItemReader orderItemReader;
+    @Mock
+    private ProductRepository productRepository;
 
     @Spy
     private ProductMapper productMapper;
@@ -51,8 +57,8 @@ public class UpdateProductStockUseCaseTest {
         void 상품수량변경(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            when(productRepository.findById(command.productId())).thenReturn(ProductStep.상품엔티티_기본값());
-            when(orderItemRepository.findById(command.orderItemId())).thenReturn(OrderStep.주문상세엔티티_기본값());
+            when(productReader.findProductOrThrow(command.productId())).thenReturn(ProductStep.상품_기본값());
+            when(orderItemReader.findOrderItemOrThrow(command.orderItemId())).thenReturn(OrderStep.주문상세_기본값());
 
             // when
             updateProductStockUseCase.execute(command);
@@ -71,7 +77,7 @@ public class UpdateProductStockUseCaseTest {
         void 상품수량변경_존재하지않는_상품일_경우(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            when(productRepository.findById(command.productId())).thenReturn(null);
+            when(productReader.findProductOrThrow(command.productId())).thenThrow(new ProductNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> updateProductStockUseCase.execute(command))
@@ -83,8 +89,8 @@ public class UpdateProductStockUseCaseTest {
         void 상품수량변경_존재하지않는_주문일_경우(){
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            when(productRepository.findById(command.productId())).thenReturn(ProductStep.상품엔티티_기본값());
-            when(orderItemRepository.findById(command.orderItemId())).thenReturn(null);
+            when(productReader.findProductOrThrow(command.productId())).thenReturn(ProductStep.상품_기본값());
+            when(orderItemReader.findOrderItemOrThrow(command.orderItemId())).thenThrow(new OrderItemNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> updateProductStockUseCase.execute(command))

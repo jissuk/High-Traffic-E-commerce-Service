@@ -2,10 +2,14 @@ package kr.hhplus.be.server.user.domain.mapper;
 
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.usecase.dto.UserResponseDTO;
-import org.mapstruct.Builder;
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface UserResponseMapper {
-    UserResponseDTO toDto(User user);
+@Component
+public class UserResponseMapper {
+    public UserResponseDTO toDto(User user){
+        return UserResponseDTO.builder()
+                                .userId(user.getUserId())
+                                .point(user.getPoint())
+                                .build();
+    };
 }

@@ -1,14 +1,11 @@
 package kr.hhplus.be.server.order.domain.model;
 
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class OrderItem {
 
     private long id;

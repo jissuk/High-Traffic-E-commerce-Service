@@ -2,13 +2,26 @@ package kr.hhplus.be.server.product.domain.mapper;
 
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
-import org.mapstruct.Builder;
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface ProductMapper {
+@Component
+public class ProductMapper {
 
-    Product toDomain(ProductEntity productEntity);
+    public Product toDomain(ProductEntity productEntity){
+        return Product.builder()
+                .id(productEntity.getId())
+                .productName(productEntity.getProductName())
+                .price(productEntity.getPrice())
+                .quantity(productEntity.getQuantity())
+                .build();
+    }
 
-    ProductEntity toEntity(Product product);
+    public ProductEntity toEntity(Product product){
+        return ProductEntity.builder()
+                            .id(product.getId())
+                            .productName(product.getProductName())
+                            .price(product.getPrice())
+                            .quantity(product.getQuantity())
+                            .build();
+    }
 }

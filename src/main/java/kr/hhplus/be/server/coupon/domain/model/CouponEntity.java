@@ -6,12 +6,12 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "COUPON")
+@Table(name = "COUPONS")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CouponEntity {
 
     @Id
@@ -30,6 +30,4 @@ public class CouponEntity {
 
     @Column
     private LocalDateTime expiredAt;
-
-
 }

@@ -7,11 +7,8 @@ import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-@ToString
+@AllArgsConstructor
 public class User {
 
     /*

@@ -51,7 +51,7 @@ public class UserControllerTest {
     }
 
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_user;");
+        jdbcTemplate.execute("TRUNCATE TABLE users;");
     }
 
     private void initTestData() {

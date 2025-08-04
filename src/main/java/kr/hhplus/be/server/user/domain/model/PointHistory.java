@@ -5,8 +5,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Builder
+@AllArgsConstructor
 public class PointHistory {
 
     private long id;
@@ -30,23 +30,4 @@ public class PointHistory {
                             .build();
     }
 
-    public PointHistory() {
-    }
-
-    public PointHistory(long id, long point, PointHistoryType pointHistoryType, LocalDateTime createdAt) {
-        this.id = id;
-        this.point = point;
-        this.pointHistoryType = pointHistoryType;
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public String toString() {
-        return "PointHistory{" +
-                "id=" + id +
-                ", point=" + point +
-                ", pointHistoryType=" + pointHistoryType +
-                ", createdAt=" + createdAt +
-                '}';
-    }
 }

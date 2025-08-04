@@ -38,7 +38,7 @@ public class PaymentRepositoryTest {
         clearTestData();
     }
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_payment;");
+        jdbcTemplate.execute("TRUNCATE TABLE payments;");
     }
     @Nested
     @DisplayName("결제 성공 케이스")

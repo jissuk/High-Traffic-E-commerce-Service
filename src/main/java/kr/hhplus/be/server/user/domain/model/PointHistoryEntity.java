@@ -5,13 +5,13 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-
-
 @Entity
-@Table(name = "POINT_HISTORY")
+@Table(name = "POINT_HISTORIES")
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class PointHistoryEntity {
 
     @Id
@@ -30,16 +30,5 @@ public class PointHistoryEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private UserEntity user;
-
-    public PointHistoryEntity() {
-    }
-
-    public PointHistoryEntity(long id, long point, PointHistoryType pointHistoryType, LocalDateTime createdAt, UserEntity user) {
-        this.id = id;
-        this.point = point;
-        this.pointHistoryType = pointHistoryType;
-        this.createdAt = createdAt;
-        this.user = user;
-    }
 
 }

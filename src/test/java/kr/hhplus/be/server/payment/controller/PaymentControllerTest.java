@@ -78,13 +78,13 @@ public class PaymentControllerTest {
         initTestData();
     }
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_user;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_order;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_order_item;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_payment;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_coupon;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_user_coupon;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_product;");
+        jdbcTemplate.execute("TRUNCATE TABLE users;");
+        jdbcTemplate.execute("TRUNCATE TABLE orders;");
+        jdbcTemplate.execute("TRUNCATE TABLE order_items;");
+        jdbcTemplate.execute("TRUNCATE TABLE payments;");
+        jdbcTemplate.execute("TRUNCATE TABLE coupons;");
+        jdbcTemplate.execute("TRUNCATE TABLE user_coupons;");
+        jdbcTemplate.execute("TRUNCATE TABLE products;");
     }
 
     private void initTestData() {

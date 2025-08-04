@@ -4,16 +4,18 @@ import kr.hhplus.be.server.coupon.exception.InvalidCouponException;
 import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class UserCoupon {
 
     private long id;
     private long discount;
     private CouponStatus couponStatus;
     private String description;
+
+    public void useCoupon() {
+        this.couponStatus = CouponStatus.USED;
+    }
 
     public void checkCoupon() {
         if (!couponStatus.equals(CouponStatus.ISSUED)) {

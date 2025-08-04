@@ -42,8 +42,8 @@ public class PointHistoryRepositoryTest {
     }
 
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_user;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_point_history;");
+        jdbcTemplate.execute("TRUNCATE TABLE users;");
+        jdbcTemplate.execute("TRUNCATE TABLE point_histories;");
     }
 
     @Nested

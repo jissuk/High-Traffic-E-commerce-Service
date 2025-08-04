@@ -38,7 +38,7 @@ public class ProductRepositoryTest {
         clearTestData();
     }
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_product;");
+        jdbcTemplate.execute("TRUNCATE TABLE products;");
     }
 
     @Nested

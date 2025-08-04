@@ -9,10 +9,12 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "PAYMENT")
+@Table(name = "PAYMENTS")
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class PaymentEntity {
 
     @Id
@@ -39,17 +41,6 @@ public class PaymentEntity {
     @JoinColumn(name = "order_item_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     OrderItemEntity orderItem;
 
-    public PaymentEntity() {
-    }
 
-    public PaymentEntity(long id, long price, PaymentStatus paymentStatus, LocalDateTime createAt, UserEntity user, CouponEntity coupon, OrderItemEntity orderItem) {
-        this.id = id;
-        this.price = price;
-        this.paymentStatus = paymentStatus;
-        this.createAt = createAt;
-        this.user = user;
-        this.coupon = coupon;
-        this.orderItem = orderItem;
-    }
 
 }

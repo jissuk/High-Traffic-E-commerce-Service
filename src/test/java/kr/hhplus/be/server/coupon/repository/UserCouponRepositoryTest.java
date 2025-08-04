@@ -45,9 +45,9 @@ public class UserCouponRepositoryTest {
     }
 
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_user;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_coupon;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_user_coupon;");
+        jdbcTemplate.execute("TRUNCATE TABLE users;");
+        jdbcTemplate.execute("TRUNCATE TABLE coupons;");
+        jdbcTemplate.execute("TRUNCATE TABLE user_coupons;");
     }
 
     @Nested

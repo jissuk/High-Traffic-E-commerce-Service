@@ -5,12 +5,12 @@ import kr.hhplus.be.server.user.domain.model.UserEntity;
 import lombok.*;
 
 @Entity
-@Table(name = "USER_COUPON")
+@Table(name = "USER_COUPONS")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class UserCouponEntity {
     @Id
     @Column

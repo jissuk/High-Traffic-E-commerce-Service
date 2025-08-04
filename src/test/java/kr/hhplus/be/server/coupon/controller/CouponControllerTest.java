@@ -56,8 +56,8 @@ public class CouponControllerTest {
     }
 
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_user;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_coupon;");
+        jdbcTemplate.execute("TRUNCATE TABLE users;");
+        jdbcTemplate.execute("TRUNCATE TABLE coupons;");
     }
 
     private void initTestData() {

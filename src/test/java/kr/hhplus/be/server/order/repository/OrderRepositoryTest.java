@@ -35,7 +35,7 @@ public class OrderRepositoryTest {
         clearTestData();
     }
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_order;");
+        jdbcTemplate.execute("TRUNCATE TABLE orders;");
     }
 
     @Nested

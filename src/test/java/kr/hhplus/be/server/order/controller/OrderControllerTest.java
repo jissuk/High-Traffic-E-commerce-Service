@@ -56,10 +56,10 @@ public class OrderControllerTest {
     }
 
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_user;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_product;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_order;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_order_item;");
+        jdbcTemplate.execute("TRUNCATE TABLE users;");
+        jdbcTemplate.execute("TRUNCATE TABLE products;");
+        jdbcTemplate.execute("TRUNCATE TABLE orders;");
+        jdbcTemplate.execute("TRUNCATE TABLE order_items;");
     }
 
     private void initTestData() {

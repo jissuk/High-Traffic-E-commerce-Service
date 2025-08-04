@@ -36,7 +36,7 @@ public class UserRepositoryTest {
     }
 
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_user;");
+        jdbcTemplate.execute("TRUNCATE TABLE users;");
     }
 
     @Nested

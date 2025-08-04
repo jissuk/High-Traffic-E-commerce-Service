@@ -5,10 +5,12 @@ import lombok.*;
 
 
 @Entity
-@Table(name = "PRODUCT")
+@Table(name = "PRODUCTS")
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ProductEntity {
 
     @Id
@@ -24,16 +26,5 @@ public class ProductEntity {
 
     @Column
     private long quantity;
-
-
-    public ProductEntity() {
-    }
-
-    public ProductEntity(long id, String productName, long price, long quantity) {
-        this.id = id;
-        this.productName = productName;
-        this.price = price;
-        this.quantity = quantity;
-    }
 
 }

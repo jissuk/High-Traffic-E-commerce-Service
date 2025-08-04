@@ -5,11 +5,11 @@ import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import lombok.*;
 
 @Entity
-@Table(name = "ORDER_ITEM")
+@Table(name = "ORDER_ITEMS")
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class OrderItemEntity {
 

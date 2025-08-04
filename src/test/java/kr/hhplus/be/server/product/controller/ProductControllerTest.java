@@ -42,7 +42,7 @@ public class ProductControllerTest {
 
 
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_product;");
+        jdbcTemplate.execute("TRUNCATE TABLE products;");
     }
 
     private void initTestData() {

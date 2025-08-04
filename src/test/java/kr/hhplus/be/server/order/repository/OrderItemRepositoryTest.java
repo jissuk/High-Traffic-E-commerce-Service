@@ -39,8 +39,8 @@ public class OrderItemRepositoryTest {
     }
 
     private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_order;");
-        jdbcTemplate.execute("TRUNCATE TABLE tbl_order_item;");
+        jdbcTemplate.execute("TRUNCATE TABLE tbl_orders;");
+        jdbcTemplate.execute("TRUNCATE TABLE tbl_order_items;");
     }
 
     @Nested

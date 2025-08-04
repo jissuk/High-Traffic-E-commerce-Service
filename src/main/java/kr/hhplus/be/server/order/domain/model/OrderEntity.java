@@ -6,12 +6,13 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-
 @Entity
-@Table(name = "ORDER")
+@Table(name = "`ORDERS`")
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class OrderEntity {
 
     @Id
@@ -28,15 +29,5 @@ public class OrderEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private UserEntity user;
-
-    public OrderEntity() {
-    }
-
-    public OrderEntity(long id, OrderStatus orderStatus, LocalDateTime createdAt, UserEntity user) {
-        this.id = id;
-        this.orderStatus = orderStatus;
-        this.createdAt = createdAt;
-        this.user = user;
-    }
 
 }

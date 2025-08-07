@@ -45,10 +45,20 @@ public class CouponStep {
                 .build();
     }
 
+    public static UserCoupon 유저쿠폰_기본값(long userId, long couponId){
+        return UserCoupon.builder()
+                .discount(3000L)
+                .couponStatus(CouponStatus.ISSUED)
+                .description("여름 특별 할인 쿠폰")
+                .userId(userId)
+                .couponId(couponId)
+                .build();
+    }
+
 
     public static CouponEntity 쿠폰엔티티_기본값(){
         return CouponEntity.builder()
-                        .discount(2000L)
+                        .discount(3000L)
                         .description("여름특별할인쿠폰")
                         .quantity(500L)
                         .expiredAt(LocalDateTime.now().plusMonths(3))

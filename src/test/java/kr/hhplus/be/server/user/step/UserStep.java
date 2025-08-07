@@ -28,7 +28,7 @@ public class UserStep {
     }
 
     public static UserCommand 유저커맨드_기본값() {
-        return new UserCommand(1L, 10000L);
+        return new UserCommand(1L, 3000L);
     }
 
     public static User 유저_기본값(){
@@ -39,7 +39,7 @@ public class UserStep {
 
     public static UserEntity 유저엔티티_기본값(){
         return UserEntity.builder()
-                .point(10000L)
+                .point(40000L)
                 .build();
     }
 

@@ -1,18 +1,17 @@
-package kr.hhplus.be.server.user.usecase;
+package kr.hhplus.be.server.user.usecase.unit;
 import kr.hhplus.be.server.user.domain.mapper.PointHistoryMapper;
 import kr.hhplus.be.server.user.domain.mapper.UserMapper;
-import kr.hhplus.be.server.user.domain.model.PointHistoryEntity;
-import kr.hhplus.be.server.user.domain.model.UserEntity;
+import kr.hhplus.be.server.user.domain.model.PointHistory;
+import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
+import kr.hhplus.be.server.user.usecase.CreateUserUseCase;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -54,8 +53,8 @@ public class CreateUserUseCaseTest {
             createUserUseCase.execute(command);
 
             // then
-            verify(userRepository).save(any(UserEntity.class));
-            verify(pointHistoryRepository).save(any(PointHistoryEntity.class));
+            verify(userRepository).save(any(User.class));
+            verify(pointHistoryRepository).save(any(PointHistory.class));
         }
     }
 }

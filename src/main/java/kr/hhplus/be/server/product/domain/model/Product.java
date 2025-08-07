@@ -14,9 +14,13 @@ public class Product {
     private long quantity;
 
     public void checkQuantity(long quantity) {
-        this.quantity -= quantity;
-        if(this.quantity < 0) {
+        if (this.quantity < quantity) {
             throw new InsufficientStockException();
         }
+    }
+
+    public void deductQuantity(long quantity) {
+        checkQuantity(quantity);
+        this.quantity -= quantity;
     }
 }

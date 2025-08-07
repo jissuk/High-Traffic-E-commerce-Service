@@ -35,8 +35,19 @@ public class ProductStep {
         return ProductEntity.builder()
                             .productName("기본 상품")
                             .price(2000L)
-                            .quantity(5L)
+                            .quantity(200L)
                             .build();
+    }
+
+    public static List<Product> 전체상품_기본값(){
+        List<Product> productList = new ArrayList<>();
+        Product product = Product.builder()
+                                .productName("기본 상품")
+                                .price(2000L)
+                                .quantity(5L)
+                                .build();
+        productList.add(product);
+        return productList;
     }
 
     public static List<ProductEntity> 전체상품엔티티_기본값(){

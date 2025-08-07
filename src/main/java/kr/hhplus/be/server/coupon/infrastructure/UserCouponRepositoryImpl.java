@@ -1,35 +1,40 @@
 package kr.hhplus.be.server.coupon.infrastructure;
 
+import kr.hhplus.be.server.coupon.domain.mapper.UserCouponMapper;
+import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class UserCouponRepositoryImpl implements UserCouponRepository {
 
     private final JpaUserCouponRepository jpaUserCouponRepository;
+    private final UserCouponMapper  userCouponMapper;
 
-    public UserCouponRepositoryImpl(JpaUserCouponRepository jpaUserCouponRepository) {
-        this.jpaUserCouponRepository = jpaUserCouponRepository;
+    @Override
+    public Optional<UserCoupon> findById(long couponId) {
+
+        return jpaUserCouponRepository.findById(couponId)
+                .map(userCouponMapper::toDomain);
     }
 
     @Override
-    public Optional<UserCouponEntity> findById(long couponId) {
-
-        return jpaUserCouponRepository.findById(couponId);
+    public Optional<UserCoupon> findByCouponId(long id) {
+        return jpaUserCouponRepository.findByCouponId(id)
+                .map(userCouponMapper::toDomain);
     }
 
     @Override
-    public UserCouponEntity save(UserCouponEntity userCoupon) {
-        return jpaUserCouponRepository.save(userCoupon);
-    }
-
-    @Override
-    public Optional<UserCouponEntity> findByCouponId(long id) {
-        return jpaUserCouponRepository.findByCouponId(id);
+    public UserCoupon save(UserCoupon userCoupon) {
+        return userCouponMapper.toDomain(
+                jpaUserCouponRepository.save(userCouponMapper.toEntity(userCoupon))
+        );
     }
 
 }

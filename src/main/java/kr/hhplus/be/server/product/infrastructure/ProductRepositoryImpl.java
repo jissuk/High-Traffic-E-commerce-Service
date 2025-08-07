@@ -1,35 +1,46 @@
 package kr.hhplus.be.server.product.infrastructure;
 
-import kr.hhplus.be.server.product.domain.model.ProductEntity;
+import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
+import kr.hhplus.be.server.product.domain.model.Product;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
+@RequiredArgsConstructor
 public class ProductRepositoryImpl implements ProductRepository {
 
     private final JpaProductRepository jpaProductRepository;
-
-    public ProductRepositoryImpl(JpaProductRepository jpaProductRepository) {
-        this.jpaProductRepository = jpaProductRepository;
-    }
+    private final ProductMapper productMapper;
 
     @Override
-    public ProductEntity save(ProductEntity product) {
-        return jpaProductRepository.save(product);
-    }
-
-    @Override
-    public Optional<ProductEntity> findById(long productId) {
-        return jpaProductRepository.findById(productId);
+    public Optional<Product> findById(long productId) {
+        return jpaProductRepository.findById(productId)
+                .map(productMapper::toDomain);
 
     }
 
     @Override
-    public List<ProductEntity> findAll() {
-        return jpaProductRepository.findAll();
+    public Optional<Product> findByIdForUpdate(long productId) {
+        return jpaProductRepository.findByIdForUpdate(productId)
+                .map(productMapper::toDomain);
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return jpaProductRepository.findAll()
+                .stream().map(productMapper::toDomain).collect(Collectors.toList());
+    }
+
+    @Override
+    public Product save(Product product) {
+        return productMapper.toDomain(
+                jpaProductRepository.save(productMapper.toEntity(product))
+        );
     }
 }

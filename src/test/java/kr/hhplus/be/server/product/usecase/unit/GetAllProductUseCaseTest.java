@@ -1,16 +1,15 @@
-package kr.hhplus.be.server.product.usecase;
+package kr.hhplus.be.server.product.usecase.unit;
 
 import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
 import kr.hhplus.be.server.product.domain.mapper.ProductRseponseMapper;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.step.ProductStep;
-import org.junit.jupiter.api.BeforeEach;
+import kr.hhplus.be.server.product.usecase.GetAllProductUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -44,7 +43,7 @@ public class GetAllProductUseCaseTest {
         @DisplayName("상품이 존재 시 모든 상품 조회 시 예외가 발생하지 않는다.")
         void 전체상품조회 (){
             // given
-            when(productRepository.findAll()).thenReturn(ProductStep.전체상품엔티티_기본값());
+            when(productRepository.findAll()).thenReturn(ProductStep.전체상품_기본값());
             // when
             getAllProductUseCase.execute();
             // then

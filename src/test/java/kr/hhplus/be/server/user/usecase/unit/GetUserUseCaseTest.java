@@ -1,8 +1,9 @@
-package kr.hhplus.be.server.user.usecase;
+package kr.hhplus.be.server.user.usecase.unit;
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
+import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
-import kr.hhplus.be.server.user.usecase.reader.UserReader;
+import kr.hhplus.be.server.user.usecase.GetUserUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -25,7 +28,7 @@ public class GetUserUseCaseTest {
     private GetUserUseCase getUserUseCase;
 
     @Mock
-    private UserReader userReader;
+    private UserRepository userRepository;
 
     @Spy
     private UserResponseMapper userResponseMapper;
@@ -39,7 +42,7 @@ public class GetUserUseCaseTest {
         void 유저조회(){
             // given
             long userId = 1L;
-            when(userReader.findUserOrThrow(userId)).thenReturn(UserStep.유저_기본값());
+            when(userRepository.findById(userId)).thenReturn(Optional.of(UserStep.유저_기본값()));
 
             // when & then
             assertDoesNotThrow(() -> getUserUseCase.execute(userId));
@@ -55,7 +58,7 @@ public class GetUserUseCaseTest {
         void 유저조회_존재하지않는_유저일_경우(){
             // given
             long userId = 1L;
-            when(userReader.findUserOrThrow(userId)).thenThrow(new UserNotFoundException());
+            when(userRepository.findById(userId)).thenThrow(new UserNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> getUserUseCase.execute(userId))

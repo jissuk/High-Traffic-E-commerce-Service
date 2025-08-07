@@ -1,18 +1,15 @@
-package kr.hhplus.be.server.product.usecase;
+package kr.hhplus.be.server.product.usecase.unit;
 
 
-import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
 import kr.hhplus.be.server.product.domain.mapper.ProductRseponseMapper;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.step.ProductStep;
-import kr.hhplus.be.server.product.usecase.reader.ProductReader;
-import org.junit.jupiter.api.BeforeEach;
+import kr.hhplus.be.server.product.usecase.GetProductUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -32,7 +29,7 @@ public class GetProductUseCaseTest {
     private GetProductUseCase getProductUseCase;
 
     @Mock
-    private ProductReader productReader;
+    private ProductRepository productRepository;
 
     @Spy
     private ProductRseponseMapper productRseponseMapper;
@@ -47,7 +44,7 @@ public class GetProductUseCaseTest {
         void 상품조회(){
             // given
             long  productId = 1L;
-            when(productReader.findProductOrThrow(productId)).thenReturn(ProductStep.상품_기본값());
+            when(productRepository.findById(productId)).thenReturn(Optional.of(ProductStep.상품_기본값()));
 
             // when
             getProductUseCase.execute(productId);
@@ -66,7 +63,7 @@ public class GetProductUseCaseTest {
         void 상품조회_존재하지않는_상품일_경우() {
             // given
             long productId = 1L;
-            when(productReader.findProductOrThrow(productId)).thenThrow(new ProductNotFoundException());
+            when(productRepository.findById(productId)).thenThrow(new ProductNotFoundException());
 
             // when & then
             assertThatThrownBy(() -> getProductUseCase.execute(productId))

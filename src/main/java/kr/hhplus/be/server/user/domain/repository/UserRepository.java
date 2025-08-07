@@ -1,13 +1,14 @@
 package kr.hhplus.be.server.user.domain.repository;
 
-import kr.hhplus.be.server.user.domain.model.UserEntity;
+
+import kr.hhplus.be.server.user.domain.model.User;
 
 import java.util.Optional;
 
 public interface UserRepository {
 
-    Optional<UserEntity> findById(long id);
+    Optional<User> findById(long id);
 
-    UserEntity save(UserEntity user);
+    User save(User user);
 
 }

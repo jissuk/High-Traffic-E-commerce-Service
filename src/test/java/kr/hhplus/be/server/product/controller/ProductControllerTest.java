@@ -20,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 @Import(TestcontainersConfiguration.class)
 @DisplayName("상품 관련 테스트")
 public class ProductControllerTest {

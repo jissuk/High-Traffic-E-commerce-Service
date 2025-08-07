@@ -29,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 @Import(TestcontainersConfiguration.class)
 @DisplayName("쿠폰 관련 테스트")
 public class CouponControllerTest {

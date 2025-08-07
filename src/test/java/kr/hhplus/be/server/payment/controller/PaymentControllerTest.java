@@ -9,8 +9,9 @@ import kr.hhplus.be.server.coupon.step.CouponStep;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderItemRepository;
-import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepositroy;
+import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepository;
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.payment.infrastructure.jpa.JpaPaymentRepository;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
@@ -28,16 +29,22 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 @Import(TestcontainersConfiguration.class)
 @DisplayName("결제 관련 테스트")
 public class PaymentControllerTest {
@@ -61,7 +68,7 @@ public class PaymentControllerTest {
     private JpaOrderItemRepository jpaOrderItemRepository;
 
     @Autowired
-    private JpaOrderRepositroy jpaOrderRepositroy;
+    private JpaOrderRepository jpaOrderRepositroy;
 
     @Autowired
     private JpaPaymentRepository jpaPaymentRepository;
@@ -102,8 +109,8 @@ public class PaymentControllerTest {
 
     @Nested
     @DisplayName("결제 성공 케이스")
-    class success{
-        
+    class success {
+
         @Test
         @DisplayName("요청 데이터가 정상적일 경우 쿠폰과 포인트를 사용하여 결제한다.")
         void 결제() throws Exception {

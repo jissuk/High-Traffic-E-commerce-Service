@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.common.response.CommonResponse;
-import kr.hhplus.be.server.order.facade.OrderFacade;
+import kr.hhplus.be.server.order.usecase.RegisterOrderUseCase;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "order", description = "주문 관련 API")
 public class OrderController {
 
-    private final OrderFacade orderFacade;
+    private final RegisterOrderUseCase registerOrderUseCase;
 
     @PostMapping
     @Operation(summary = "상품 주문", description = "유저는 아직 재고가 남아있는 상품을 주문합니다.", tags = {"OrderController"})
     public ResponseEntity<CommonResponse> createOrder(@RequestBody @Valid OrderItemRequestDTO request) {
 
         OrderItemCommand command = OrderItemCommand.from(request);
-        orderFacade.createOrder(command);
+        registerOrderUseCase.execute(command);
 
         return ResponseEntity
                 .ok()

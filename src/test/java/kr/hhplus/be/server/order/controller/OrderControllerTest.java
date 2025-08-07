@@ -1,12 +1,8 @@
 package kr.hhplus.be.server.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.coupon.step.CouponStep;
-import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderItemRepository;
-import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepositroy;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
-import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
@@ -22,14 +18,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 @Import(TestcontainersConfiguration.class)
 @DisplayName("주문 관련 테스트")
 public class OrderControllerTest {
@@ -84,6 +79,7 @@ public class OrderControllerTest {
             // then
             result.andExpect(status().isOk());
         }
+
     }
     @Nested
     @DisplayName("주문 실패 케이스")
@@ -117,5 +113,4 @@ public class OrderControllerTest {
             result.andExpect(jsonPath("$.code").value("ProductNotFound"));
         }
     }
-
 }

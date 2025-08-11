@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.user.domain.repository;
 
 
-import kr.hhplus.be.server.user.domain.model.PointHistoryEntity;
+import kr.hhplus.be.server.user.domain.model.PointHistory;
 
 public interface PointHistoryRepository {
 
-    PointHistoryEntity save(PointHistoryEntity pointHistory);
+    PointHistory save(PointHistory pointHistory);
 }

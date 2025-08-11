@@ -30,4 +30,7 @@ public class CouponEntity {
 
     @Column
     private LocalDateTime expiredAt;
+
+    @Version
+    private long version;
 }

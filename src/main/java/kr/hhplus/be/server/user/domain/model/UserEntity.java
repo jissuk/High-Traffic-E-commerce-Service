@@ -20,4 +20,7 @@ public class UserEntity {
     @Column
     private long point;
 
+    @Version
+    private long version;
+
 }

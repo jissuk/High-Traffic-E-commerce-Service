@@ -23,7 +23,6 @@ public class PaymentEntity {
     private long id;
     @Column
     private long price;
-
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
     @Column
@@ -34,5 +33,6 @@ public class PaymentEntity {
     private long couponId;
     @Column
     private long orderItemId;
-
+    @Version
+    private long version;
 }

@@ -1,0 +1,102 @@
+package kr.hhplus.be.server.user.usecase.integration;
+
+import kr.hhplus.be.server.coupon.domain.model.CouponEntity;
+import kr.hhplus.be.server.coupon.step.CouponStep;
+import kr.hhplus.be.server.user.domain.model.User;
+import kr.hhplus.be.server.user.domain.model.UserEntity;
+import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
+import kr.hhplus.be.server.user.step.UserStep;
+import kr.hhplus.be.server.user.usecase.ChargePointUseCase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.testcontainers.utility.TestcontainersConfiguration;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest
+@Import(TestcontainersConfiguration.class)
+@DisplayName("유저 관련 통합 테스트")
+public class ChargePointUseCaseTest {
+
+    @Autowired
+    private ChargePointUseCase chargePointUseCase;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private JpaUserRepository jpaUserRepository;
+
+    @BeforeEach
+    void setUp() {
+        clearTestData();
+        initTestData();
+    }
+    private void clearTestData() {
+        jdbcTemplate.execute("TRUNCATE TABLE users;");
+    }
+    private void initTestData() {
+        jpaUserRepository.save(UserStep.유저엔티티_기본값());
+    }
+
+    @Nested
+    @DisplayName("성공 케이스")
+    class success {
+        @Test
+        @DisplayName("동시에 100건의 충전 요청을 보낼 경우 1번만 성공")
+        void 유저_동시성() throws Exception {
+            int threadCount = 100;
+            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+            CountDownLatch latch = new CountDownLatch(threadCount);
+
+            List<Future<Void>> futures = new ArrayList<>();
+
+            for (int i = 0; i < threadCount; i++) {
+                futures.add(executor.submit(() -> {
+                    try {
+                        chargePointUseCase.execute(UserStep.유저커맨드_기본값());
+                        return null;
+                    } finally {
+                        latch.countDown();
+                    }
+                }));
+            }
+            latch.await();
+            executor.shutdown();
+
+            int successCount = 0;
+            int failureCount = 0;
+
+            for (Future<Void> future : futures) {
+                try {
+                    future.get();
+                    successCount++;
+                } catch (ExecutionException e) {
+                    if (e.getCause() instanceof ObjectOptimisticLockingFailureException) {
+                        failureCount++;
+                    }
+                }
+            }
+
+            System.out.println("성공한 요청 수: " + successCount);
+            System.out.println("실패한 요청 수: " + failureCount);
+
+            // then
+            assertEquals(1, successCount);
+            UserEntity user = jpaUserRepository.findById(1L).get();
+            assertThat(user.getPoint()).isEqualTo(43000L);
+        }
+    }
+}

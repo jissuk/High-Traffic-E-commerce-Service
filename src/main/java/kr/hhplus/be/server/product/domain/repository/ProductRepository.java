@@ -1,14 +1,14 @@
 package kr.hhplus.be.server.product.domain.repository;
 
-import kr.hhplus.be.server.product.domain.model.ProductEntity;
+import kr.hhplus.be.server.product.domain.model.Product;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface ProductRepository {
-    Optional<ProductEntity> findById(long productId);
-    List<ProductEntity> findAll();
-    ProductEntity save(ProductEntity product);
+    Optional<Product> findById(long productId);
+    Optional<Product> findByIdForUpdate(long productId);
+    List<Product> findAll();
+    Product save(Product product);
 }
 

@@ -1,30 +1,35 @@
 package kr.hhplus.be.server.order.infrastructure;
 
+import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
+import kr.hhplus.be.server.order.domain.model.Order;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
-import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepositroy;
+import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class OrderRepositroyImpl implements OrderRepository {
 
-    private final JpaOrderRepositroy jpaOrderRepositroy;
+    private final JpaOrderRepository jpaOrderRepositroy;
+    private final OrderMapper orderMapper;
 
-    public OrderRepositroyImpl(JpaOrderRepositroy jpaOrderRepositroy) {
-        this.jpaOrderRepositroy = jpaOrderRepositroy;
+
+    @Override
+    public Optional<Order> findById(long orderId) {
+
+        return jpaOrderRepositroy.findById(orderId)
+                .map(orderMapper::toDomain);
     }
 
     @Override
-    public Optional<OrderEntity> findById(long orderId) {
-
-        return jpaOrderRepositroy.findById(orderId);
-    }
-
-    @Override
-    public OrderEntity save(OrderEntity order) {
-        return jpaOrderRepositroy.save(order);
+    public Order save(Order order){
+        return orderMapper.toDomain(
+                jpaOrderRepositroy.save(orderMapper.toEntity(order))
+        );
     }
 
 }

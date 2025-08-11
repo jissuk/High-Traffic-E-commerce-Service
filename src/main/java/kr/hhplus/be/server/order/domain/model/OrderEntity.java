@@ -14,19 +14,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class OrderEntity {
-
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-
     @Column
     private LocalDateTime createdAt;
-
     @Column
     private long userId;
-
+    @Version
+    private long version;
 }

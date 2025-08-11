@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.order.domain.model;
 
+import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.user.domain.model.User;
 import lombok.*;
 
@@ -16,6 +17,12 @@ public class Order {
 
     public void complete() {
         this.orderStatus = OrderStatus.COMPLETED;
+    }
+
+    public void checkOrder() {
+        if(this.orderStatus.equals(OrderStatus.COMPLETED)){
+            throw new RuntimeException("이미 완료된 주문입니다.");
+        }
     }
 
     public static Order createBeforeOrder(User user){

@@ -16,20 +16,16 @@ public class UserCouponEntity {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @Column
     private long discount;
-
-    @Column
+    @Enumerated(EnumType.STRING)
     private CouponStatus couponStatus;
-
     @Column
     private String description;
-
     @Column
     private long couponId;
-
     @Column
     private long userId;
-
+    @Version
+    private long version;
 }

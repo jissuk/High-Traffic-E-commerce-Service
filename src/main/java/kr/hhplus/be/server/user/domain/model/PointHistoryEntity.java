@@ -16,6 +16,7 @@ public class PointHistoryEntity {
 
     @Id
     @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column

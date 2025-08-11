@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 @Import(TestcontainersConfiguration.class)
 @DisplayName("유저 관련 테스트")
 public class UserControllerTest {

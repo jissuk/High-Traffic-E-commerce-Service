@@ -3,19 +3,19 @@ package kr.hhplus.be.server.product.usecase;
 import kr.hhplus.be.server.common.annotation.UseCase;
 import kr.hhplus.be.server.product.domain.mapper.ProductRseponseMapper;
 import kr.hhplus.be.server.product.domain.model.Product;
+import kr.hhplus.be.server.product.domain.repository.ProductRepository;
+import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.usecase.dto.ProductResponseDTO;
-import kr.hhplus.be.server.product.usecase.reader.ProductReader;
 import lombok.RequiredArgsConstructor;
 
 @UseCase
 @RequiredArgsConstructor
 public class GetProductUseCase {
-    private final ProductReader productReader;
+    private final ProductRepository productRepository;
     private final ProductRseponseMapper productRseponseMapper;
 
     public ProductResponseDTO execute(long productId) {
-        Product product = productReader.findProductOrThrow(productId);
-
+        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         return productRseponseMapper.toDto(product);
     }
 }

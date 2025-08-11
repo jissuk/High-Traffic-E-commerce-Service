@@ -4,6 +4,7 @@ import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 public class OrderItem {
@@ -15,6 +16,10 @@ public class OrderItem {
     private long price;
 
     private long totalPrice;
+
+    private long productId;
+
+    private long orderId;
 
     public void deductCouponAmount(long discount) {
         this.totalPrice -= discount;

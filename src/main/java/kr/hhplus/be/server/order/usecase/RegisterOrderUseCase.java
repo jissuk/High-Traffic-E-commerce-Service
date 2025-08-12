@@ -34,8 +34,8 @@ public class RegisterOrderUseCase {
     * 4. 결제 등록
     * */
     public void execute(OrderItemCommand command){
-        User user = userRepository.findById(command.userId()).orElseThrow(UserNotFoundException::new);
-        Product product = productRepository.findById(command.productId()).orElseThrow(ProductNotFoundException::new);
+        User user = userRepository.findById(command.userId());
+        Product product = productRepository.findById(command.productId());
 
         Order order = Order.createBeforeOrder(user);
         orderRepositroy.save(order);

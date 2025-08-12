@@ -26,10 +26,10 @@ public class IssueCouponUseCase {
     @Transactional
     public void execute(UserCouponCommand command) {
 
-        Coupon coupon = couponRepository.findByIdForUpdate(command.couponId())
-                                        .orElseThrow(CouponNotFoundException::new);
+        Coupon coupon = couponRepository.findByIdForUpdate(command.couponId());
 
-        User user = userRepository.findById(command.userId()).orElseThrow(UserNotFoundException::new);
+
+        User user = userRepository.findById(command.userId());
 
         coupon.checkQuantity();
         coupon.decreaseQuantity();

@@ -54,34 +54,6 @@ public class UserCouponRepositoryTest {
     @Nested
     class success{
 
-//        @Test
-//        void 유저쿠폰_등록() {
-//            // given
-//            UserEntity user = userRepository.save(UserStep.유저엔티티_기본값());
-//            CouponEntity coupon = couponRepository.save(CouponStep.쿠폰엔티티_기본값());
-//            UserCouponEntity entity = CouponStep.유저쿠폰엔티티_기본값(user, coupon);
-//
-//            // when
-//            UserCouponEntity saved = userCouponRepository.save(entity);
-//
-//            // then
-//            assertThat(saved.getId()).isNotNull();
-//        }
-//
-//        @Test
-//        void 유저쿠폰_조회() {
-//            // given
-//            UserEntity user = userRepository.save(UserStep.유저엔티티_기본값());
-//            CouponEntity coupon = couponRepository.save(CouponStep.쿠폰엔티티_기본값());
-//            UserCouponEntity saved = userCouponRepository.save(CouponStep.유저쿠폰엔티티_기본값(user, coupon));
-//
-//            // when
-//            UserCouponEntity found = userCouponRepository.findById(saved.getId()).get();
-//
-//            // then
-//            assertThat(found).isNotNull();
-//        }
-
         @Test
         void 유저쿠폰_쿠폰아이디_조회() {
             // given
@@ -90,7 +62,7 @@ public class UserCouponRepositoryTest {
             UserCoupon saved = userCouponRepository.save(CouponStep.유저쿠폰_기본값(user.getId(), coupon.getId()));
 
             // when
-            UserCoupon found = userCouponRepository.findByCouponId(coupon.getId()).get();
+            UserCoupon found = userCouponRepository.findByCouponId(coupon.getId());
 
             // then
             assertThat(found).isEqualTo(saved);

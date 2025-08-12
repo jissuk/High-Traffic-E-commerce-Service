@@ -15,7 +15,7 @@ public class GetProductUseCase {
     private final ProductRseponseMapper productRseponseMapper;
 
     public ProductResponseDTO execute(long productId) {
-        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
+        Product product = productRepository.findById(productId);
         return productRseponseMapper.toDto(product);
     }
 }

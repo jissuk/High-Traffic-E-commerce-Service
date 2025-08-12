@@ -42,7 +42,7 @@ public class GetUserUseCaseTest {
         void 유저조회(){
             // given
             long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(Optional.of(UserStep.유저_기본값()));
+            when(userRepository.findById(userId)).thenReturn(UserStep.유저_기본값());
 
             // when & then
             assertDoesNotThrow(() -> getUserUseCase.execute(userId));

@@ -65,14 +65,6 @@ public class CouponStep {
                         .build();
     }
 
-    public static UserCouponEntity 유저쿠폰엔티티_기본값(){
-        return UserCouponEntity.builder()
-                            .discount(3000L)
-                            .couponStatus(CouponStatus.ISSUED)
-                            .description("여름 특별 할인 쿠폰")
-                            .build();
-    }
-
     public static UserCouponEntity 유저쿠폰엔티티_기본값(UserEntity user, CouponEntity coupon){
         return UserCouponEntity.builder()
                 .discount(3000L)

@@ -18,46 +18,12 @@ public class OrderStep {
 
     private static String PATH_URL = "/orders";
 
-    public static OrderItemCommand 주문상세커맨드_기본값(){
-        return new OrderItemCommand(1L, 1L, 1L, 1L, 2L, 3000L, 6000L);
-    }
-
-    public static Order 주문_기본값(){
-        return Order.builder()
-                .orderStatus(OrderStatus.PENDING)
-                .createdAt(LocalDateTime.now())
-                .build();
-    }
-
-    public static OrderItem 주문상세_기본값(){
-        return OrderItem.builder()
-                .quantity(2L)
-                .price(3000L)
-                .totalPrice(6000L)
-                .build();
-    }
-
-    public static OrderEntity 주문엔티티_기본값(){
-        return OrderEntity.builder()
-                    .orderStatus(OrderStatus.PENDING)
-                    .createdAt(LocalDateTime.now())
-                    .build();
-    }
-
     public static OrderEntity 주문엔티티_기본값(UserEntity user){
         return OrderEntity.builder()
                 .orderStatus(OrderStatus.PENDING)
                 .createdAt(LocalDateTime.now())
                 .userId(user.getId())
                 .build();
-    }
-
-    public static OrderItemEntity 주문상세엔티티_기본값(){
-        return OrderItemEntity.builder()
-                                .quantity(2L)
-                                .price(3000L)
-                                .totalPrice(6000L)
-                                .build();
     }
 
     public static OrderItemEntity 주문상세엔티티_기본값(OrderEntity order){

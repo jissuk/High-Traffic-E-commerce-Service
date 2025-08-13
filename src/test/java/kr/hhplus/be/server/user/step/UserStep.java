@@ -43,15 +43,6 @@ public class UserStep {
                 .build();
     }
 
-    public static PointHistoryEntity 포인트내역엔티티_기본값(UserEntity user){
-        return PointHistoryEntity.builder()
-                .point(10000L)
-                .pointHistoryType(PointHistoryType.CHARGE)
-                .createdAt(LocalDateTime.now())
-                .userId(user.getId())
-                .build();
-    }
-
     public static ResultActions 유저포인트충전요청(MockMvc mockMvc, ObjectMapper objectMapper, UserRequestDTO request) throws Exception {
         return mockMvc.perform(post(PATH_URL+ "/chargePoint")
                         .content(objectMapper.writeValueAsString(request))

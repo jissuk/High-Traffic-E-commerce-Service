@@ -1,5 +1,8 @@
 package kr.hhplus.be.server.payment.usecase;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
 import kr.hhplus.be.server.common.sender.OrderDataSender;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
@@ -24,6 +27,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 
 @UseCase
@@ -31,6 +36,7 @@ import java.time.LocalDate;
 public class RegisterPaymentUseCase {
 
     private final RedisTemplate<String, Object> redis;
+    private final ObjectMapper objectMapper;
 
     private final UserCouponDomainService userCouponDomainService;
     private final PaymentDomainService paymentDomainService;
@@ -45,14 +51,15 @@ public class RegisterPaymentUseCase {
 
     private final OrderDataSender orderDataSender;
 
+    @DistributedLock(key = "RegisterPayment")
     @Transactional
-    public void execute(PaymentCommand command){
+    public void execute(PaymentCommand command) throws JsonProcessingException {
 
         Payment payment = paymentRepository.findById(command.paymentId());
         User user = userRepository.findById(command.userId());
         OrderItem orderItem = orderItemRepository.findById(command.orderItemId());
         Order order = orderRepository.findById(command.orderId());
-        Product product = productRepository.findByIdForUpdate(command.productId());
+        Product product = productRepository.findById(command.productId());
 
         if (command.couponId() != null) {
             UserCoupon userCoupon = userCouponRepository.findByCouponId(command.couponId());
@@ -76,9 +83,18 @@ public class RegisterPaymentUseCase {
         paymentRepository.save(payment);
         orderRepository.save(order);
 
-        redis.opsForZSet().incrementScore("sales:"+ LocalDate.now(), 4, 1);
+        String zsetKey = "sales:" + LocalDate.now();
+        String hashKey = "PopularProduct";
+
+        // productId(pk), product
+        redis.opsForHash().put(hashKey, product.getId(), objectMapper.writeValueAsString(product));
+        redis.opsForZSet().incrementScore(zsetKey, product.getId(), orderItem.getQuantity());
+
+        long baseTtlSeconds = TimeUnit.DAYS.toSeconds(5);  // 5일
+
+        redis.expire(zsetKey, baseTtlSeconds, TimeUnit.SECONDS);
+        redis.expire(hashKey, baseTtlSeconds, TimeUnit.SECONDS);
 
         //        orderDataSender.send(orderItem);
-
     }
 }

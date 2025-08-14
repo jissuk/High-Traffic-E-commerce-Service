@@ -25,6 +25,16 @@ public class ProductStep {
                 .build();
     }
 
+    public static Product 상품_기본값_ID지정(long id){
+
+        return Product.builder()
+                .id(id)
+                .productName("기본 상품")
+                .price(2000L)
+                .quantity(5L)
+                .build();
+    }
+
     public static ProductEntity 상품엔티티_기본값(){
 
         return ProductEntity.builder()
@@ -32,6 +42,16 @@ public class ProductStep {
                             .price(2000L)
                             .quantity(200L)
                             .build();
+    }
+
+    public static ProductEntity 상품엔티티_기본값_ID지정(long id){
+
+        return ProductEntity.builder()
+                .id(id)
+                .productName("기본 상품")
+                .price(2000L)
+                .quantity(200L)
+                .build();
     }
 
     public static List<Product> 전체상품_기본값(){

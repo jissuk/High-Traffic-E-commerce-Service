@@ -51,7 +51,7 @@ public class RegisterPaymentUseCase {
 
     private final OrderDataSender orderDataSender;
 
-    @DistributedLock(key = "RegisterPayment")
+    @DistributedLock(key = "'payment:register:' + #command.paymentId")
     @Transactional
     public void execute(PaymentCommand command) throws JsonProcessingException {
 

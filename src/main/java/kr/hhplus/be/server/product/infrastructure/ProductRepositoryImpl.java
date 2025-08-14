@@ -45,4 +45,9 @@ public class ProductRepositoryImpl implements ProductRepository {
                 jpaProductRepository.save(productMapper.toEntity(product))
         );
     }
+
+    @Override
+    public List<Object[]> findPopularProduct3Days() {
+        return jpaProductRepository.findPopularProduct3Days();
+    }
 }

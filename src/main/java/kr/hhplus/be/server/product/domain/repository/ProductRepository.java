@@ -10,5 +10,7 @@ public interface ProductRepository {
     Product findByIdForUpdate(long productId);
     List<Product> findAll();
     Product save(Product product);
+
+    List<Object[]> findPopularProduct3Days();
 }
 

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface JpaProductRepository extends JpaRepository<ProductEntity, Long> {
@@ -15,4 +16,19 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM ProductEntity p WHERE p.id = :productId")
     Optional<ProductEntity> findByIdForUpdate(long productId);
+
+    @Query(value = """
+        SELECT pr.id AS productId,
+               SUM(oi.quantity) AS totalSold
+        FROM payments p
+        JOIN order_items oi ON p.order_item_id = oi.id
+        JOIN products pr ON oi.product_id = pr.id
+        WHERE p.create_at >= CURDATE() - INTERVAL 3 DAY
+          AND p.create_at < CURDATE() 
+          AND p.payment_status = 'COMPLETED'
+        GROUP BY pr.id
+        ORDER BY totalSold DESC
+        LIMIT 3
+        """, nativeQuery = true)
+    List<Object[]> findPopularProduct3Days();
 }

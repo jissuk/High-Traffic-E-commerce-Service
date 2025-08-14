@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "COUPONS")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -30,7 +29,4 @@ public class CouponEntity {
 
     @Column
     private LocalDateTime expiredAt;
-
-    @Version
-    private long version;
 }

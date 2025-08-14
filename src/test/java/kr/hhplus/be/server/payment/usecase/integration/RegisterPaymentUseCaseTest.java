@@ -284,7 +284,7 @@ public class RegisterPaymentUseCaseTest {
 
         @Test
         @DisplayName("동시에 100건의 상품수량변경 요청을 보낼 경우 모두 성공")
-        void 상품수량변경_동시성() throws InterruptedException {
+        void 상품수량변경_분산락_동시성() throws InterruptedException {
             // given
             int threadCount = 100;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);

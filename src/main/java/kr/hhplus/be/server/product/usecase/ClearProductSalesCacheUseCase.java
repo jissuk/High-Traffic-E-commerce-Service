@@ -14,9 +14,11 @@ public class ClearProductSalesCacheUseCase {
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void execute() {
-        String key = "sales:" + LocalDate.now().minusDays(4);
+        String zsetKey = "sales:" + LocalDate.now().minusDays(4);
+        String hashKey = "PopularProduct";
 
-        redisTemplate.delete(key);
+        redisTemplate.delete(zsetKey);
+        redisTemplate.delete(hashKey);
 
     }
 }

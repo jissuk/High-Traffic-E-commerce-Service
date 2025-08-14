@@ -9,7 +9,6 @@ import kr.hhplus.be.server.product.usecase.dto.ProductResponseDTO;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @UseCase
 @RequiredArgsConstructor
@@ -28,6 +27,6 @@ public class GetAllProductUseCase {
 
         return productEntityList.stream()
                                 .map(responseMapper::toDto)
-                                .collect(Collectors.toList());
+                                .toList();
     }
 }

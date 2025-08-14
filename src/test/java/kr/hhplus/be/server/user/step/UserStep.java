@@ -1,8 +1,6 @@
 package kr.hhplus.be.server.user.step;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.user.domain.model.PointHistoryEntity;
-import kr.hhplus.be.server.user.domain.model.PointHistoryType;
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
@@ -11,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

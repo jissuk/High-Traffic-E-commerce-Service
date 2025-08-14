@@ -8,7 +8,7 @@ import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+
 
 @Repository
 @RequiredArgsConstructor

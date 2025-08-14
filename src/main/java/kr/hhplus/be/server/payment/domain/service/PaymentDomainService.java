@@ -10,7 +10,7 @@ public class PaymentDomainService {
     public void paymentComplate(Payment payment, Order order) {
         payment.checkPayment();
         payment.complete();
-        order.checkOrder();
+        order.checkNotCompletedOrder();
         order.complete();
     }
 }

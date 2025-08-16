@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository {
-    Optional<Product> findById(long productId);
-    Optional<Product> findByIdForUpdate(long productId);
+    Product findById(long productId);
+    Product findByIdForUpdate(long productId);
     List<Product> findAll();
     Product save(Product product);
+
+    List<Object[]> findPopularProduct3Days();
 }
 

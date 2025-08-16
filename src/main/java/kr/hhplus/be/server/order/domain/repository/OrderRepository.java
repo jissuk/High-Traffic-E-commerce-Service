@@ -6,6 +6,6 @@ import kr.hhplus.be.server.order.domain.model.Order;
 import java.util.Optional;
 
 public interface OrderRepository {
-    Optional<Order> findById(long orderId);
+    Order findById(long orderId);
     Order save(Order order);
 }

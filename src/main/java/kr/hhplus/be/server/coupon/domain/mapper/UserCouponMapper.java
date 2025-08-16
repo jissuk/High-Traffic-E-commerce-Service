@@ -13,6 +13,8 @@ public class UserCouponMapper {
                             .discount(userCouponEntity.getDiscount())
                             .couponStatus(userCouponEntity.getCouponStatus())
                             .description(userCouponEntity.getDescription())
+                            .userId(userCouponEntity.getUserId())
+                            .couponId(userCouponEntity.getCouponId())
                             .build();
     }
     public UserCouponEntity toEntity(UserCoupon userCoupon){
@@ -21,6 +23,8 @@ public class UserCouponMapper {
                             .discount(userCoupon.getDiscount())
                             .couponStatus(userCoupon.getCouponStatus())
                             .description(userCoupon.getDescription())
+                            .userId(userCoupon.getUserId())
+                            .couponId(userCoupon.getCouponId())
                             .build();
     }
 }

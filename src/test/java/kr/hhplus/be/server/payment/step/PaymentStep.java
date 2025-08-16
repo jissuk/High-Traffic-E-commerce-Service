@@ -1,21 +1,20 @@
 package kr.hhplus.be.server.payment.step;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.order.domain.model.OrderEntity;
 import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.payment.domain.model.PaymentStatus;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
-import kr.hhplus.be.server.user.usecase.command.UserCommand;
-import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -32,12 +31,25 @@ public class PaymentStep {
         return Payment.builder()
                 .price(3000L)
                 .paymentStatus(PaymentStatus.BEFORE_PAYMENT)
+                .createdAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
     }
+
     public static PaymentEntity 결제엔티티_기본값(){
         return PaymentEntity.builder()
-                        .price(3000L)
-                        .paymentStatus(PaymentStatus.BEFORE_PAYMENT).build();
+                .price(3000L)
+                .paymentStatus(PaymentStatus.BEFORE_PAYMENT)
+                .createAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                .build();
+    }
+
+    public static PaymentEntity 결제엔티티_기본값_주문상세ID_생성일_성공상태_지정(long id, LocalDateTime createdAt) {
+        return PaymentEntity.builder()
+                .price(3000L)
+                .paymentStatus(PaymentStatus.COMPLETED)
+                .orderItemId(id)
+                .createAt(createdAt)
+                .build();
     }
 
     public static PaymentEntity 결제엔티티_기본값(UserEntity user){
@@ -45,6 +57,7 @@ public class PaymentStep {
                 .price(3000L)
                 .paymentStatus(PaymentStatus.BEFORE_PAYMENT)
                 .userId(user.getId())
+                .createAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
     }
 

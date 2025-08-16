@@ -4,6 +4,7 @@ import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.Order;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
+import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -19,10 +20,11 @@ public class OrderRepositroyImpl implements OrderRepository {
 
 
     @Override
-    public Optional<Order> findById(long orderId) {
+    public Order findById(long orderId) {
 
         return jpaOrderRepositroy.findById(orderId)
-                .map(orderMapper::toDomain);
+                .map(orderMapper::toDomain)
+                .orElseThrow(OrderNotFoundException::new);
     }
 
     @Override

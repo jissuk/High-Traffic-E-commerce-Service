@@ -10,11 +10,10 @@ import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
 import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
-import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
-import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
 @RequiredArgsConstructor
@@ -33,9 +32,10 @@ public class RegisterOrderUseCase {
     * 3. 주문 상세 등록
     * 4. 결제 등록
     * */
+    @Transactional
     public void execute(OrderItemCommand command){
-        User user = userRepository.findById(command.userId()).orElseThrow(UserNotFoundException::new);
-        Product product = productRepository.findById(command.productId()).orElseThrow(ProductNotFoundException::new);
+        User user = userRepository.findById(command.userId());
+        Product product = productRepository.findById(command.productId());
 
         Order order = Order.createBeforeOrder(user);
         orderRepositroy.save(order);

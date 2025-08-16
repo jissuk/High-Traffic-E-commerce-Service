@@ -61,7 +61,7 @@ public class IssueCouponUseCaseTest {
     class success {
         @Test
         @DisplayName("동시에 100건의 실시간쿠폰발급 요청을 보낼 경우 모두 성공")
-        void 실시간쿠폰발급_비관적락_동시성() throws Exception {
+        void 실시간쿠폰발급_분산락_동시성() throws Exception {
             int threadCount = 100;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
             CountDownLatch latch = new CountDownLatch(threadCount);

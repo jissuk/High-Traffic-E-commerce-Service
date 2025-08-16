@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.payment.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,7 +23,7 @@ public class PaymentController {
 
     @PostMapping
     @Operation(summary = "결제 요청", description = "유저는 취소되지 않은 주문에 대해 포인트를 사용하여 결제를 요청할 수 있습니다.")
-    public ResponseEntity<CommonResponse> requestPayment(@RequestBody @Valid PaymentRequestDTO request) throws InterruptedException {
+    public ResponseEntity<CommonResponse> requestPayment(@RequestBody @Valid PaymentRequestDTO request) throws Exception {
 
         PaymentCommand command = PaymentCommand.from(request);
         registerPaymentUseCase.execute(command);

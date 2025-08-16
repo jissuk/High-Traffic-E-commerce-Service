@@ -23,7 +23,7 @@ public class ChargePointUseCase {
     @Transactional
     public UserResponseDTO execute(UserCommand command) {
 
-        User user = userRepository.findById(command.userId()).orElseThrow(UserCouponNotFoundException::new);
+        User user = userRepository.findById(command.userId());
         user.charegePoint(command.point());
 
         PointHistory pointHistory = PointHistory.charge(user);

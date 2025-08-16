@@ -8,7 +8,7 @@ import kr.hhplus.be.server.order.domain.model.OrderItem;
 public class UserCouponDomainService {
 
     public void applyCoupon(OrderItem orderItem, UserCoupon userCoupon) {
-        userCoupon.checkCoupon();
+        userCoupon.useCheckCoupon();
         orderItem.deductCouponAmount(userCoupon.getDiscount());
         userCoupon.useCoupon();
     }

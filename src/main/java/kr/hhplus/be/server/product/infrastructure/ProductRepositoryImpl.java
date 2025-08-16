@@ -2,13 +2,13 @@ package kr.hhplus.be.server.product.infrastructure;
 
 import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
+import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.domain.model.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -19,16 +19,18 @@ public class ProductRepositoryImpl implements ProductRepository {
     private final ProductMapper productMapper;
 
     @Override
-    public Optional<Product> findById(long productId) {
+    public Product findById(long productId) {
         return jpaProductRepository.findById(productId)
-                .map(productMapper::toDomain);
+                .map(productMapper::toDomain)
+                .orElseThrow(ProductNotFoundException::new);
 
     }
 
     @Override
-    public Optional<Product> findByIdForUpdate(long productId) {
+    public Product findByIdForUpdate(long productId) {
         return jpaProductRepository.findByIdForUpdate(productId)
-                .map(productMapper::toDomain);
+                .map(productMapper::toDomain)
+                .orElseThrow(ProductNotFoundException::new);
     }
 
     @Override
@@ -42,5 +44,10 @@ public class ProductRepositoryImpl implements ProductRepository {
         return productMapper.toDomain(
                 jpaProductRepository.save(productMapper.toEntity(product))
         );
+    }
+
+    @Override
+    public List<Object[]> findPopularProduct3Days() {
+        return jpaProductRepository.findPopularProduct3Days();
     }
 }

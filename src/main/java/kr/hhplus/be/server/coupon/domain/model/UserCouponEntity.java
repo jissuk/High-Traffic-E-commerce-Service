@@ -7,7 +7,6 @@ import lombok.*;
 @Entity
 @Table(name = "USER_COUPONS")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

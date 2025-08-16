@@ -1,5 +1,8 @@
 package kr.hhplus.be.server.product.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,10 +16,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,23 +38,26 @@ public class ProductControllerTest {
     private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         clearTestData();
         initTestData();
     }
 
 
     private void clearTestData() {
+        // MySql
         jdbcTemplate.execute("TRUNCATE TABLE products;");
+
     }
-
-    private void initTestData() {
-        jpaProductRepository.save(ProductStep.상품엔티티_기본값());
-        jpaProductRepository.save(ProductStep.상품엔티티_기본값());
-        jpaProductRepository.save(ProductStep.상품엔티티_기본값());
+    private void initTestData() throws Exception {
+        for(int i = 0; i < 10; i++){
+            // MySql
+            ProductEntity product = jpaProductRepository.save(ProductEntity.builder()
+                    .productName("기본상품")
+                    .quantity(3)
+                    .build());
+        }
     }
-
-
 
     @Nested
     @DisplayName("상품 조회 성공 케이스")
@@ -69,12 +76,24 @@ public class ProductControllerTest {
         }
 
         @Test
-        @DisplayName("요청 데이터가 정상적일 경우 전체 상품을 조회한다.")
+        @DisplayName("전체 상품을 조회한다.")
         void 전체상품조회() throws Exception {
             // given
 
             // when
             ResultActions result = ProductStep.전체상품조회요청(mockMvc);
+
+            // then
+            result.andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("인기 판매 상품을 조회한다.")
+        void 인기판매상품조회() throws Exception {
+            // given
+
+            // when
+            ResultActions result = ProductStep.인기판매상품조회요청(mockMvc);
 
             // then
             result.andExpect(status().isOk());

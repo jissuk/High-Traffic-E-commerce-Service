@@ -44,7 +44,7 @@ public class GetProductUseCaseTest {
         void 상품조회(){
             // given
             long  productId = 1L;
-            when(productRepository.findById(productId)).thenReturn(Optional.of(ProductStep.상품_기본값()));
+            when(productRepository.findById(productId)).thenReturn(ProductStep.상품_기본값());
 
             // when
             getProductUseCase.execute(productId);

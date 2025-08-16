@@ -3,6 +3,7 @@ package kr.hhplus.be.server.coupon.infrastructure;
 import kr.hhplus.be.server.coupon.domain.mapper.UserCouponMapper;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
+import kr.hhplus.be.server.coupon.exception.UserCouponNotFoundException;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +19,18 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     private final UserCouponMapper  userCouponMapper;
 
     @Override
-    public Optional<UserCoupon> findById(long couponId) {
+    public UserCoupon findById(long couponId) {
 
         return jpaUserCouponRepository.findById(couponId)
-                .map(userCouponMapper::toDomain);
+                .map(userCouponMapper::toDomain)
+                .orElseThrow(UserCouponNotFoundException::new);
     }
 
     @Override
-    public Optional<UserCoupon> findByCouponId(long id) {
+    public UserCoupon findByCouponId(long id) {
         return jpaUserCouponRepository.findByCouponId(id)
-                .map(userCouponMapper::toDomain);
+                .map(userCouponMapper::toDomain)
+                .orElseThrow(UserCouponNotFoundException::new);
     }
 
     @Override

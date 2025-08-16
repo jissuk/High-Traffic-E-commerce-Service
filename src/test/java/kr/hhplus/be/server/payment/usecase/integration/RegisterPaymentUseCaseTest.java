@@ -1,26 +1,36 @@
 package kr.hhplus.be.server.payment.usecase.integration;
 
 
+import kr.hhplus.be.server.coupon.domain.mapper.UserCouponMapper;
 import kr.hhplus.be.server.coupon.domain.model.CouponEntity;
 import kr.hhplus.be.server.coupon.domain.model.CouponStatus;
+import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
 import kr.hhplus.be.server.coupon.step.CouponStep;
+import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
+import kr.hhplus.be.server.order.domain.model.Order;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
 import kr.hhplus.be.server.order.domain.model.OrderStatus;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderItemRepository;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepository;
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.payment.domain.mapper.PaymentMapper;
+import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.payment.domain.model.PaymentStatus;
 import kr.hhplus.be.server.payment.infrastructure.jpa.JpaPaymentRepository;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.RegisterPaymentUseCase;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
+import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
+import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
+import kr.hhplus.be.server.user.domain.mapper.UserMapper;
+import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
@@ -34,6 +44,7 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,24 +63,30 @@ public class RegisterPaymentUseCaseTest {
 
     @Autowired
     private JpaUserRepository jpaUserRepository;
-
     @Autowired
     private JpaProductRepository jpaProductRepository;
-
     @Autowired
     private JpaOrderItemRepository jpaOrderItemRepository;
-
     @Autowired
     private JpaOrderRepository jpaOrderRepositroy;
-
     @Autowired
     private JpaPaymentRepository jpaPaymentRepository;
-
     @Autowired
     private JpaCouponRepository jpaCouponRepository;
-
     @Autowired
     private JpaUserCouponRepository jpaUserCouponRepository;
+
+    @Autowired
+    private UserCouponMapper userCouponMapper;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private ProductMapper productMapper;
+    @Autowired
+    private PaymentMapper paymentMapper;
+    @Autowired
+    private OrderMapper orderMapper;
+
 
     @BeforeEach
     void setUp() {
@@ -155,8 +172,12 @@ public class RegisterPaymentUseCaseTest {
         void 쿠폰사용_동시성() throws InterruptedException {
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            UserCouponEntity userCoupon = jpaUserCouponRepository.findByCouponId(command.couponId()).get();
-            userCoupon.setCouponStatus(CouponStatus.USED);
+            UserCouponEntity userCouponEntity = jpaUserCouponRepository.findByCouponId(command.couponId()).get();
+
+            UserCoupon userCoupon = userCouponMapper.toDomain(userCouponEntity);
+            userCoupon.useCoupon();
+
+            UserCouponEntity updateUserCoupon = userCouponMapper.toEntity(userCoupon);
 
             int threadCount = 10;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -167,7 +188,7 @@ public class RegisterPaymentUseCaseTest {
             for (int i = 0; i < threadCount; i++) {
                 futures.add(executor.submit(() -> {
                     try {
-                        jpaUserCouponRepository.save(userCoupon);
+                        jpaUserCouponRepository.save(updateUserCoupon);
                         return null;
                     } finally {
                         latch.countDown();
@@ -208,9 +229,12 @@ public class RegisterPaymentUseCaseTest {
         void 포인트사용_동시성() throws InterruptedException {
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
-            UserEntity user = jpaUserRepository.findById(command.userId()).get();
-            user.setPoint(user.getPoint() - 3000L);
+            UserEntity userEntity = jpaUserRepository.findById(command.userId()).get();
 
+            User user = userMapper.toDomain(userEntity);
+            user.deductPoint(3000L);
+
+            UserEntity updateUser = userMapper.toEntity(user);
 
             int threadCount = 10;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -221,7 +245,7 @@ public class RegisterPaymentUseCaseTest {
             for (int i = 0; i < threadCount; i++) {
                 futures.add(executor.submit(() -> {
                     try {
-                        jpaUserRepository.save(user);
+                        jpaUserRepository.save(updateUser);
                         return null;
                     } finally {
                         latch.countDown();
@@ -260,7 +284,7 @@ public class RegisterPaymentUseCaseTest {
 
         @Test
         @DisplayName("동시에 100건의 상품수량변경 요청을 보낼 경우 모두 성공")
-        void 상품수량변경_동시성() throws InterruptedException {
+        void 상품수량변경_분산락_동시성() throws InterruptedException {
             // given
             int threadCount = 100;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -273,7 +297,14 @@ public class RegisterPaymentUseCaseTest {
 
                 futures.add(executor.submit(() -> {
                     try {
+                        //
+                        ProductEntity productEntity = jpaProductRepository.findById(command.productId()).get();
 
+                        Product product = productMapper.toDomain(productEntity);
+                        product.deductQuantity(1);
+
+                        ProductEntity updateProduct = productMapper.toEntity(product);
+                        jpaProductRepository.save(updateProduct);
                         return null;
                     } finally {
                         latch.countDown();
@@ -313,7 +344,11 @@ public class RegisterPaymentUseCaseTest {
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
             PaymentEntity paymentEntity = jpaPaymentRepository.findById(command.productId()).get();
-            paymentEntity.setPaymentStatus(PaymentStatus.COMPLETED);
+
+            Payment payment = paymentMapper.toDomain(paymentEntity);
+            payment.complete();
+
+            PaymentEntity updatePayment = paymentMapper.toEntity(payment);
 
             int threadCount = 10;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -324,7 +359,7 @@ public class RegisterPaymentUseCaseTest {
             for (int i = 0; i < threadCount; i++) {
                 futures.add(executor.submit(() -> {
                     try {
-                        jpaPaymentRepository.save(paymentEntity);
+                        jpaPaymentRepository.save(updatePayment);
                         return null;
                     } finally {
                         latch.countDown();
@@ -366,7 +401,11 @@ public class RegisterPaymentUseCaseTest {
             // given
             PaymentCommand command = PaymentStep.결제커맨드_기본값();
             OrderEntity orderEntity = jpaOrderRepositroy.findById(command.productId()).get();
-            orderEntity.setOrderStatus(OrderStatus.COMPLETED);
+
+            Order order = orderMapper.toDomain(orderEntity);
+            order.complete();
+
+            OrderEntity updateOrder = orderMapper.toEntity(order);
 
             int threadCount = 10;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -377,7 +416,7 @@ public class RegisterPaymentUseCaseTest {
             for (int i = 0; i < threadCount; i++) {
                 futures.add(executor.submit(() -> {
                     try {
-                        jpaOrderRepositroy.save(orderEntity);
+                        jpaOrderRepositroy.save(updateOrder);
                         return null;
                     } finally {
                         latch.countDown();

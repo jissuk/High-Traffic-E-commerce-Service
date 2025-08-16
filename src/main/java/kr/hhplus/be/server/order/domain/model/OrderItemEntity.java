@@ -7,7 +7,6 @@ import lombok.*;
 @Entity
 @Table(name = "ORDER_ITEMS")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

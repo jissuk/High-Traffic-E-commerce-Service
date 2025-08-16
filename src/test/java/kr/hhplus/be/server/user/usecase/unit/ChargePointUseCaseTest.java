@@ -53,7 +53,7 @@ public class ChargePointUseCaseTest {
         void 포인트충전(){
             // given
             UserCommand command = UserStep.유저커맨드_기본값();
-            when(userRepository.findById(command.userId())).thenReturn(Optional.of(UserStep.유저_기본값()));
+            when(userRepository.findById(command.userId())).thenReturn(UserStep.유저_기본값());
 
             // when
             chargePointUseCase.execute(command);

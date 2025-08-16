@@ -16,7 +16,7 @@ public class GetUserUseCase {
     private final UserResponseMapper userResponseMapper;
 
     public UserResponseDTO execute(long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(userId);
         return userResponseMapper.toDto(user);
     }
 }

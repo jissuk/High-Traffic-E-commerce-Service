@@ -2,13 +2,9 @@ package kr.hhplus.be.server.coupon.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.step.CouponStep;
-import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
-import kr.hhplus.be.server.order.step.OrderStep;
-import kr.hhplus.be.server.payment.step.PaymentStep;
-import kr.hhplus.be.server.product.step.ProductStep;
+import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequest;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +18,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -72,7 +67,7 @@ public class CouponControllerTest {
         @DisplayName("요청 데이터가 정상적이며 쿠폰 수량이 남아있을 경우 쿠폰을 발급한다.")
         void 선착순쿠폰발급() throws Exception {
             // given
-            UserCouponRequestDTO request = CouponStep.유저쿠폰요청_기본값();
+            UserCouponRequest request = CouponStep.유저쿠폰요청_기본값();
             // when
             ResultActions result = CouponStep.선착순쿠폰발급요청(mockMvc, objectMapper, request);
 
@@ -88,8 +83,7 @@ public class CouponControllerTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 선착순쿠폰발급_존재하지않는_유저일_경우() throws Exception {
             // given
-            UserCouponRequestDTO request = CouponStep.유저쿠폰요청_기본값();
-            request.setUserId(0L);
+            UserCouponRequest request = CouponStep.유저쿠폰요청_유저ID지정(2L);
 
             // when
             ResultActions result = CouponStep.선착순쿠폰발급요청(mockMvc, objectMapper, request);
@@ -102,8 +96,7 @@ public class CouponControllerTest {
         @DisplayName("존재하지 않는 쿠폰일 경우 CouponNotFoundException이 발생한다.")
         void 선착순쿠폰발급_존재하지않는_쿠폰일_경우() throws Exception {
             // given
-            UserCouponRequestDTO request = CouponStep.유저쿠폰요청_기본값();
-            request.setCouponId(0L);
+            UserCouponRequest request = CouponStep.유저쿠폰요청_쿠폰ID지정(2L);
             // when
             ResultActions result = CouponStep.선착순쿠폰발급요청(mockMvc, objectMapper, request);
 

@@ -1,13 +1,9 @@
 package kr.hhplus.be.server.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.coupon.step.CouponStep;
-import kr.hhplus.be.server.order.step.OrderStep;
-import kr.hhplus.be.server.payment.step.PaymentStep;
-import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
-import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
+import kr.hhplus.be.server.user.usecase.dto.UserRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +15,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -66,7 +61,7 @@ public class UserControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 포인트를 충전한다.")
         void 포인트충전() throws Exception {
             // given
-            UserRequestDTO request = UserStep.유저요청생성_기본값();
+            UserRequest request = UserStep.유저요청생성_기본값();
 
             // when
             ResultActions result = UserStep.유저포인트충전요청(mockMvc, objectMapper, request);
@@ -84,8 +79,7 @@ public class UserControllerTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 포인트충전() throws Exception {
             // given
-            UserRequestDTO request = UserStep.유저요청생성_기본값();
-            request.setUserId(0L);
+            UserRequest request = UserStep.유저요청생성_유저ID지정(2L);
 
             // when
             ResultActions result = UserStep.유저포인트충전요청(mockMvc, objectMapper, request);

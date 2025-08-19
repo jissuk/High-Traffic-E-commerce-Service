@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.util.ArrayList;
@@ -30,9 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class IssueCouponUseCaseTest {
     
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private IssueCouponUseCase issueCouponUseCase;
     @Autowired
     private JpaUserCouponRepository jpaUserCouponRepository;
@@ -43,16 +39,12 @@ public class IssueCouponUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        clearTestData();
         initTestData();
     }
-    private void clearTestData() {
-        jdbcTemplate.execute("TRUNCATE TABLE user_coupons;");
-        jdbcTemplate.execute("TRUNCATE TABLE users;");
-    }
+
     private void initTestData() {
-        
         UserEntity user = jpaUserRepository.save(UserStep.유저엔티티_기본값());
+        // 쿠폰 수량 : 500개
         CouponEntity coupon = jpaCouponRepository.save(CouponStep.쿠폰엔티티_기본값());
         jpaUserCouponRepository.save(CouponStep.유저쿠폰엔티티_기본값(user, coupon));
     }
@@ -71,7 +63,6 @@ public class IssueCouponUseCaseTest {
             for (int i = 0; i < threadCount; i++) {
                 futures.add(executor.submit(() -> {
                     try {
-                        //
                         issueCouponUseCase.execute(CouponStep.유저쿠폰커맨드_기본값());
                         return null;
                     } finally {

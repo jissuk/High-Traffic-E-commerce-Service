@@ -13,6 +13,7 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
@@ -38,7 +39,11 @@ public class ClearProductSalesCacheUseCaseTest {
         Boolean productExists = redis.hasKey(hashKey);
         Boolean salesExists = redis.hasKey(zsetKey);
 
-        assertThat(productExists).isFalse();
-        assertThat(salesExists).isFalse();
+        // given
+        assertAll(
+            ()-> assertThat(productExists).isFalse(),
+            ()-> assertThat(salesExists).isFalse()
+        );
+
     }
 }

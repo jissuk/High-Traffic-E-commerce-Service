@@ -21,8 +21,10 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -55,9 +57,9 @@ public class ChargePointUseCaseTest {
     @DisplayName("성공 케이스")
     class success {
         @Test
-        @DisplayName("동시에 100건의 충전 요청을 보낼 경우 1번만 성공")
+        @DisplayName("동시에 1000건의 충전 요청을 보낼 경우 1번만 성공")
         void 유저_동시성() throws Exception {
-            int threadCount = 100;
+            int threadCount = 1000;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
             CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -76,16 +78,16 @@ public class ChargePointUseCaseTest {
             latch.await();
             executor.shutdown();
 
-            int successCount = 0;
-            int failureCount = 0;
+            AtomicLong successCount = new AtomicLong();
+            AtomicLong failureCount = new AtomicLong();
 
             for (Future<Void> future : futures) {
                 try {
                     future.get();
-                    successCount++;
+                    successCount.getAndIncrement();
                 } catch (ExecutionException e) {
                     if (e.getCause() instanceof ObjectOptimisticLockingFailureException) {
-                        failureCount++;
+                        failureCount.getAndIncrement();
                     }
                 }
             }
@@ -94,9 +96,12 @@ public class ChargePointUseCaseTest {
             System.out.println("실패한 요청 수: " + failureCount);
 
             // then
-            assertEquals(1, successCount);
             UserEntity user = jpaUserRepository.findById(1L).get();
-            assertThat(user.getPoint()).isEqualTo(43000L);
+            assertAll(
+                ()-> assertEquals(1, successCount.get()),
+                ()-> assertEquals(999, failureCount.get()),
+                ()-> assertThat(user.getPoint()).isEqualTo(43000L)
+            );
         }
     }
 }

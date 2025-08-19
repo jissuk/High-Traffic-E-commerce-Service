@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.user.usecase.unit;
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
+import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
 import kr.hhplus.be.server.user.usecase.GetUserUseCase;
+import kr.hhplus.be.server.user.usecase.dto.UserResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
@@ -42,10 +46,15 @@ public class GetUserUseCaseTest {
         void 유저조회(){
             // given
             long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(UserStep.유저_기본값());
+            when(userRepository.findById(userId)).thenReturn(new User(1L, 10000L));
 
-            // when & then
-            assertDoesNotThrow(() -> getUserUseCase.execute(userId));
+            // when
+            UserResponse result = getUserUseCase.execute(userId);
+            // then
+            assertAll(
+                ()-> assertThat(result.userId()).isEqualTo(1L),
+                ()-> assertThat(result.point()).isEqualTo(10000L)
+            );
         }
     }
 

@@ -2,7 +2,7 @@ package kr.hhplus.be.server.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.order.step.OrderStep;
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
+import kr.hhplus.be.server.order.usecase.dto.OrderItemRequest;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
@@ -71,7 +71,7 @@ public class OrderControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 주문을 등록한다.")
         void 주문() throws Exception {
             // given
-            OrderItemRequestDTO request = OrderStep.주문상세요청_기본값();
+            OrderItemRequest request = OrderStep.주문상세요청_기본값();
 
             // when
             ResultActions result = OrderStep.주문요청(mockMvc, objectMapper, request);
@@ -89,8 +89,7 @@ public class OrderControllerTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 주문_존재하지않는_유저일_경우() throws Exception {
             // given
-            OrderItemRequestDTO request = OrderStep.주문상세요청_기본값();
-            request.setUserId(0L);
+            OrderItemRequest request = OrderStep.주문상세요청_유저ID지정(2L);
 
             // when
             ResultActions result = OrderStep.주문요청(mockMvc, objectMapper, request);
@@ -103,8 +102,7 @@ public class OrderControllerTest {
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 주문_존재하지않는_상품일_경우() throws Exception {
             // given
-            OrderItemRequestDTO request = OrderStep.주문상세요청_기본값();
-            request.setProductId(0L);
+            OrderItemRequest request = OrderStep.주문상세요청_상품ID지정(2L);
 
             // when
             ResultActions result = OrderStep.주문요청(mockMvc, objectMapper, request);

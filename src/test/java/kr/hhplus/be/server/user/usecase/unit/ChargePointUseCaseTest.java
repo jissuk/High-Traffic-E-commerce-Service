@@ -10,6 +10,7 @@ import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
 import kr.hhplus.be.server.user.usecase.ChargePointUseCase;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
+import kr.hhplus.be.server.user.usecase.dto.UserResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,15 +55,18 @@ public class ChargePointUseCaseTest {
         @DisplayName("유저가 존재할 경우 유저의 포인트를 충전한다.")
         void 포인트충전(){
             // given
-            UserCommand command = UserStep.유저커맨드_기본값();
-            when(userRepository.findById(command.userId())).thenReturn(UserStep.유저_기본값());
+            UserCommand command = UserStep.유저커맨드_기본값(); // point: 3000L
+            when(userRepository.findById(command.userId())).thenReturn(new User(1L, 10_000L));
 
             // when
-            chargePointUseCase.execute(command);
+            UserResponse result = chargePointUseCase.execute(command);
 
             // then
-            verify(userRepository).save(any(User.class));
-            verify(pointHistoryRepository).save(any(PointHistory.class));
+            assertAll(
+                ()-> assertThat(result.userId()).isEqualTo(1L),
+                ()-> assertThat(result.point()).isEqualTo(13000L)
+            );
+
         }
     }
 

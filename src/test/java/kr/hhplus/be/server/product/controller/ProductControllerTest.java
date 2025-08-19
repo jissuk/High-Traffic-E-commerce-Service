@@ -1,8 +1,5 @@
 package kr.hhplus.be.server.product.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,13 +47,8 @@ public class ProductControllerTest {
 
     }
     private void initTestData() throws Exception {
-        for(int i = 0; i < 10; i++){
-            // MySql
-            ProductEntity product = jpaProductRepository.save(ProductEntity.builder()
-                    .productName("기본상품")
-                    .quantity(3)
-                    .build());
-        }
+    // MySql
+        jpaProductRepository.save(ProductStep.상품엔티티_기본값());
     }
 
     @Nested

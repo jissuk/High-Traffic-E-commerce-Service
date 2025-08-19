@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
-import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
+import kr.hhplus.be.server.user.usecase.dto.UserRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -17,11 +17,18 @@ public class UserStep {
 
     private static String PATH_URL = "/user";
 
-    public static UserRequestDTO 유저요청생성_기본값(){
-        return UserRequestDTO.builder()
+    public static UserRequest 유저요청생성_기본값(){
+        return UserRequest.builder()
                                 .userId(1L)
                                 .point(3000L)
                                 .build();
+    }
+
+    public static UserRequest 유저요청생성_유저ID지정(long userId){
+        return UserRequest.builder()
+                .userId(userId)
+                .point(3000L)
+                .build();
     }
 
     public static UserCommand 유저커맨드_기본값() {
@@ -40,7 +47,7 @@ public class UserStep {
                 .build();
     }
 
-    public static ResultActions 유저포인트충전요청(MockMvc mockMvc, ObjectMapper objectMapper, UserRequestDTO request) throws Exception {
+    public static ResultActions 유저포인트충전요청(MockMvc mockMvc, ObjectMapper objectMapper, UserRequest request) throws Exception {
         return mockMvc.perform(post(PATH_URL+ "/chargePoint")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))

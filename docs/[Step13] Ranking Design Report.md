@@ -5,26 +5,34 @@
 ---
 
 ### 1. 인기 판매 상품 조회 기능 개요
-- 3일간 판매 수량이 많은 3개의 상품을 조회
+1. **결제 시 Redis Sorted Set에 데이터 주입**
+   - Key: `product:sales:YYYY-MM-DD`
+   - Value: 상품 ID
+   - Score: 주문 수량
+   - 동일 상품 ID는 결제 시마다 score 증가
 
-### 2. 인기 판매 상품 조회 구현 방식
-1. 결제 시 Redis의 Sorted Set 자료구조로 아래와 같은 형태로 데이터 주입되며 상품 ID가 동일 할 경우 매 결제시 마다 score가 증가 합니다.
-```
-Key: product:sales:2025-08-22 
-value: 상품ID,
-score: 주문 수량
-```
-2. 매 00:05분 마다 최근 3일의 데이터를 집계하여 Sorted Set 자료구조의 `product:sales:3days:total`라는 새로운 키를 생성 혹은 갱신
-3. 인기 상품 조회 요청시 `product:sales:3days:total`를 score의 역순으로 상품 ID를 조회하여 DB를 조회 후 반환
+   ```text
+   Key: product:sales:2025-08-22
+   Value: 상품ID
+   Score: 주문 수량
+   ```
+
+2. **3일 데이터 집계**
+   - 매일 00:05, 최근 3일 데이터를 집계
+   - 집계 결과를 `product:sales:3days:total` 키로 생성/갱신
+   - Score 역순으로 인기 상품 조회 가능
+
+3. **조회 시 처리**
+   - `product:sales:3days:total`에서 상품 ID 조회 후 DB에서 상세 정보 반환
 
 ### 3. 인기 판매 상품 조회 구현 방식 결정 배경
-- 상품 데이터를 레디스에서 관리하면 조회가 성능이 더욱 좋으나 아래와 같은 이유로 DB에서 조회하는 방식으로 변경 하였습니다.
-  - DB와 레디스 간의 상품 정합성 문제
-  - Redis의 의존성 증가
-  - 같은 데이터를 다른 두 곳에서 관리를 함으로서 관리 포인트 증가
-  - DB에서 PK로 조회하기에 클러스터링 인덱스로 인해 성능상의 이슈가 크게 생기지 않음
-- 데이터를 주입 시 Expire를 `TimeUnit.DAYS`가 아닌 `TimeUnit.SECONDS`으로 설정하여 혹시 모를 캐시 스탬피드를 예방
-- 위와 비슷한 예시로 `@Scheduled`로 4일전의 데이터를 정각에 지우며 5분이 지난 후에 3일간의 데이터를 집계하였습니다.
+- Redis에서 직접 조회 대신 **DB에서 조회**하도록 결정
+  - DB와 Redis 간 상품 정합성 문제
+  - Redis 의존성 증가 방지
+  - 동일 데이터를 두 곳에서 관리 시 관리 포인트 증가
+  - DB PK 조회 시 클러스터링 인덱스로 인해 성능 저하 미비
+- 캐시 스탬피드 예방을 위해 Expire를 `TimeUnit.DAYS`가 아닌 `TimeUnit.SECONDS`로 설정
+- 위와 비슷한 목적으로 `@Scheduled`로 4일전의 데이터를 정각에 삭제 후 5분이 지난 후에 3일간의 데이터 집계
    
 
 ### 4. 인기 상품 조회 코드

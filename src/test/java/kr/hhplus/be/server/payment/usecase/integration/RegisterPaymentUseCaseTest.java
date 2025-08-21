@@ -44,7 +44,6 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -167,8 +166,12 @@ public class RegisterPaymentUseCaseTest {
 
             // then
             assertAll(
-                ()-> assertEquals(1, successCount.get()),
-                ()-> assertEquals(9, failureCount.get())
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(1L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(9L)
             );
 
         }
@@ -227,9 +230,15 @@ public class RegisterPaymentUseCaseTest {
             // then
             UserCouponEntity result = jpaUserCouponRepository.findByCouponId(command.couponId()).get();
             assertAll(
-                ()-> assertEquals(1, successCount.get()),
-                ()-> assertEquals(9, failureCount.get()),
-                ()-> assertEquals(CouponStatus.USED, result.getCouponStatus())
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(1L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(9L),
+                ()-> assertThat(result.getCouponStatus())
+                        .as("쿠폰 사용 상태 확인")
+                        .isEqualTo(CouponStatus.USED)
             );
         }
 
@@ -287,8 +296,15 @@ public class RegisterPaymentUseCaseTest {
             // then
             UserEntity result = jpaUserRepository.findById(command.userId()).get();
             assertAll(
-                ()-> assertEquals(1, successCount.get()),
-                ()-> assertThat(result.getPoint()).isEqualTo(37000L)
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(1L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(9L),
+                ()-> assertThat(result.getPoint())
+                        .as("차감된 포인트 확인")
+                        .isEqualTo(37000L)
             );
         }
 
@@ -347,8 +363,12 @@ public class RegisterPaymentUseCaseTest {
 
             // then
             assertAll(
-                ()-> assertEquals(100, successCount.get()),
-                ()-> assertEquals(0, failureCount.get())
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(100L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(0L)
             );
         }
 
@@ -406,9 +426,15 @@ public class RegisterPaymentUseCaseTest {
             // then
             PaymentEntity result = jpaPaymentRepository.findById(command.productId()).get();
             assertAll(
-                ()-> assertEquals(1, successCount.get()),
-                ()-> assertEquals(9, failureCount.get()),
-                ()-> assertThat(result.getPaymentStatus()).isEqualTo(PaymentStatus.COMPLETED)
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(1L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(9L),
+                ()-> assertThat(result.getPaymentStatus())
+                        .as("결제 상태 변경 확인")
+                        .isEqualTo(PaymentStatus.COMPLETED)
             );
         }
 
@@ -466,8 +492,12 @@ public class RegisterPaymentUseCaseTest {
             // then
             OrderEntity result = jpaOrderRepositroy.findById(command.productId()).get();
             assertAll(
-                ()-> assertEquals(1, successCount.get()),
-                ()-> assertEquals(9, failureCount.get()),
+                    ()-> assertThat(successCount.get())
+                            .as("성공한 요청 수")
+                            .isEqualTo(1L),
+                    ()-> assertThat(failureCount.get())
+                            .as("실패한 요청 수")
+                            .isEqualTo(9L),
                 ()-> assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COMPLETED)
             );
         }

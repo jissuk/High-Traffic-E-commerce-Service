@@ -98,8 +98,13 @@ public class ChargePointUseCaseTest {
             // then
             UserEntity user = jpaUserRepository.findById(1L).get();
             assertAll(
-                ()-> assertEquals(1, successCount.get()),
-                ()-> assertEquals(999, failureCount.get()),
+
+                    ()-> assertThat(successCount.get())
+                            .as("성공한 요청 수")
+                            .isEqualTo(1L),
+                    ()-> assertThat(failureCount.get())
+                            .as("실패한 요청 수")
+                            .isEqualTo(999L),
                 ()-> assertThat(user.getPoint()).isEqualTo(43000L)
             );
         }

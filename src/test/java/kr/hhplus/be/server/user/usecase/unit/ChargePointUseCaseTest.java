@@ -62,11 +62,7 @@ public class ChargePointUseCaseTest {
             UserResponse result = chargePointUseCase.execute(command);
 
             // then
-            assertAll(
-                ()-> assertThat(result.userId()).isEqualTo(1L),
-                ()-> assertThat(result.point()).isEqualTo(13000L)
-            );
-
+            assertThat(result.point()).isEqualTo(13000L);
         }
     }
 

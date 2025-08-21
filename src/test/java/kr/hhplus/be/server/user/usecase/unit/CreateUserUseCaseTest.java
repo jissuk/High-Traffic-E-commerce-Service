@@ -63,8 +63,12 @@ public class CreateUserUseCaseTest {
 
             // then
             assertAll(
-                ()-> assertThat(result.userId()).isEqualTo(1L),
-                ()-> assertThat(result.point()).isEqualTo(3000L)
+                ()-> assertThat(result.userId())
+                        .as("유저 생성 확인")
+                        .isEqualTo(1L),
+                ()-> assertThat(result.point())
+                        .as("충전된 포인트 확인")
+                        .isEqualTo(3000L)
             );
         }
     }

@@ -52,8 +52,12 @@ public class GetUserUseCaseTest {
             UserResponse result = getUserUseCase.execute(userId);
             // then
             assertAll(
-                ()-> assertThat(result.userId()).isEqualTo(1L),
-                ()-> assertThat(result.point()).isEqualTo(10000L)
+                ()-> assertThat(result.userId())
+                        .as("유저 조회 확인")
+                        .isEqualTo(1L),
+                ()-> assertThat(result.point())
+                        .as("유저 포인트 조회 확인")
+                        .isEqualTo(10000L)
             );
         }
     }

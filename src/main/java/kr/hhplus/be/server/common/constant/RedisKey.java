@@ -12,8 +12,8 @@ public class RedisKey {
 
         public static final String COUPON_ISSUE_QUEUE = "coupon:issue:queue";
 
-        public static String userCouponIssuedKey(Long userId) {
-            return String.format("coupon:issue:%d:issued", userId);
+        public static String userCouponIssuedKey(Long userId, Long couponId) {
+            return String.format("coupon:issue:%d:coupon:%d:issued", userId,couponId);
         }
         public static String issueCouponQuantityKey(Long couponId) {
             return String.format("coupon:issue:%d:quantity", couponId);

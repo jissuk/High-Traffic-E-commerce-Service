@@ -29,7 +29,7 @@ public class IssueCouponUseCase {
 
 
     private void validateDuplicateIssue(UserCouponCommand command) {
-        String issuedKey = RedisKey.Coupon.userCouponIssuedKey(command.couponId());
+        String issuedKey = RedisKey.Coupon.userCouponIssuedKey(command.userId(), command.couponId());
         Boolean issuedResult = redis.opsForValue().getBit(issuedKey, command.userId());
 
         if(!issuedResult){

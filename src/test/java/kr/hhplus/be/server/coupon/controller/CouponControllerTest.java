@@ -64,8 +64,9 @@ public class CouponControllerTest {
 
     private void initTestRedisData(){
         long couponId = 1L;
+        long userId = 1L;
         String quantityKey = RedisKey.Coupon.issueCouponQuantityKey(couponId);
-        String issuedKey = RedisKey.Coupon.userCouponIssuedKey(couponId);
+        String issuedKey = RedisKey.Coupon.userCouponIssuedKey(userId, couponId);
 
         redis.opsForValue().set(quantityKey , 10L);
         redis.opsForValue().setBit(issuedKey, 0, false);

@@ -14,6 +14,6 @@ public class IssueCouponScheduler {
 
     @Scheduled(fixedDelay = 1000)
     public void processQueue() throws JsonProcessingException {
-//        couponQueueUseCase.execute();
+        couponQueueUseCase.execute();
     }
 }

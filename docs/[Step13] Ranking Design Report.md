@@ -44,5 +44,5 @@
 ---
 
 ### 4. 코드 및 테스트
-- [인기상품조회 구현 및 테스트 코드 작성](425cf6f)
-- [인기상품조회 Scheduled 코드 및 Repository 코드 작성](7079b9b)
+- [인기상품조회 구현 및 테스트 코드 작성](https://github.com/jissuk/hhplus_eCommerce_java/pull/8/commits/425cf6ff013e1d507bcb4e67577aa009afb5d897)
+- [인기상품조회 Scheduled 코드 및 Repository 코드 작성](https://github.com/jissuk/hhplus_eCommerce_java/pull/8/commits/7079b9bb2b1a3264e8da4bf2a8c1b9eeca551b3b)

@@ -1,11 +1,19 @@
 package kr.hhplus.be.server.order.usecase.command;
 
+import kr.hhplus.be.server.order.usecase.dto.OrderItemRequest;
+import lombok.Builder;
 
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
-
+@Builder
 public record OrderItemCommand(Long productId, Long userId, Long orderId, Long orderItemId, Long quantity, Long price, Long totalPrice ) {
-    public static OrderItemCommand from(OrderItemRequestDTO dto){
-        return new OrderItemCommand(dto.getProductId(), dto.getUserId(), dto.getOrderId(), dto.getOrderItemId(), dto.getQuantity(), dto.getPrice(), dto.getTotalPrice());
+    public static OrderItemCommand from(OrderItemRequest dto){
+        return OrderItemCommand.builder()
+                                .productId(dto.productId())
+                                .userId(dto.userId())
+                                .orderId(dto.orderId())
+                                .quantity(dto.quantity())
+                                .price(dto.price())
+                                .build();
+
     }
 }
 

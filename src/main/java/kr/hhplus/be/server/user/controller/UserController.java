@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import kr.hhplus.be.server.common.response.CommonResponse;
 import kr.hhplus.be.server.user.usecase.ChargePointUseCase;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
-import kr.hhplus.be.server.user.usecase.dto.UserRequestDTO;
+import kr.hhplus.be.server.user.usecase.dto.UserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class UserController {
     private final ChargePointUseCase chargePointUseCase;
     @PostMapping("/chargePoint")
     @Operation(summary = "포인트 충전", description = "유저는 상품 구매를 위한 포인트를 충전합니다")
-    public ResponseEntity<CommonResponse> chargeUserPoint(@RequestBody @Valid UserRequestDTO request) {
+    public ResponseEntity<CommonResponse> chargeUserPoint(@RequestBody @Valid UserRequest request) {
 
         UserCommand command = UserCommand.from(request);
 

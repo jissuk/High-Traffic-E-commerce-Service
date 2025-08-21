@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import kr.hhplus.be.server.common.response.CommonResponse;
 import kr.hhplus.be.server.order.usecase.RegisterOrderUseCase;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
+import kr.hhplus.be.server.order.usecase.dto.OrderItemRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class OrderController {
 
     @PostMapping
     @Operation(summary = "상품 주문", description = "유저는 아직 재고가 남아있는 상품을 주문합니다.", tags = {"OrderController"})
-    public ResponseEntity<CommonResponse> createOrder(@RequestBody @Valid OrderItemRequestDTO request) {
+    public ResponseEntity<CommonResponse> createOrder(@RequestBody @Valid OrderItemRequest request) {
 
         OrderItemCommand command = OrderItemCommand.from(request);
         registerOrderUseCase.execute(command);

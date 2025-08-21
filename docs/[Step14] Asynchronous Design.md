@@ -41,5 +41,5 @@
 ---
 
 ### 4. 코드 및 테스트
-- [실시간쿠폰발급 구현 및 테스트 코드 작성](d254fd7)
-- [주석실수](d919b8b)
+- [실시간쿠폰발급 구현 및 테스트 코드 작성](https://github.com/jissuk/hhplus_eCommerce_java/pull/8/commits/d254fd7a9a77c488b8879d69da4ec74c486f04bb)
+- [주석실수](https://github.com/jissuk/hhplus_eCommerce_java/pull/8/commits/d919b8bf020686023b3e83f403b06c2c8c798acb)

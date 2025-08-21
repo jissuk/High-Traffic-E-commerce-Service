@@ -7,6 +7,7 @@ import lombok.*;
 @Getter
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserCoupon {
 
     private long id;
@@ -33,6 +34,7 @@ public class UserCoupon {
                             .couponStatus(CouponStatus.ISSUED)
                             .description(coupon.getDescription())
                             .userId(user.getId())
+                            .couponId(coupon.getId())
                             .build();
     }
 }

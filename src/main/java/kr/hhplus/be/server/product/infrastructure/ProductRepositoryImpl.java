@@ -5,6 +5,7 @@ import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.domain.model.Product;
+import kr.hhplus.be.server.product.usecase.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -34,12 +35,6 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> findAll() {
-        return jpaProductRepository.findAll()
-                .stream().map(productMapper::toDomain).collect(Collectors.toList());
-    }
-
-    @Override
     public Product save(Product product) {
         return productMapper.toDomain(
                 jpaProductRepository.save(productMapper.toEntity(product))
@@ -47,7 +42,30 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Object[]> findPopularProduct3Days() {
-        return jpaProductRepository.findPopularProduct3Days();
+    public List<Product> findAll() {
+        List<Product> products = jpaProductRepository.findAll()
+                .stream()
+                .map(productMapper::toDomain)
+                .toList();
+
+        if (products.isEmpty()) {
+            throw new ProductNotFoundException();
+        }
+
+        return products;
+    }
+
+    @Override
+    public List<Product> findPopularProduct3Days() {
+        List<Product> products = jpaProductRepository.findPopularProduct3Days()
+                .stream()
+                .map(productMapper::toDomain)
+                .toList();
+
+        if (products.isEmpty()) {
+            throw new ProductNotFoundException();
+        }
+
+        return products;
     }
 }

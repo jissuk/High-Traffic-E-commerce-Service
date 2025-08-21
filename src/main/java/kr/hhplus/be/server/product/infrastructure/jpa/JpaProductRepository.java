@@ -18,17 +18,20 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
     Optional<ProductEntity> findByIdForUpdate(long productId);
 
     @Query(value = """
-        SELECT pr.id AS productId,
-               SUM(oi.quantity) AS totalSold
+        SELECT 
+            pr.id,
+            pr.product_name,
+            pr.price,
+            pr.quantity
         FROM payments p
         JOIN order_items oi ON p.order_item_id = oi.id
         JOIN products pr ON oi.product_id = pr.id
         WHERE p.create_at >= CURDATE() - INTERVAL 3 DAY
-          AND p.create_at < CURDATE() 
-          AND p.payment_status = 'COMPLETED'
+            AND p.create_at < CURDATE() 
+            AND p.payment_status = 'COMPLETED'
         GROUP BY pr.id
-        ORDER BY totalSold DESC
+        ORDER BY SUM(oi.quantity) DESC
         LIMIT 3
         """, nativeQuery = true)
-    List<Object[]> findPopularProduct3Days();
+    List<ProductEntity> findPopularProduct3Days();
 }

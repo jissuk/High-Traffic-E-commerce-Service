@@ -22,6 +22,7 @@ public class Coupon {
         }
     }
     public void decreaseQuantity() {
+        checkQuantity();
         this.quantity -= 1;
     }
 }

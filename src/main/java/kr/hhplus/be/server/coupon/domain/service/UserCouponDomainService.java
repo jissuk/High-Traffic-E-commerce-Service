@@ -9,8 +9,8 @@ public class UserCouponDomainService {
 
     public void applyCoupon(OrderItem orderItem, UserCoupon userCoupon) {
         userCoupon.useCheckCoupon();
-        orderItem.deductCouponAmount(userCoupon.getDiscount());
         userCoupon.useCoupon();
+        orderItem.deductCouponAmount(userCoupon.getDiscount());
     }
 
 }

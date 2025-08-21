@@ -17,10 +17,11 @@ class TestcontainersConfiguration {
 		MYSQL_CONTAINER = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))
 			.withDatabaseName("hhplus")
 			.withUsername("test")
-			.withPassword("test");
+			.withPassword("test")
+		    .withEnv("TZ", "Asia/Seoul"); // 컨테이너 시간대 설정
 		MYSQL_CONTAINER.start();
 
-		System.setProperty("spring.datasource.url", MYSQL_CONTAINER.getJdbcUrl() + "?characterEncoding=UTF-8&serverTimezone=UTC");
+		System.setProperty("spring.datasource.url", MYSQL_CONTAINER.getJdbcUrl() + "?characterEncoding=UTF-8&serverTimezone=Asia/Seoul");
 		System.setProperty("spring.datasource.username", MYSQL_CONTAINER.getUsername());
 		System.setProperty("spring.datasource.password", MYSQL_CONTAINER.getPassword());
 

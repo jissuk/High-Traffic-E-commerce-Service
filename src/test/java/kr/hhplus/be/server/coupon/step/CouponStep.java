@@ -21,6 +21,9 @@ public class CouponStep {
     public static UserCouponCommand 유저쿠폰커맨드_기본값(){
         return new UserCouponCommand(1L, 1L);
     }
+    public static UserCouponCommand 유저쿠폰커맨드_유저ID지정(Long userId){
+        return new UserCouponCommand(userId, 1L);
+    }
 
     public static UserCouponRequest 유저쿠폰요청_기본값(){
         return UserCouponRequest.builder()

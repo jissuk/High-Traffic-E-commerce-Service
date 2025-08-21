@@ -2,6 +2,7 @@ package kr.hhplus.be.server.order.step;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.order.domain.model.*;
+import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderItemRequest;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import org.springframework.http.MediaType;
@@ -17,7 +18,15 @@ public class OrderStep {
 
     private static String PATH_URL = "/orders";
 
-
+    public static OrderItemCommand 주문커맨드_기본값(){
+        return OrderItemCommand.builder()
+                .productId(1L)
+                .userId(1L)
+                .orderId(1L)
+                .quantity(2L)
+                .price(3000L)
+                .build();
+    }
 
     public static OrderEntity 주문엔티티_기본값(UserEntity user){
         return OrderEntity.builder()

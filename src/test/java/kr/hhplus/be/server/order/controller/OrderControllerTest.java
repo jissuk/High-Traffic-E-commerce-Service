@@ -23,7 +23,7 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 @DisplayName("주문 관련 테스트")

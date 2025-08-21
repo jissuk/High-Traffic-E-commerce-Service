@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
+import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.common.sender.OrderDataSender;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
@@ -25,18 +26,18 @@ import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDate;
-import java.util.concurrent.ThreadLocalRandom;
+import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
 
 
 @UseCase
 @RequiredArgsConstructor
 public class RegisterPaymentUseCase {
-
-    private final RedisTemplate<String, Object> redis;
-    private final ObjectMapper objectMapper;
+    // 수정중1
+    private final RedisTemplate<String, Long> redis;
 
     private final UserCouponDomainService userCouponDomainService;
     private final PaymentDomainService paymentDomainService;
@@ -49,27 +50,39 @@ public class RegisterPaymentUseCase {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
+    private final TransactionTemplate transactionTemplate;
+
     private final OrderDataSender orderDataSender;
 
-    @DistributedLock(key = "'payment:register:' + #command.paymentId")
+    // RedisKey
+    @DistributedLock(key = "T(kr.hhplus.be.server.common.constant.RedisKey.Payment).LOCK_PAYMENT_REGISTER + #command.paymentId + ':lock'")
     @Transactional
     public void execute(PaymentCommand command) throws JsonProcessingException {
 
         Payment payment = paymentRepository.findById(command.paymentId());
         User user = userRepository.findById(command.userId());
-        OrderItem orderItem = orderItemRepository.findById(command.orderItemId());
         Order order = orderRepository.findById(command.orderId());
+        OrderItem orderItem = orderItemRepository.findById(command.orderItemId());
         Product product = productRepository.findById(command.productId());
 
+        useCoupon(command, orderItem);
+        processPayment(payment, user, order, orderItem, product);
+
+        recordProductSale(product, orderItem);
+
+        //        orderDataSender.send(orderItem);
+    }
+
+    private void useCoupon(PaymentCommand command, OrderItem orderItem) {
         if (command.couponId() != null) {
             UserCoupon userCoupon = userCouponRepository.findByCouponId(command.couponId());
 
             userCouponDomainService.applyCoupon(orderItem, userCoupon);
-
-            orderItem = orderItemRepository.save(orderItem);
             userCouponRepository.save(userCoupon);
         }
+    }
 
+    private void processPayment(Payment payment, User user, Order order, OrderItem orderItem, Product product) {
         user.deductPoint(orderItem.getTotalPrice());
         PointHistory pointHistory = PointHistory.use(user);
 
@@ -82,19 +95,16 @@ public class RegisterPaymentUseCase {
         productRepository.save(product);
         paymentRepository.save(payment);
         orderRepository.save(order);
+        orderItemRepository.save(orderItem);
+    }
 
-        String zsetKey = "sales:" + LocalDate.now();
-        String hashKey = "PopularProduct";
-
-        // productId(pk), product
-        redis.opsForHash().put(hashKey, product.getId(), objectMapper.writeValueAsString(product));
+    private void recordProductSale(Product product, OrderItem orderItem) {
+        String zsetKey = RedisKey.Product.productSalesKey(LocalDate.now(ZoneId.of("Asia/Seoul")).toString());
         redis.opsForZSet().incrementScore(zsetKey, product.getId(), orderItem.getQuantity());
 
-        long baseTtlSeconds = TimeUnit.DAYS.toSeconds(5);  // 5일
+        long baseTtlSeconds = TimeUnit.DAYS.toSeconds(5);
 
         redis.expire(zsetKey, baseTtlSeconds, TimeUnit.SECONDS);
-        redis.expire(hashKey, baseTtlSeconds, TimeUnit.SECONDS);
-
-        //        orderDataSender.send(orderItem);
     }
+
 }

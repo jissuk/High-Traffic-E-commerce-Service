@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.product.usecase.integration;
 
 
+import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.product.usecase.ClearProductSalesCacheUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -24,26 +26,19 @@ public class ClearProductSalesCacheUseCaseTest {
     private ClearProductSalesCacheUseCase clearProductSalesCacheUseCase;
 
     @Autowired
-    private RedisTemplate<String, Object> redis;
+    private RedisTemplate<String, Long> redis;
 
     @Test
     void 인기상품캐시삭제() {
+        // given
+        String zsetKey = RedisKey.Product.productSalesKey(LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(4).toString());
+        redis.opsForZSet().add(zsetKey, 1L, 2L);
 
         // when
         clearProductSalesCacheUseCase.execute();
 
         // then
-        String hashKey = "PopularProduct";
-        String zsetKey = "sales:" + LocalDate.now().minusDays(4);
-
-        Boolean productExists = redis.hasKey(hashKey);
         Boolean salesExists = redis.hasKey(zsetKey);
-
-        // given
-        assertAll(
-            ()-> assertThat(productExists).isFalse(),
-            ()-> assertThat(salesExists).isFalse()
-        );
-
+        assertThat(salesExists).isFalse();
     }
 }

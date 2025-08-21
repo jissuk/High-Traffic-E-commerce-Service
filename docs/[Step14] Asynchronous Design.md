@@ -1,4 +1,4 @@
-## [Step14] Asynchronous Design.md
+## [Step14] Asynchronous Design Report
 - **선착순 쿠폰발급 기능에 대해 Redis 기반의 설계**  
 - **적절하게 동작할 수 있도록 쿠폰 발급 로직을 개선해 제출**
 - **시스템 ( 랭킹, 비동기 ) 디자인 설계 및 개발 후 회고 내용을 담은 보고서 제출**

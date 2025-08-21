@@ -10,20 +10,20 @@
 ---
 
 ### 2. 선착순 쿠폰 발급 구현 방식
-0. Redis에 쿠폰 수량 관리
+0. **Redis에 쿠폰 수량 관리**
    - Key 형태: `coupon:issue:!couponId!:quantity`
    - 쿠폰의 남은 수량을 저장
-1. 중복 발급 체크
+1. **중복 발급 체크**
    - BitMap 자료구조 사용
    - Key: `coupon:issue:!userId!:coupon:!couponId!:issued`
    - 이미 발급된 경우 중복 방지
-2. 쿠폰 수량 감소
+2. **쿠폰 수량 감소**
    - `coupon:issue:!couponId!:quantity` Key의 값을 `decrement()`로 **원자적 감소**
-3. 비동기 처리를 위한 Queue 등록
+3. **비동기 처리를 위한 Queue 등록**
    - Sorted Set 자료구조 사용: `coupon:issue:queue`
    - Value: `userId:couponId` (예: `"1:1"`)
    - Score: 현재 시각(밀리초)
-4. DB 등록 처리
+4. **DB 등록 처리**
    - `@Scheduled`를 통해 매 초마다 `coupon:issue:queue`에서 score 기준으로 **50개씩 `popMin()`**
    - 조회한 값으로 `userCoupon`을 DB에 등록
 

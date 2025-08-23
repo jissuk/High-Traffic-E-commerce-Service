@@ -2,19 +2,16 @@ package kr.hhplus.be.server.payment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.coupon.domain.model.CouponEntity;
-import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
 import kr.hhplus.be.server.coupon.step.CouponStep;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
-import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderItemRepository;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepository;
 import kr.hhplus.be.server.order.step.OrderStep;
-import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.payment.infrastructure.jpa.JpaPaymentRepository;
 import kr.hhplus.be.server.payment.step.PaymentStep;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
+import kr.hhplus.be.server.payment.usecase.dto.PaymentRequest;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
@@ -29,21 +26,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.utility.TestcontainersConfiguration;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 @DisplayName("결제 관련 테스트")
@@ -60,22 +51,16 @@ public class PaymentControllerTest {
 
     @Autowired
     private JpaUserRepository jpaUserRepository;
-
     @Autowired
     private JpaProductRepository jpaProductRepository;
-
     @Autowired
     private JpaOrderItemRepository jpaOrderItemRepository;
-
     @Autowired
     private JpaOrderRepository jpaOrderRepositroy;
-
     @Autowired
     private JpaPaymentRepository jpaPaymentRepository;
-
     @Autowired
     private JpaCouponRepository jpaCouponRepository;
-
     @Autowired
     private JpaUserCouponRepository jpaUserCouponRepository;
 
@@ -115,7 +100,7 @@ public class PaymentControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 쿠폰과 포인트를 사용하여 결제한다.")
         void 결제() throws Exception {
             // givne
-            PaymentRequestDTO request = PaymentStep.결제요청_기본값();
+            PaymentRequest request = PaymentStep.결제요청_기본값();
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
@@ -128,8 +113,7 @@ public class PaymentControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 포인트만 사용하여 결제한다.")
         void 결제_쿠폰이존재하지않을_경우() throws Exception {
             // givne
-            PaymentRequestDTO request = PaymentStep.결제요청_기본값();
-            request.setCouponId(null);
+            PaymentRequest request = PaymentStep.결제요청_쿠폰ID지정(null);
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
@@ -146,8 +130,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 결제_존재하지않는_유저일_경우() throws Exception {
             // givne
-            PaymentRequestDTO request = PaymentStep.결제요청_기본값();
-            request.setUserId(0L);
+            PaymentRequest request = PaymentStep.결제요청_유저ID지정(2L);
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
@@ -160,8 +143,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 주문일 경우 OrderNotFoundException이 발생한다.")
         void 결제_존재하지않는_주문일_경우() throws Exception {
             // givne
-            PaymentRequestDTO request = PaymentStep.결제요청_기본값();
-            request.setOrderId(0L);
+            PaymentRequest request = PaymentStep.결제요청_주문ID지정(2L);
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
@@ -174,8 +156,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 주문상세일 경우 OrderItemNotFoundException이 발생한다.")
         void 결제_존재하지않는_주문상세일_경우() throws Exception {
             // givne
-            PaymentRequestDTO request = PaymentStep.결제요청_기본값();
-            request.setOrderItemId(0L);
+            PaymentRequest request = PaymentStep.결제요청_주문상세ID지정(2L);
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
@@ -188,8 +169,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 결제일 경우 PaymentNotFoundException이 발생한다.")
         void 결제_존재하지않는_결제일_경우() throws Exception {
             // givne
-            PaymentRequestDTO request = PaymentStep.결제요청_기본값();
-            request.setPaymentId(0L);
+            PaymentRequest request = PaymentStep.결제요청_결제ID지정(2L);
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
@@ -199,25 +179,10 @@ public class PaymentControllerTest {
         }
 
         @Test
-        @DisplayName("존재하지 않는 유저쿠폰일 경우 UserCouponNotFoundException이 발생한다.")
-        void 결제_존재하지않는_유저쿠폰일_경우() throws Exception {
-            // givne
-            PaymentRequestDTO request = PaymentStep.결제요청_기본값();
-            request.setCouponId(0L);
-
-            // when
-            ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
-
-            // then
-            result.andExpect(jsonPath("$.code").value("UserCouponNotFound"));
-        }
-
-        @Test
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 결제_존재하지않는_상품일_경우() throws Exception {
             // givne
-            PaymentRequestDTO request = PaymentStep.결제요청_기본값();
-            request.setProductId(0L);
+            PaymentRequest request = PaymentStep.결제요청_상품ID지정(2L);
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);

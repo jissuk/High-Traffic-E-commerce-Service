@@ -36,6 +36,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 
 	// jooq
 	implementation("org.jooq:jooq:3.19.7")
@@ -43,8 +44,8 @@ dependencies {
 	implementation("org.jooq:jooq-meta:3.19.7")
 
 	// lombok
-	implementation(group = "org.projectlombok", name = "lombok", version = "1.18.38")
-	annotationProcessor("org.projectlombok:lombok:1.18.38")
+	implementation("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
 
     // DB
 	runtimeOnly("com.mysql:mysql-connector-j")

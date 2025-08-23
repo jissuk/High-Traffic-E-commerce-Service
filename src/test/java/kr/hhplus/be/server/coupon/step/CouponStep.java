@@ -3,7 +3,7 @@ package kr.hhplus.be.server.coupon.step;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.coupon.domain.model.*;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
-import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequestDTO;
+import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequest;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,13 +21,31 @@ public class CouponStep {
     public static UserCouponCommand 유저쿠폰커맨드_기본값(){
         return new UserCouponCommand(1L, 1L);
     }
+    public static UserCouponCommand 유저쿠폰커맨드_유저ID지정(Long userId){
+        return new UserCouponCommand(userId, 1L);
+    }
 
-    public static UserCouponRequestDTO 유저쿠폰요청_기본값(){
-        return UserCouponRequestDTO.builder()
+    public static UserCouponRequest 유저쿠폰요청_기본값(){
+        return UserCouponRequest.builder()
                 .userId(1L)
                 .couponId(1L)
                 .build();
     }
+
+    public static UserCouponRequest 유저쿠폰요청_유저ID지정(long userId){
+        return UserCouponRequest.builder()
+                .userId(userId)
+                .couponId(1L)
+                .build();
+    }
+
+    public static UserCouponRequest 유저쿠폰요청_쿠폰ID지정(long couponId){
+        return UserCouponRequest.builder()
+                .userId(1L)
+                .couponId(couponId)
+                .build();
+    }
+
     public static Coupon 쿠폰_기본값(){
         return Coupon.builder()
                         .discount(2000L)
@@ -35,14 +53,6 @@ public class CouponStep {
                         .quantity(500L)
                         .expiredAt(LocalDateTime.now().plusMonths(3))
                         .build();
-    }
-
-    public static UserCoupon 유저쿠폰_기본값(){
-        return UserCoupon.builder()
-                .discount(3000L)
-                .couponStatus(CouponStatus.ISSUED)
-                .description("여름 특별 할인 쿠폰")
-                .build();
     }
 
     public static UserCoupon 유저쿠폰_기본값(long userId, long couponId){
@@ -76,7 +86,7 @@ public class CouponStep {
     }
 
 
-    public static ResultActions 선착순쿠폰발급요청(MockMvc mockMvc, ObjectMapper objectMapper, UserCouponRequestDTO request) throws Exception {
+    public static ResultActions 선착순쿠폰발급요청(MockMvc mockMvc, ObjectMapper objectMapper, UserCouponRequest request) throws Exception {
         return mockMvc.perform(post(PATH_URL + "/issue")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))

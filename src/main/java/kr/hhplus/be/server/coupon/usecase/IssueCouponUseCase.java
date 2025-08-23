@@ -2,38 +2,57 @@ package kr.hhplus.be.server.coupon.usecase;
 
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.coupon.domain.model.Coupon;
-import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
-import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
-import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
+import kr.hhplus.be.server.common.constant.RedisKey;
+import kr.hhplus.be.server.coupon.exception.CouponOutOfStockException;
+import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
-import kr.hhplus.be.server.user.domain.model.User;
-import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+import java.util.concurrent.TimeUnit;
 
 
 @UseCase
 @RequiredArgsConstructor
 public class IssueCouponUseCase {
 
-    private final UserRepository userRepository;
-    private final CouponRepository couponRepository;
-    private final UserCouponRepository userCouponRepository;
+    private final RedisTemplate<String, Long> redis;
+    private final StringRedisTemplate couponRedis;
 
-    @DistributedLock(key = "'coupon:issue:' + #command.userId")
-    @Transactional
+    @DistributedLock(key = "T(kr.hhplus.be.server.common.constant.RedisKey.Coupon).LOCK_COUPON_ISSUE + #command.userId + ':lock'")
     public void execute(UserCouponCommand command) {
+        validateDuplicateIssue(command);
+        decrementQuantity(command);
+        queueCouponIssue(command);
+    }
 
-        Coupon coupon = couponRepository.findById(command.couponId());
-        User user = userRepository.findById(command.userId());
 
-        coupon.checkQuantity();
-        coupon.decreaseQuantity();
+    private void validateDuplicateIssue(UserCouponCommand command) {
+        String issuedKey = RedisKey.Coupon.userCouponIssuedKey(command.userId(), command.couponId());
+        Boolean issuedResult = redis.opsForValue().getBit(issuedKey, command.userId());
 
-        UserCoupon userCoupon = UserCoupon.createBeforeUserCoupon(coupon, user);
+        if(!issuedResult){
+            redis.opsForValue().setBit(issuedKey, command.userId(), true);
+        } else{
+            throw new DuplicateCouponIssueException();
+        }
+    }
 
-        couponRepository.save(coupon);
-        userCouponRepository.save(userCoupon);
+    private void decrementQuantity(UserCouponCommand command) {
+        String quantityKey = RedisKey.Coupon.issueCouponQuantityKey(command.couponId());
+        Long quantity = redis.opsForValue().decrement(quantityKey);
+
+        if(quantity == null || quantity < 0){
+            throw new CouponOutOfStockException();
+        }
+    }
+
+    private void queueCouponIssue(UserCouponCommand command) {
+        String queueKey = RedisKey.Coupon.COUPON_ISSUE_QUEUE;
+        String value = command.userId() + ":" + command.couponId();
+
+        couponRedis.opsForZSet().add(queueKey, value,System.currentTimeMillis());
+        couponRedis.expire(queueKey, 5, TimeUnit.MINUTES);
     }
 }

@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.product.usecase.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderItemRepository;
 import kr.hhplus.be.server.order.step.OrderStep;
@@ -10,9 +10,11 @@ import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
+import kr.hhplus.be.server.product.scheduler.ProductSalesScheduler;
 import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.product.usecase.GetPopularProductUseCase;
-import kr.hhplus.be.server.product.usecase.dto.ProductResponseDTO;
+import kr.hhplus.be.server.product.usecase.RegisterTop3DaysProductsUsecase;
+import kr.hhplus.be.server.product.usecase.dto.ProductResponse;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,22 +30,22 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Import(TestcontainersConfiguration.class)
 @DisplayName("상품 관련 테스트")
 public class GetPopularProductUseCaseTest {
 
     @Autowired
     private GetPopularProductUseCase getPopularProductUseCase;
-
     @Autowired
-    private RedisTemplate<String, Object> redis;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private RegisterTop3DaysProductsUsecase registerTop3DaysProductsUsecase;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private RedisTemplate<String, Long> redis;
 
     @Autowired
     private JpaPaymentRepository jpaPaymentRepository;
@@ -52,11 +54,11 @@ public class GetPopularProductUseCaseTest {
     @Autowired
     private JpaProductRepository jpaProductRepository;
 
-
-    void clearTestDBData() {
-        jdbcTemplate.execute("TRUNCATE TABLE products;");
-        jdbcTemplate.execute("TRUNCATE TABLE order_items;");
-        jdbcTemplate.execute("TRUNCATE TABLE payments;");
+    @BeforeEach
+    void setUp() {
+        clearTestDBData();
+        clearTestRedisData();
+        initTestDBData();
     }
 
     private void clearTestRedisData() {
@@ -67,7 +69,13 @@ public class GetPopularProductUseCaseTest {
         }
     }
 
-    void initDBTestDBData(){
+    void clearTestDBData() {
+        jdbcTemplate.execute("TRUNCATE TABLE products;");
+        jdbcTemplate.execute("TRUNCATE TABLE order_items;");
+        jdbcTemplate.execute("TRUNCATE TABLE payments;");
+    }
+
+    void initTestDBData(){
         ProductEntity product1 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
         ProductEntity product2 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
         ProductEntity product3 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
@@ -119,38 +127,30 @@ public class GetPopularProductUseCaseTest {
         Product product3 = ProductStep.상품_기본값_ID지정(3);
         Product product4 = ProductStep.상품_기본값_ID지정(4);
 
-        int orderQuantity1 = 5;
-        int orderQuantity2 = 3;
-        int orderQuantity3 = 2;
-        int orderQuantity4 = 1;
+        LocalDate toDay = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        String salesKeyD1 = RedisKey.Product.productSalesKey(toDay.minusDays(1).toString());
+        String salesKeyD2 = RedisKey.Product.productSalesKey(toDay.minusDays(2).toString());
+        String salesKeyD3 = RedisKey.Product.productSalesKey(toDay.minusDays(3).toString());
+        String salesKeyD4 = RedisKey.Product.productSalesKey(toDay.minusDays(4).toString());
 
-        // product1 : 예상 스코어 5
-        redis.opsForZSet().incrementScore("sales:" + LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(1),
-                                                                            product1.getId(),
-                                                                            orderQuantity1);
-        /* 4일전 => 집계되지 않음 */
-        redis.opsForZSet().incrementScore("sales:" + LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(4),
-                                                                            product1.getId(),
-                                                                            orderQuantity1);
-        redis.opsForHash().put("PopularProduct", product1.getId(), objectMapper.writeValueAsString(product1));
+        /*
+        * product1 : 예상 스코어 5
+        * product2 : 예상 스코어 6
+        * product3 : 예상 스코어 4
+        * product4 : 예상 스코어 1
+        * */
+        redis.opsForZSet().incrementScore(salesKeyD1, product1.getId(), 5);
 
-        // product2 : 예상 스코어 6
-        for(int i = 1; i < 3; i++){
-            redis.opsForZSet().incrementScore("sales:" + LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(i),
-                                                                                product2.getId(),
-                                                                                orderQuantity2);
-            redis.opsForHash().put("PopularProduct", product2.getId(), objectMapper.writeValueAsString(product2));
-        }
-        // product3 : 예상 스코어 4
-        for(int i = 2; i < 4; i++){
-            redis.opsForZSet().incrementScore("sales:" + LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(i),
-                                                                                product3.getId(),
-                                                                                orderQuantity3);
-            redis.opsForHash().put("PopularProduct", product3.getId(), objectMapper.writeValueAsString(product3));
-        }
-        // product4 : 예상 스코어 1
-        redis.opsForZSet().incrementScore("sales:" + LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(2),product4.getId(),orderQuantity4);
-        redis.opsForHash().put("PopularProduct", product4.getId(), objectMapper.writeValueAsString(product4));
+        // 4일전 => 집계되지 않음
+        redis.opsForZSet().incrementScore(salesKeyD4, product1.getId(), 5);
+
+        redis.opsForZSet().incrementScore(salesKeyD1, product2.getId(), 3);
+        redis.opsForZSet().incrementScore(salesKeyD2, product2.getId(), 3);
+
+        redis.opsForZSet().incrementScore(salesKeyD2, product3.getId(), 2);
+        redis.opsForZSet().incrementScore(salesKeyD3, product3.getId(), 2);
+
+        redis.opsForZSet().incrementScore(salesKeyD1,product4.getId(),1);
 
         // 예상 순위 인기 상품 3개
         // product2 -> product1 -> product3 -> product4(탈락)
@@ -164,38 +164,36 @@ public class GetPopularProductUseCaseTest {
         @DisplayName("최근 3일 판매량이 높은 상위 3개의 제품을 Redis의 캐시에서 조회한다.")
         void 인기판매상품조회_Redis() throws Exception {
             // given
-            clearTestRedisData();
             initTestRedisData();
+            registerTop3DaysProductsUsecase.execute();
 
             // when
-            List<ProductResponseDTO> result = getPopularProductUseCase.execute();
+            List<ProductResponse> result = getPopularProductUseCase.execute();
 
             // then
-            assertThat(result).hasSize(3);
-            assertThat(result.get(0).getId()).isEqualTo(2L);
-            assertThat(result.get(1).getId()).isEqualTo(1L);
-            assertThat(result.get(2).getId()).isEqualTo(3L);
+            assertAll(
+                ()-> assertThat(result).as("조회 데이터 개수").hasSize(3),
+                ()-> assertThat(result.get(0).id()).as("1순위").isEqualTo(2L),
+                ()-> assertThat(result.get(1).id()).as("2순위").isEqualTo(1L),
+                ()-> assertThat(result.get(2).id()).as("3순위").isEqualTo(3L)
+            );
         }
 
         @Test
         @DisplayName("최근 3일 판매량이 높은 상위 3개의 제품을 Mysql에서 조회한다.")
         void 인기판매상품조회_Mysql() throws Exception {
             // given
-            clearTestDBData();
-            clearTestRedisData();
-            initDBTestDBData();
 
             // when
-            List<ProductResponseDTO> result = getPopularProductUseCase.execute();
-            for(ProductResponseDTO productResponseDTO : result){
-                System.out.println(productResponseDTO);
-            }
-
+            List<ProductResponse> result = getPopularProductUseCase.execute();
             // then
-            assertThat(result).hasSize(3);
-            assertThat(result.get(0).getId()).isEqualTo(4L);
-            assertThat(result.get(1).getId()).isEqualTo(2L);
-            assertThat(result.get(2).getId()).isEqualTo(1L);
+            assertAll(
+                ()-> assertThat(result).as("조회 데이터 개수").hasSize(3),
+                ()-> assertThat(result.get(0).id()).as("1순위").isEqualTo(4L),
+                ()-> assertThat(result.get(1).id()).as("2순위").isEqualTo(2L),
+                ()-> assertThat(result.get(2).id()).as("3순위").isEqualTo(1L)
+            );
+
         }
     }
 }

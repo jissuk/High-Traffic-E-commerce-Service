@@ -1,9 +1,6 @@
 package kr.hhplus.be.server.common.exception;
 
-import kr.hhplus.be.server.coupon.exception.CouponNotFoundException;
-import kr.hhplus.be.server.coupon.exception.CouponOutOfStockException;
-import kr.hhplus.be.server.coupon.exception.InvalidCouponException;
-import kr.hhplus.be.server.coupon.exception.UserCouponNotFoundException;
+import kr.hhplus.be.server.coupon.exception.*;
 import kr.hhplus.be.server.order.exception.OrderItemNotFoundException;
 import kr.hhplus.be.server.order.exception.OrderNotFoundException;
 import kr.hhplus.be.server.payment.exception.PaymentNotFoundException;
@@ -122,4 +119,13 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse("CouponNotFound", e.getMessage()));
     }
+
+    @ExceptionHandler(DuplicateCouponIssueException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateCouponIssue(DuplicateCouponIssueException e){
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse("DuplicateCouponIssue", e.getMessage()));
+    }
+
 }

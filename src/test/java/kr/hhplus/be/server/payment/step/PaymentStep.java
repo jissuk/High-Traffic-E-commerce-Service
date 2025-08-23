@@ -5,14 +5,13 @@ import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.payment.domain.model.PaymentStatus;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequestDTO;
+import kr.hhplus.be.server.payment.usecase.dto.PaymentRequest;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -61,8 +60,8 @@ public class PaymentStep {
                 .build();
     }
 
-    public static PaymentRequestDTO 결제요청_기본값(){
-        return PaymentRequestDTO.builder()
+    public static PaymentRequest 결제요청_기본값(){
+        return PaymentRequest.builder()
                                 .paymentId(1L)
                                 .userId(1L)
                                 .orderId(1L)
@@ -71,10 +70,73 @@ public class PaymentStep {
                                 .productId(1L)
                                 .build();
     }
+    public static PaymentRequest 결제요청_쿠폰ID지정(Long couponId){
+        return PaymentRequest.builder()
+                                .paymentId(1L)
+                                .userId(1L)
+                                .orderId(1L)
+                                .orderItemId(1L)
+                                .couponId(couponId)
+                                .productId(1L)
+                                .build();
+    }
 
+    public static PaymentRequest 결제요청_유저ID지정(long userId){
+        return PaymentRequest.builder()
+                .paymentId(1L)
+                .userId(userId)
+                .orderId(1L)
+                .orderItemId(1L)
+                .couponId(1L)
+                .productId(1L)
+                .build();
+    }
 
+    public static PaymentRequest 결제요청_주문ID지정(long orderId){
+        return PaymentRequest.builder()
+                .paymentId(1L)
+                .userId(1L)
+                .orderId(orderId)
+                .orderItemId(1L)
+                .couponId(1L)
+                .productId(1L)
+                .build();
+    }
 
-    public static ResultActions 결제요청(MockMvc mockMvc, ObjectMapper objectMapper, PaymentRequestDTO request) throws Exception {
+    public static PaymentRequest 결제요청_주문상세ID지정(long orderItemId){
+        return PaymentRequest.builder()
+                .paymentId(1L)
+                .userId(1L)
+                .orderId(1L)
+                .orderItemId(orderItemId)
+                .couponId(1L)
+                .productId(1L)
+                .build();
+    }
+
+    public static PaymentRequest 결제요청_결제ID지정(long paymentId){
+        return PaymentRequest.builder()
+                .paymentId(paymentId)
+                .userId(1L)
+                .orderId(1L)
+                .orderItemId(1L)
+                .couponId(1L)
+                .productId(1L)
+                .build();
+    }
+
+    public static PaymentRequest 결제요청_상품ID지정(long productId){
+        return PaymentRequest.builder()
+                .paymentId(1L)
+                .userId(1L)
+                .orderId(1L)
+                .orderItemId(1L)
+                .couponId(1L)
+                .productId(productId)
+                .build();
+    }
+
+    public static ResultActions 결제요청(MockMvc mockMvc, ObjectMapper objectMapper, PaymentRequest request) throws Exception {
 
         return mockMvc.perform(post(PATH_URL)
                                     .content(objectMapper.writeValueAsString(request))

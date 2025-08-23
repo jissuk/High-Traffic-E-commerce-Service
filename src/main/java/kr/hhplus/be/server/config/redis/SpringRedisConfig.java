@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.config.redis;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,36 +9,30 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableRedisRepositories
 public class SpringRedisConfig {
 
-    @Value("${spring.data.redis.host}")
-    private String host;
+    private final RedisProperties properties;
 
-    @Value("${spring.data.redis.port}")
-    private int port;
-
-    // Spring Data Redis용 연결 (캐시, 저장소)
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(host, port);
+        return new LettuceConnectionFactory(properties.getHost(), properties.getPort());
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<String, Long> redisTemplate() {
+        RedisTemplate<String, Long> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
 
-
-        // 키는 문자열로 직렬화 (읽기 편하게)
         template.setKeySerializer(new StringRedisSerializer());
-
-        // 값은 JSON 직렬화 (사람이 읽기 편하게)
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(new GenericToStringSerializer<>(Long.class));
 
         return template;
     }
+
 }

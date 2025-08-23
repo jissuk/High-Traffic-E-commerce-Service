@@ -1,10 +1,10 @@
 package kr.hhplus.be.server.order.domain.model;
 
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
+import kr.hhplus.be.server.product.domain.model.Product;
 import lombok.*;
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 public class OrderItem {
@@ -29,11 +29,13 @@ public class OrderItem {
         }
     }
 
-    public static OrderItem createBeforeOrderItem(OrderItemCommand command) {
+    public static OrderItem createBeforeOrderItem(OrderItemCommand command, Order order) {
         return OrderItem.builder()
                 .quantity(command.quantity())
                 .price(command.price())
                 .totalPrice(command.price() * command.quantity())
+                .productId(command.productId())
+                .orderId(order.getId())
                 .build();
     }
 

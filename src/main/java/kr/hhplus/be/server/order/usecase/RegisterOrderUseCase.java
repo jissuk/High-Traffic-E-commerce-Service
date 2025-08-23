@@ -25,33 +25,34 @@ public class RegisterOrderUseCase {
     private final OrderRepository orderRepositroy;
     private final OrderItemRepository orderItemRepository;
 
-
-    /*
-    * 1. 주문 등록
-    * 2. 상품 수량 체크
-    * 3. 주문 상세 등록
-    * 4. 결제 등록
-    * */
     @Transactional
     public void execute(OrderItemCommand command){
         User user = userRepository.findById(command.userId());
         Product product = productRepository.findById(command.productId());
 
+        deductProductQuantity(product, command);
+
+        Order order = createAndSaveOrder(user);
+        OrderItem orderItem = createAndSaveOrderItem(command, order);
+
+        createAndSavePayment(command, orderItem);
+    }
+
+    private void deductProductQuantity(Product product, OrderItemCommand command){
+        product.deductQuantity(command.quantity());
+        productRepository.save(product);
+    }
+
+    private Order createAndSaveOrder(User user){
         Order order = Order.createBeforeOrder(user);
-        orderRepositroy.save(order);
-
-        product.checkQuantity(command.quantity());
-
-        OrderItem orderItem = OrderItem.createBeforeOrderItem(command);
-        orderItem.setProductId(product.getId());
-        orderItem.setOrderId(order.getId());
-
-        orderItemRepository.save(orderItem);
-
-        Payment payment = Payment.createBeforePayment(command);
-        payment.setUserId(user.getId());
-        payment.setOrderItemId(orderItem.getId());
-
+        return orderRepositroy.save(order);
+    }
+    private OrderItem createAndSaveOrderItem(OrderItemCommand command, Order order){
+        OrderItem orderItem = OrderItem.createBeforeOrderItem(command, order);
+        return orderItemRepository.save(orderItem);
+    }
+    private void createAndSavePayment(OrderItemCommand command, OrderItem orderItem){
+        Payment payment = Payment.createBeforePayment(command, orderItem);
         paymentRepository.save(payment);
     }
 }

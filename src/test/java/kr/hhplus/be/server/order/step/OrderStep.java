@@ -3,7 +3,7 @@ package kr.hhplus.be.server.order.step;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.order.domain.model.*;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequestDTO;
+import kr.hhplus.be.server.order.usecase.dto.OrderItemRequest;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,7 +18,15 @@ public class OrderStep {
 
     private static String PATH_URL = "/orders";
 
-
+    public static OrderItemCommand 주문커맨드_기본값(){
+        return OrderItemCommand.builder()
+                .productId(1L)
+                .userId(1L)
+                .orderId(1L)
+                .quantity(2L)
+                .price(3000L)
+                .build();
+    }
 
     public static OrderEntity 주문엔티티_기본값(UserEntity user){
         return OrderEntity.builder()
@@ -70,10 +78,9 @@ public class OrderStep {
     }
 
 
-    public static OrderItemRequestDTO 주문상세요청_기본값(){
-        return OrderItemRequestDTO.builder()
+    public static OrderItemRequest 주문상세요청_기본값(){
+        return OrderItemRequest.builder()
                                     .userId(1L)
-                                    .orderItemId(1L)
                                     .productId(1L)
                                     .orderId(1L)
                                     .quantity(1L)
@@ -81,13 +88,30 @@ public class OrderStep {
                                     .build();
     }
 
+    public static OrderItemRequest 주문상세요청_유저ID지정(long userId){
+        return OrderItemRequest.builder()
+                .userId(userId)
+                .productId(1L)
+                .orderId(1L)
+                .quantity(1L)
+                .price(3000L)
+                .build();
+    }
 
-    public static ResultActions 주문요청(MockMvc mockMvc, ObjectMapper objectMapper, OrderItemRequestDTO request) throws Exception {
+    public static OrderItemRequest 주문상세요청_상품ID지정(long productId){
+        return OrderItemRequest.builder()
+                .userId(1L)
+                .productId(productId)
+                .orderId(1L)
+                .quantity(1L)
+                .price(3000L)
+                .build();
+    }
+
+    public static ResultActions 주문요청(MockMvc mockMvc, ObjectMapper objectMapper, OrderItemRequest request) throws Exception {
         return mockMvc.perform(post(PATH_URL)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                         .andDo(print());
     }
-
-
 }

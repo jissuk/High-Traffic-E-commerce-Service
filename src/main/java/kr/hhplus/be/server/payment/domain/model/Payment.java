@@ -1,13 +1,12 @@
 package kr.hhplus.be.server.payment.domain.model;
 
+import kr.hhplus.be.server.order.domain.model.OrderItem;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
-import kr.hhplus.be.server.payment.exception.PaymentNotFoundException;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 public class Payment {
@@ -28,11 +27,13 @@ public class Payment {
         }
     }
 
-    public static Payment createBeforePayment(OrderItemCommand command) {
+    public static Payment createBeforePayment(OrderItemCommand command, OrderItem orderItem) {
         return Payment.builder()
                         .price(command.price())
                         .paymentStatus(PaymentStatus.BEFORE_PAYMENT)
                         .createdAt(LocalDateTime.now())
+                        .userId(command.userId())
+                        .orderItemId(orderItem.getId())
                         .build();
     }
 

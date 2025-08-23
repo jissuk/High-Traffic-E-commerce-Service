@@ -44,10 +44,11 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -144,16 +145,16 @@ public class RegisterPaymentUseCaseTest {
             latch.await();
             executor.shutdown();
 
-            int successCount = 0;
-            int failureCount = 0;
+            AtomicLong successCount = new AtomicLong();
+            AtomicLong failureCount = new AtomicLong();
 
             for (Future<Void> future : futures) {
                 try {
                     future.get();
-                    successCount++;
+                    successCount.getAndIncrement();
                 } catch (ExecutionException e) {
-                    if (e.getCause() instanceof ObjectOptimisticLockingFailureException) {
-                        failureCount++;
+                    if (e.getCause() instanceof RuntimeException) {
+                        failureCount.getAndIncrement();
                     } else{
                         e.getCause().printStackTrace();
                     }
@@ -164,7 +165,15 @@ public class RegisterPaymentUseCaseTest {
             System.out.println("실패한 요청 수: " + failureCount);
 
             // then
-            assertEquals(1, successCount);
+            assertAll(
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(1L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(9L)
+            );
+
         }
 
         @Test
@@ -199,16 +208,16 @@ public class RegisterPaymentUseCaseTest {
             latch.await();
             executor.shutdown();
 
-            int successCount = 0;
-            int failureCount = 0;
+            AtomicLong successCount = new AtomicLong();
+            AtomicLong failureCount = new AtomicLong();
 
             for (Future<Void> future : futures) {
                 try {
                     future.get();
-                    successCount++;
+                    successCount.getAndIncrement();
                 } catch (ExecutionException e) {
                     if (e.getCause() instanceof ObjectOptimisticLockingFailureException) {
-                        failureCount++;
+                        failureCount.getAndIncrement();
                     } else{
                         e.getCause().printStackTrace();
                     }
@@ -219,9 +228,18 @@ public class RegisterPaymentUseCaseTest {
             System.out.println("실패한 요청 수: " + failureCount);
 
             // then
-            assertEquals(1, successCount);
             UserCouponEntity result = jpaUserCouponRepository.findByCouponId(command.couponId()).get();
-            assertEquals(CouponStatus.USED, result.getCouponStatus());
+            assertAll(
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(1L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(9L),
+                ()-> assertThat(result.getCouponStatus())
+                        .as("쿠폰 사용 상태 확인")
+                        .isEqualTo(CouponStatus.USED)
+            );
         }
 
         @Test
@@ -256,16 +274,16 @@ public class RegisterPaymentUseCaseTest {
             latch.await();
             executor.shutdown();
 
-            int successCount = 0;
-            int failureCount = 0;
+            AtomicLong successCount = new AtomicLong();
+            AtomicLong failureCount = new AtomicLong();
 
             for (Future<Void> future : futures) {
                 try {
                     future.get();
-                    successCount++;
+                    successCount.getAndIncrement();
                 } catch (ExecutionException e) {
                     if (e.getCause() instanceof ObjectOptimisticLockingFailureException) {
-                        failureCount++;
+                        failureCount.getAndIncrement();
                     } else{
                         e.getCause().printStackTrace();
                     }
@@ -276,9 +294,18 @@ public class RegisterPaymentUseCaseTest {
             System.out.println("실패한 요청 수: " + failureCount);
 
             // then
-            assertEquals(1, successCount);
             UserEntity result = jpaUserRepository.findById(command.userId()).get();
-            assertThat(result.getPoint()).isEqualTo(37000L);
+            assertAll(
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(1L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(9L),
+                ()-> assertThat(result.getPoint())
+                        .as("차감된 포인트 확인")
+                        .isEqualTo(37000L)
+            );
         }
 
 
@@ -315,16 +342,16 @@ public class RegisterPaymentUseCaseTest {
             latch.await();
             executor.shutdown();
 
-            int successCount = 0;
-            int failureCount = 0;
+            AtomicLong successCount = new AtomicLong();
+            AtomicLong failureCount = new AtomicLong();
 
             for (Future<Void> future : futures) {
                 try {
                     future.get();
-                    successCount++;
+                    successCount.getAndIncrement();
                 } catch (ExecutionException e) {
                     if (e.getCause() instanceof ObjectOptimisticLockingFailureException) {
-                        failureCount++;
+                        failureCount.getAndIncrement();
                     } else{
                         e.getCause().printStackTrace();
                     }
@@ -335,7 +362,14 @@ public class RegisterPaymentUseCaseTest {
             System.out.println("실패한 요청 수: " + failureCount);
 
             // then
-            assertEquals(100, successCount);
+            assertAll(
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(100L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(0L)
+            );
         }
 
         @Test
@@ -370,16 +404,16 @@ public class RegisterPaymentUseCaseTest {
             latch.await();
             executor.shutdown();
 
-            int successCount = 0;
-            int failureCount = 0;
+            AtomicLong successCount = new AtomicLong();
+            AtomicLong failureCount = new AtomicLong();
 
             for (Future<Void> future : futures) {
                 try {
                     future.get();
-                    successCount++;
+                    successCount.getAndIncrement();
                 } catch (ExecutionException e) {
                     if (e.getCause() instanceof ObjectOptimisticLockingFailureException) {
-                        failureCount++;
+                        failureCount.getAndIncrement();
                     } else{
                         e.getCause().printStackTrace();
                     }
@@ -390,9 +424,18 @@ public class RegisterPaymentUseCaseTest {
             System.out.println("실패한 요청 수: " + failureCount);
 
             // then
-            assertEquals(1, successCount);
             PaymentEntity result = jpaPaymentRepository.findById(command.productId()).get();
-            assertThat(result.getPaymentStatus()).isEqualTo(PaymentStatus.COMPLETED);
+            assertAll(
+                ()-> assertThat(successCount.get())
+                        .as("성공한 요청 수")
+                        .isEqualTo(1L),
+                ()-> assertThat(failureCount.get())
+                        .as("실패한 요청 수")
+                        .isEqualTo(9L),
+                ()-> assertThat(result.getPaymentStatus())
+                        .as("결제 상태 변경 확인")
+                        .isEqualTo(PaymentStatus.COMPLETED)
+            );
         }
 
         @Test
@@ -427,16 +470,16 @@ public class RegisterPaymentUseCaseTest {
             latch.await();
             executor.shutdown();
 
-            int successCount = 0;
-            int failureCount = 0;
+            AtomicLong successCount = new AtomicLong();
+            AtomicLong failureCount = new AtomicLong();
 
             for (Future<Void> future : futures) {
                 try {
                     future.get();
-                    successCount++;
+                    successCount.getAndIncrement();
                 } catch (ExecutionException e) {
                     if (e.getCause() instanceof ObjectOptimisticLockingFailureException) {
-                        failureCount++;
+                        failureCount.getAndIncrement();
                     } else{
                         e.getCause().printStackTrace();
                     }
@@ -447,9 +490,16 @@ public class RegisterPaymentUseCaseTest {
             System.out.println("실패한 요청 수: " + failureCount);
 
             // then
-            assertEquals(1, successCount);
             OrderEntity result = jpaOrderRepositroy.findById(command.productId()).get();
-            assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COMPLETED);
+            assertAll(
+                    ()-> assertThat(successCount.get())
+                            .as("성공한 요청 수")
+                            .isEqualTo(1L),
+                    ()-> assertThat(failureCount.get())
+                            .as("실패한 요청 수")
+                            .isEqualTo(9L),
+                ()-> assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COMPLETED)
+            );
         }
     }
 }

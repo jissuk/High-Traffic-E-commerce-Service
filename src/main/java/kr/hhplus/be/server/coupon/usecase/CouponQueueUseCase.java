@@ -25,10 +25,10 @@ public class CouponQueueUseCase {
     private final UserCouponRepository userCouponRepository;
 
     public static final String COUPON_ISSUE_QUEUE = "coupon:issue:queue";
-
+    public static final long REQUEST_BATCH_SIZE = 50;
     public void execute() {
 
-        Set<TypedTuple<String>> top50 = couponRedis.opsForZSet().popMin(COUPON_ISSUE_QUEUE, 50);
+        Set<TypedTuple<String>> top50 = couponRedis.opsForZSet().popMin(COUPON_ISSUE_QUEUE, REQUEST_BATCH_SIZE);
         for (TypedTuple<String> top : top50) {
 
             String[] ids = top.getValue().split(":");

@@ -24,6 +24,8 @@ public class IssueCouponUseCase {
     public static final String QUANTITY_SUFFIX = ":quantity";
     public static final String COUPON_ISSUE_QUEUE = "coupon:issue:queue";
 
+    public static final long COUPON_REQUEST_EXPIRE_MINUTES = 5;
+
     @DistributedLock(key = "T(kr.hhplus.be.server.common.constant.RedisKey.Coupon).LOCK_COUPON_ISSUE + #command.userId + ':lock'")
     public void execute(UserCouponCommand command) {
         validateDuplicateIssue(command);
@@ -57,6 +59,6 @@ public class IssueCouponUseCase {
         String value = command.userId() + ":" + command.couponId();
 
         couponRedis.opsForZSet().add(COUPON_ISSUE_QUEUE, value,System.currentTimeMillis());
-        couponRedis.expire(COUPON_ISSUE_QUEUE, 5, TimeUnit.MINUTES);
+        couponRedis.expire(COUPON_ISSUE_QUEUE, COUPON_REQUEST_EXPIRE_MINUTES, TimeUnit.MINUTES);
     }
 }

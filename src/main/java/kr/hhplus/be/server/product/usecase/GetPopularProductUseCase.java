@@ -22,12 +22,11 @@ public class GetPopularProductUseCase {
     private final ProductRepository productRepository;
 
     public static final String PRODUCT_SALES_3DAYS_TOTAL  = "product:sales:3days:total";
+    public static final long TOP_PRODUCT_SALES_LIMIT = 2;
 
     public List<ProductResponse> execute() throws JsonProcessingException {
 
-        int limit = 2;
-
-        Set<Long> redisZSetData = redis.opsForZSet().reverseRange(PRODUCT_SALES_3DAYS_TOTAL, 0, limit);
+        Set<Long> redisZSetData = redis.opsForZSet().reverseRange(PRODUCT_SALES_3DAYS_TOTAL, 0, TOP_PRODUCT_SALES_LIMIT);
 
         if (redisZSetData == null || redisZSetData.isEmpty()) {
             return popularProduct3DaysMysql();

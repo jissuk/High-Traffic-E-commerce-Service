@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.product.usecase.integration;
 
-import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderItemRepository;
 import kr.hhplus.be.server.order.step.OrderStep;
@@ -10,7 +9,6 @@ import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
-import kr.hhplus.be.server.product.scheduler.ProductSalesScheduler;
 import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.product.usecase.GetPopularProductUseCase;
 import kr.hhplus.be.server.product.usecase.RegisterTop3DaysProductsUsecase;
@@ -53,6 +51,8 @@ public class GetPopularProductUseCaseTest {
     private JpaOrderItemRepository jpaOrderItemRepository;
     @Autowired
     private JpaProductRepository jpaProductRepository;
+
+    public static final String PRODUCT_SALES_PREFIX = "product:sales:";
 
     @BeforeEach
     void setUp() {
@@ -128,10 +128,11 @@ public class GetPopularProductUseCaseTest {
         Product product4 = ProductStep.상품_기본값_ID지정(4);
 
         LocalDate toDay = LocalDate.now(ZoneId.of("Asia/Seoul"));
-        String salesKeyD1 = RedisKey.Product.productSalesKey(toDay.minusDays(1).toString());
-        String salesKeyD2 = RedisKey.Product.productSalesKey(toDay.minusDays(2).toString());
-        String salesKeyD3 = RedisKey.Product.productSalesKey(toDay.minusDays(3).toString());
-        String salesKeyD4 = RedisKey.Product.productSalesKey(toDay.minusDays(4).toString());
+
+        String salesKeyD1 = PRODUCT_SALES_PREFIX + toDay.minusDays(1);
+        String salesKeyD2 = PRODUCT_SALES_PREFIX + toDay.minusDays(2);
+        String salesKeyD3 = PRODUCT_SALES_PREFIX + toDay.minusDays(3);
+        String salesKeyD4 = PRODUCT_SALES_PREFIX + toDay.minusDays(4);
 
         /*
         * product1 : 예상 스코어 5

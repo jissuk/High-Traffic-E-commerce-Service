@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.coupon.usecase.integration;
 
-import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.coupon.step.CouponStep;
@@ -37,6 +36,8 @@ public class CouponQueueUseCaseTest {
     @Autowired
     private StringRedisTemplate couponRedis;
 
+    public static final String COUPON_ISSUE_QUEUE = "coupon:issue:queue";
+
     @BeforeEach
     void setUp() {
         initTestDBData();
@@ -52,22 +53,19 @@ public class CouponQueueUseCaseTest {
         long userId = 1L;
         long couponId = 1L;
         String value = userId + ":" + couponId;
-        String queueKey = RedisKey.Coupon.COUPON_ISSUE_QUEUE;
 
-        couponRedis.opsForZSet().add(queueKey, value, System.currentTimeMillis());
+        couponRedis.opsForZSet().add(COUPON_ISSUE_QUEUE, value, System.currentTimeMillis());
     }
 
     @Test
     void 비동기유저요청캐시조회및삭제() {
-        // given
-        String queueKey = RedisKey.Coupon.COUPON_ISSUE_QUEUE;
 
         // when
         queueUseCase.execute();
 
         // then
         assertAll(
-            ()->  assertThat(couponRedis.opsForZSet().range(queueKey, 0, 0))
+            ()->  assertThat(couponRedis.opsForZSet().range(COUPON_ISSUE_QUEUE, 0, 0))
                     .as("캐시 삭제 확인")
                     .hasSize(0),
             ()-> assertThat(userCouponRepository.findById(1L))

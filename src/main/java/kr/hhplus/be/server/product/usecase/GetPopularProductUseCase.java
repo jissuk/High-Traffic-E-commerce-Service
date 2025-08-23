@@ -2,7 +2,6 @@ package kr.hhplus.be.server.product.usecase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.product.domain.mapper.ProductRseponseMapper;
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
@@ -22,13 +21,13 @@ public class GetPopularProductUseCase {
     private final RedisTemplate<String, Long> redis;
     private final ProductRepository productRepository;
 
+    public static final String PRODUCT_SALES_3DAYS_TOTAL  = "product:sales:3days:total";
 
     public List<ProductResponse> execute() throws JsonProcessingException {
 
         int limit = 2;
-        String destKey = RedisKey.Product.PRODUCT_SALES_3DAYS_TOTAL;
 
-        Set<Long> redisZSetData = redis.opsForZSet().reverseRange(destKey, 0, limit);
+        Set<Long> redisZSetData = redis.opsForZSet().reverseRange(PRODUCT_SALES_3DAYS_TOTAL, 0, limit);
 
         if (redisZSetData == null || redisZSetData.isEmpty()) {
             return popularProduct3DaysMysql();

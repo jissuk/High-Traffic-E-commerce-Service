@@ -1,10 +1,8 @@
 package kr.hhplus.be.server.payment.usecase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.common.sender.OrderDataSender;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
@@ -54,6 +52,8 @@ public class RegisterPaymentUseCase {
 
     private final OrderDataSender orderDataSender;
 
+    public static final String PRODUCT_SALES_PREFIX = "product:sales:";
+
     // RedisKey
     @DistributedLock(key = "T(kr.hhplus.be.server.common.constant.RedisKey.Payment).LOCK_PAYMENT_REGISTER + #command.paymentId + ':lock'")
     @Transactional
@@ -99,12 +99,12 @@ public class RegisterPaymentUseCase {
     }
 
     private void recordProductSale(Product product, OrderItem orderItem) {
-        String zsetKey = RedisKey.Product.productSalesKey(LocalDate.now(ZoneId.of("Asia/Seoul")).toString());
-        redis.opsForZSet().incrementScore(zsetKey, product.getId(), orderItem.getQuantity());
+        String zSetKey = PRODUCT_SALES_PREFIX +LocalDate.now(ZoneId.of("Asia/Seoul"));
+        redis.opsForZSet().incrementScore(zSetKey, product.getId(), orderItem.getQuantity());
 
         long baseTtlSeconds = TimeUnit.DAYS.toSeconds(5);
 
-        redis.expire(zsetKey, baseTtlSeconds, TimeUnit.SECONDS);
+        redis.expire(zSetKey, baseTtlSeconds, TimeUnit.SECONDS);
     }
 
 }

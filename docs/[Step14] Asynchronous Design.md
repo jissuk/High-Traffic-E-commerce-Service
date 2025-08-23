@@ -15,7 +15,7 @@
    - 쿠폰의 남은 수량을 저장
 1. **중복 발급 체크**
    - BitMap 자료구조 사용
-   - Key: `coupon:issue:!userId!:coupon:!couponId!:issued`
+   - Key: `coupon:issue:!userId!:coupon:issued`
    - 이미 발급된 경우 중복 방지
 2. **쿠폰 수량 감소**
    - `coupon:issue:!couponId!:quantity` Key의 값을 `decrement()`로 **원자적 감소**

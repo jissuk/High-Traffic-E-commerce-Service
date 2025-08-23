@@ -41,49 +41,6 @@ RepositoryImpl은 Repository 인터페이스를 실제 데이터베이스 맞게
 <br> 인터페이스와 분리되어 있어 데이터 베이스 구현 및 변경 시 도메인이나 상위 계층에 영향을 최소화합니다.
 
 
-## 프로젝트 패키지 구조 설명
-```
-📦 kr.hhplus.be.server
-├── 📁 common                    ← 공통 유틸, 예외, 응답 등 (전 계층 공유)
-│   ├── 📁 annotation            ← 커스텀 어노테이션(DomainService, UseCase)
-│   ├── 📁 exception             ← 예외 전역 관리 관련 코드(GlobalExceptionHandler)
-│   ├── 📁 response              ← 컨트롤러 응답 객체(HttpStatus, message, data)
-│   └── 📁 sender                ← 외부 시스템 연동(추상화)
-│
-├── 📁 config.jpa               ← JPA 관련 설정 (Infra 지원)
-│
-├── 📁 external.dataplatform    ← 외부 시스템 연동 (Infra Layer)
-│   └── HttpDataSender.java
-│── 📁 coupon
-    ├── 📁 controller                    ← [Presentation Layer]
-    │   └── CouponController.java
-    │
-    ├── 📁 domain                        ← [Domain Layer]
-    │   ├── 📁 mapper                    ← DB → 도메인 변환 등 (도메인 도우미)
-    │   ├── 📁 model                     ← 순수 도메인 모델 (Entity 아님)
-    │   ├── 📁 repository                ← 저장소 인터페이스 (도메인 중심)
-    │   └── 📁 service                   ← 도메인 서비스 (비즈니스 규칙 응집)
-    │
-    ├── 📁 exception                     ← [도메인 / 유스케이스 에러 정의]
-    │   ├── CouponNotFoundException.java
-    │   ├── CouponOperationException.java
-    │   ├── CouponOutOfStockException.java
-    │   ├── InvalidCouponException.java
-    │   └── UserCouponNotFoundException.java
-    │
-    ├── 📁 facade                        ← [Application Layer / 유스케이스 조합]
-    │   └── CouponFacade.java
-    │
-    ├── 📁 infrastructure                ← [Infrastructure Layer]
-    │   ├── CouponRepositoryImpl.java     ← 구현체
-    │   └── UserCouponRepositoryImpl.java
-    │
-    └── 📁 usecase                       ← [UseCase Layer]
-        ├── 📁 dto                       ← DTO 객체들
-        ├── CheckCouponStockUseCase.java
-        ├── RegisterUserCouponUseCase.java
-        └── UseCouponUseCase.java
-
 ```
 ### 도메인 구조의 패키지 구조를 선택한 이유
 계층 구조의 패키지 구조를 선택하게 될 경우 여러 UseCase들을 한번에 파악하기 쉽다는 장점도 있지만

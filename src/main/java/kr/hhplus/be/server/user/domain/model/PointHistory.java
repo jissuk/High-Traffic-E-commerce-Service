@@ -13,12 +13,14 @@ public class PointHistory {
     private long point;
     private PointHistoryType pointHistoryType;
     private LocalDateTime createdAt;
+    private long userId;
 
     public static PointHistory charge(User user) {
         return PointHistory.builder()
                 .point(user.getPoint())
                 .pointHistoryType(PointHistoryType.CHARGE)
                 .createdAt(LocalDateTime.now())
+                .userId(user.getId())
                 .build();
     }
 
@@ -27,6 +29,7 @@ public class PointHistory {
                             .point(user.getPoint())
                             .pointHistoryType(PointHistoryType.USE)
                             .createdAt(LocalDateTime.now())
+                            .userId(user.getId())
                             .build();
     }
 

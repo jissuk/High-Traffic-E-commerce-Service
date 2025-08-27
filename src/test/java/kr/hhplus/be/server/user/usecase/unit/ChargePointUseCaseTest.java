@@ -1,16 +1,13 @@
 package kr.hhplus.be.server.user.usecase.unit;
-import kr.hhplus.be.server.user.domain.mapper.PointHistoryMapper;
-import kr.hhplus.be.server.user.domain.mapper.UserMapper;
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
-import kr.hhplus.be.server.user.domain.model.PointHistory;
 import kr.hhplus.be.server.user.domain.model.User;
-import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
 import kr.hhplus.be.server.user.usecase.ChargePointUseCase;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.usecase.dto.UserResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,14 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -39,13 +35,13 @@ public class ChargePointUseCaseTest {
     @Mock
     private UserRepository userRepository;
     @Mock
-    private PointHistoryRepository pointHistoryRepository;
+    private TransactionTemplate transactionTemplate;
+
     @Spy
-    private UserMapper userMapper;
-    @Spy
-    private PointHistoryMapper pointHistoryMapper;
+    private ApplicationEventPublisher applicationEventPublisher;
     @Spy
     private UserResponseMapper userResponseMapper;
+
 
     @Nested
     @DisplayName("포인트 충전 성공 케이스")

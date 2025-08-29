@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.coupon.usecase;
 
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.coupon.domain.model.Coupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
@@ -25,10 +24,11 @@ public class CouponQueueUseCase {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
 
+    public static final String COUPON_ISSUE_QUEUE = "coupon:issue:queue";
+    public static final long REQUEST_BATCH_SIZE = 50;
     public void execute() {
-        String queueKey = RedisKey.Coupon.COUPON_ISSUE_QUEUE;
 
-        Set<TypedTuple<String>> top50 = couponRedis.opsForZSet().popMin(queueKey, 50);
+        Set<TypedTuple<String>> top50 = couponRedis.opsForZSet().popMin(COUPON_ISSUE_QUEUE, REQUEST_BATCH_SIZE);
         for (TypedTuple<String> top : top50) {
 
             String[] ids = top.getValue().split(":");

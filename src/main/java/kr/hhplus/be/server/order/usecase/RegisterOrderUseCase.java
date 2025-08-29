@@ -14,6 +14,7 @@ import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @UseCase
 @RequiredArgsConstructor
@@ -25,17 +26,18 @@ public class RegisterOrderUseCase {
     private final OrderRepository orderRepositroy;
     private final OrderItemRepository orderItemRepository;
 
-    @Transactional
+    private final TransactionTemplate transactionTemplate;
+
     public void execute(OrderItemCommand command){
         User user = userRepository.findById(command.userId());
         Product product = productRepository.findById(command.productId());
 
-        deductProductQuantity(product, command);
-
-        Order order = createAndSaveOrder(user);
-        OrderItem orderItem = createAndSaveOrderItem(command, order);
-
-        createAndSavePayment(command, orderItem);
+        transactionTemplate.executeWithoutResult(status -> {
+            deductProductQuantity(product, command);
+            Order order = createAndSaveOrder(user);
+            OrderItem orderItem = createAndSaveOrderItem(command, order);
+            createAndSavePayment(command, orderItem);
+        });
     }
 
     private void deductProductQuantity(Product product, OrderItemCommand command){

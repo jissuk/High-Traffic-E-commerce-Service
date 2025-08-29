@@ -13,6 +13,7 @@ public class PointHistoryMapper {
                             .point(pointHistory.getPoint())
                             .pointHistoryType(pointHistory.getPointHistoryType())
                             .createdAt(pointHistory.getCreatedAt())
+                            .userId(pointHistory.getUserId())
                             .build();
     };
     public PointHistoryEntity toEntity(PointHistory pointHistory){
@@ -21,6 +22,7 @@ public class PointHistoryMapper {
                                     .point(pointHistory.getPoint())
                                     .pointHistoryType(pointHistory.getPointHistoryType())
                                     .createdAt(pointHistory.getCreatedAt())
+                                    .userId(pointHistory.getUserId())
                                     .build();
     }
 }

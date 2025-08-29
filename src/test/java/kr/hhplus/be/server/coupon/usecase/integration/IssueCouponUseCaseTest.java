@@ -1,7 +1,5 @@
 package kr.hhplus.be.server.coupon.usecase.integration;
 
-import kr.hhplus.be.server.common.constant.RedisKey;
-import kr.hhplus.be.server.coupon.domain.model.UserCouponEntity;
 import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
@@ -52,6 +50,9 @@ public class IssueCouponUseCaseTest {
     @Autowired
     private JpaUserCouponRepository jpaUserCouponRepository;
 
+    public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
+    public static final String ISSUED_SUFFIX = ":issued";
+    public static final String QUANTITY_SUFFIX = ":quantity";
     @BeforeEach
     void setUp() {
         clearTestDBData();
@@ -81,8 +82,8 @@ public class IssueCouponUseCaseTest {
     private void initTestRedisData(){
         long couponId = 1L;
         long userId = 1L;
-        String quantityKey = RedisKey.Coupon.issueCouponQuantityKey(couponId);
-        String issuedKey = RedisKey.Coupon.userCouponIssuedKey(userId, couponId);
+        String quantityKey = COUPON_ISSUE_PREFIX +couponId + QUANTITY_SUFFIX;
+        String issuedKey = COUPON_ISSUE_PREFIX + userId + ISSUED_SUFFIX;
 
         redis.opsForValue().set(quantityKey , 10L);
         redis.opsForValue().setBit(issuedKey, 0, false);
@@ -99,7 +100,7 @@ public class IssueCouponUseCaseTest {
             // given
             long couponId = 1L;
             UserCouponCommand request = CouponStep.유저쿠폰커맨드_기본값();
-            String quantityKey = RedisKey.Coupon.issueCouponQuantityKey(couponId);
+            String quantityKey = COUPON_ISSUE_PREFIX +couponId + QUANTITY_SUFFIX;
 
             // when
             issueCouponUseCase.execute(request);
@@ -152,7 +153,7 @@ public class IssueCouponUseCaseTest {
 
             // then
             long couponId = 1L;
-            String quantityKey = RedisKey.Coupon.issueCouponQuantityKey(couponId);
+            String quantityKey = COUPON_ISSUE_PREFIX +couponId + QUANTITY_SUFFIX;
 
             Long couponQuantity = redis.opsForValue().get(quantityKey);
             assertAll(

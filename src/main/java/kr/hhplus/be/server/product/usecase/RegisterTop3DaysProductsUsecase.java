@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.product.usecase;
 
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.common.constant.RedisKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.zset.Aggregate;
 import org.springframework.data.redis.connection.zset.Weights;
@@ -17,22 +16,27 @@ public class RegisterTop3DaysProductsUsecase {
 
     private final RedisTemplate<String, Long> redis;
 
-    public void execute() {
-        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
-        String salesKeyD1 = RedisKey.Product.productSalesKey(today.minusDays(1).toString());
-        String salesKeyD2 = RedisKey.Product.productSalesKey(today.minusDays(2).toString());
-        String salesKeyD3 = RedisKey.Product.productSalesKey(today.minusDays(3).toString());
+    public static final String PRODUCT_SALES_3DAYS_TOTAL  = "product:sales:3days:total";
+    public static final String PRODUCT_SALES_PREFIX = "product:sales:";
 
-        String destKey = RedisKey.Product.PRODUCT_SALES_3DAYS_TOTAL;
+    public void execute() {
+
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+
+        String salesProductKeyD1 = PRODUCT_SALES_PREFIX + today.minusDays(1);
+        String salesProductKeyD2 = PRODUCT_SALES_PREFIX + today.minusDays(2);
+        String salesProductKeyD3 = PRODUCT_SALES_PREFIX + today.minusDays(3);
+
+        long dailyWeight = 1;
 
         redis.execute((RedisCallback<Void>) connection -> {
             connection.zUnionStore(
-                    destKey.getBytes(),
+                    PRODUCT_SALES_3DAYS_TOTAL.getBytes(),
                     Aggregate.SUM,
-                    Weights.of(1, 1, 1),
-                    salesKeyD1.getBytes(),
-                    salesKeyD2.getBytes(),
-                    salesKeyD3.getBytes()
+                    Weights.of(dailyWeight, dailyWeight, dailyWeight),
+                    salesProductKeyD1.getBytes(),
+                    salesProductKeyD2.getBytes(),
+                    salesProductKeyD3.getBytes()
             );
             return null;
         });

@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.product.usecase.integration;
 
 
-import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.product.usecase.ClearProductSalesCacheUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,10 +27,12 @@ public class ClearProductSalesCacheUseCaseTest {
     @Autowired
     private RedisTemplate<String, Long> redis;
 
+    public static final String PRODUCT_SALES_PREFIX = "product:sales:";
+
     @Test
     void 인기상품캐시삭제() {
         // given
-        String zsetKey = RedisKey.Product.productSalesKey(LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(4).toString());
+        String zsetKey = PRODUCT_SALES_PREFIX + LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(4);
         redis.opsForZSet().add(zsetKey, 1L, 2L);
 
         // when

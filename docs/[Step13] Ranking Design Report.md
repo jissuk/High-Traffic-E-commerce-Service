@@ -1,4 +1,4 @@
-## [Step13] Ranking Design Report
+## [Step13] Ranking Design
 - **가장 많이 주문한 상품 랭킹을 Redis 기반으로 설계**  
 - **설계를 기반으로 개발 및 구현**
 

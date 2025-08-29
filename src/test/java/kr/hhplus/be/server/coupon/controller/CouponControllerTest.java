@@ -2,7 +2,6 @@ package kr.hhplus.be.server.coupon.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.common.constant.RedisKey;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.step.CouponStep;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequest;
@@ -45,6 +44,9 @@ public class CouponControllerTest {
     @Autowired
     private RedisTemplate<String, Long> redis;
 
+    public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
+    public static final String ISSUED_SUFFIX = ":issued";
+    public static final String QUANTITY_SUFFIX = ":quantity";
     @BeforeEach
     void setUp() {
         clearTestData();
@@ -65,8 +67,8 @@ public class CouponControllerTest {
     private void initTestRedisData(){
         long couponId = 1L;
         long userId = 1L;
-        String quantityKey = RedisKey.Coupon.issueCouponQuantityKey(couponId);
-        String issuedKey = RedisKey.Coupon.userCouponIssuedKey(userId, couponId);
+        String quantityKey = COUPON_ISSUE_PREFIX + couponId + QUANTITY_SUFFIX;
+        String issuedKey = COUPON_ISSUE_PREFIX + userId + ISSUED_SUFFIX;
 
         redis.opsForValue().set(quantityKey , 10L);
         redis.opsForValue().setBit(issuedKey, 0, false);

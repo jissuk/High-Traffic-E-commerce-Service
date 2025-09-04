@@ -1,17 +1,16 @@
 package kr.hhplus.be.server.order.listener;
 
-import kr.hhplus.be.server.payment.event.PaymentCompletedEvent;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class OrderDataSenderListener {
 
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void sendOrderData(PaymentCompletedEvent event) {
-        System.out.println("event :  " + event);
+    private final static String PAYMENT_COMPLETE_TOPIC = "paymentComplete";
+    private final static String SEND_ORDER_DATA_SERVICE = "sendOrderData-service";
+
+    @KafkaListener(topics = PAYMENT_COMPLETE_TOPIC, groupId = SEND_ORDER_DATA_SERVICE)
+    public void sendOrderData(String orderItem) {
+        System.out.println("orderItem :  " + orderItem);
     }
 }

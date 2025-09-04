@@ -54,14 +54,14 @@ Zero-copy는 데이터를 전송할 때 CPU와 메모리 간에 불필요한 복
 예를 들어, 리뷰 시스템과 레거시 DB 싱크처럼 서로 다른 그룹들은 각자의 오프셋을 기반으로 서로 다른 시점부터 데이터를 읽어 들일 수 있습니다.
 
 [참고자료]  
-<br> [이미지]
+<br> ![image](https://github.com/user-attachments/assets/5590bc22-78b1-406d-a675-8242f8bca4c4)
 
 ---
 
 ## 실시간 주문 정보를 카프카 메시지로 발행
 
 ### 0. 카프카 설정
-구현 코드 : [커밋파일]
+구현 코드 : [kafka설정](https://github.com/jissuk/hhplus_eCommerce_java/blob/step17/src/main/resources/application.yml)
 
 초기에는 `application.yml`에 아래와 같은 설정을 하여 `KafkaTemplate<key,value>`의 value가 자동으로 직렬화되도록 설정하였습니다.  
 하지만 보안상의 이슈로 추후 `ObjectMapper`를 사용하는 방식으로 변경하였습니다.
@@ -123,6 +123,7 @@ public void sendOrderData(String orderItem) {
 
 ---
 
-### 3. 코드 및 테스트
-- 구현 코드 :
-- 테스트 코드 :  
+### 3. 구현 코드 
+- 구현 코드 : [feat: 실시간 주문 정보를 카프카 메시지로 발행](https://github.com/jissuk/hhplus_eCommerce_java/commit/9f9829db227537de4ef7e7bb7d6f44467d2446a2#diff-0fd64f4af511ff3df37c2cbf0f3409917afc250c1fcb8f3df7a8ad2dd9adb3f6)
+- 테스트 코드 : [테스트 코드](https://github.com/jissuk/hhplus_eCommerce_java/blob/step17/src/test/java/kr/hhplus/be/server/payment/controller/PaymentControllerTest.java)
+  </br> => `결제()`을 통해서 테스트를 진행하였습니다.

@@ -33,5 +33,6 @@
 
 - **테스트 환경 보완** : 테스트 실행 시 비동기 처리 완료 전에 테스트가 종료되는 문제를 방지하기 위해, Polling 주기에 맞춘 시간 지연 로직을 추가했습니다
 ### 3. 코드 및 테스트
-- 구현 코드 :
-- 테스트 코드 : 
+- 구현 코드 : [feat: 카프카의 특징과 Outbox를 통한 선착순 쿠폰 발급 구현](https://github.com/jissuk/hhplus_eCommerce_java/commit/25ad2024f08c033ce86f92e607d30f9460dc9a28)
+- 테스트 코드 : [테스트 코드](https://github.com/jissuk/hhplus_eCommerce_java/blob/step17/src/test/java/kr/hhplus/be/server/coupon/usecase/integration/IssueCouponUseCaseTest.java)
+  </br> => `실시간쿠폰발급_비동기()`를 통해서 테스트를 진행하였습니다.

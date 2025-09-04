@@ -1,10 +1,15 @@
 package kr.hhplus.be.server.coupon.usecase.integration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.common.outbox.domain.OutboxStatus;
+import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
+import kr.hhplus.be.server.common.outbox.infrastructure.jpa.JpaOutBoxMessageRepository;
+import kr.hhplus.be.server.common.outbox.scheduler.OutboxRelayScheduler;
 import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
 import kr.hhplus.be.server.coupon.step.CouponStep;
-import kr.hhplus.be.server.coupon.usecase.CouponQueueUseCase;
 import kr.hhplus.be.server.coupon.usecase.IssueCouponUseCase;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
@@ -36,19 +41,21 @@ public class IssueCouponUseCaseTest {
     @Autowired
     private IssueCouponUseCase issueCouponUseCase;
     @Autowired
-    private CouponQueueUseCase couponQueueUseCase;
-
+    private OutboxRelayScheduler outboxRelayScheduler;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private RedisTemplate<String, Long> redis;
-
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private JpaUserRepository jpaUserRepository;
     @Autowired
     private JpaCouponRepository jpaCouponRepository;
     @Autowired
     private JpaUserCouponRepository jpaUserCouponRepository;
+    @Autowired
+    private JpaOutBoxMessageRepository jpaOutBoxMessageRepository;
 
     public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
     public static final String ISSUED_SUFFIX = ":issued";
@@ -95,20 +102,42 @@ public class IssueCouponUseCaseTest {
     class success {
 
         @Test
-        @DisplayName("실시간 쿠폰 발급 Redis 비동기 처리")
-        void 실시간쿠폰발급_비동기(){
+        @DisplayName("실시간 쿠폰 발급 Kafka 비동기 처리")
+        void 실시간쿠폰발급_비동기() throws InterruptedException, JsonProcessingException {
             // given
             long couponId = 1L;
+            long userCouponId = 1L;
+            long remainingCoupons = 9L;
             UserCouponCommand request = CouponStep.유저쿠폰커맨드_기본값();
             String quantityKey = COUPON_ISSUE_PREFIX +couponId + QUANTITY_SUFFIX;
 
             // when
             issueCouponUseCase.execute(request);
-            couponQueueUseCase.execute();
+            outboxRelayScheduler.relayMessages();
+
+            /* scheduler가 실행되는 주기 */
+            Thread.sleep(5000);
 
             // then
             Long couponQuantity = redis.opsForValue().get(quantityKey);
-            assertThat(couponQuantity).isEqualTo(9L);
+            String jsonCommand = objectMapper.writeValueAsString(request);
+            List<OutboxMessage> resultList = jpaOutBoxMessageRepository.findByPayload(jsonCommand);
+
+            assertAll(
+                ()-> assertThat(couponQuantity)
+                        .as("잔여 쿠폰 수")
+                        .isEqualTo(remainingCoupons),
+                ()-> assertThat(jpaUserCouponRepository.findById(userCouponId))
+                        .as("유저 쿠폰 등록 확인")
+                        .isPresent(),
+                () -> {
+                    for(OutboxMessage outbox : resultList){
+                        assertThat(outbox.getStatus())
+                                .as("Outbox 완료 상태 확인")
+                                .isEqualTo(OutboxStatus.PUBLISHED);
+                    }
+                }
+            );
         }
 
         @Test
@@ -125,7 +154,6 @@ public class IssueCouponUseCaseTest {
                 futures.add(executor.submit(() -> {
                     try {
                         issueCouponUseCase.execute(CouponStep.유저쿠폰커맨드_유저ID지정(userId));
-                        couponQueueUseCase.execute();
                         return null;
                     } finally {
                         latch.countDown();
@@ -175,11 +203,10 @@ public class IssueCouponUseCaseTest {
     class fail {
         @Test
         @DisplayName("실시간 쿠폰 발급 동일 유저 발급")
-        void 실시간쿠폰발급_동일유저발급(){
+        void 실시간쿠폰발급_동일유저발급() throws JsonProcessingException {
             // given
             UserCouponCommand request = CouponStep.유저쿠폰커맨드_기본값();
             issueCouponUseCase.execute(request);
-            couponQueueUseCase.execute();
 
             // when & then
             assertThatThrownBy(() -> issueCouponUseCase.execute(request))

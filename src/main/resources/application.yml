@@ -33,6 +33,14 @@ spring:
     redis:
       host: localhost
       port: 6379
+  kafka:
+    admin:
+      properties:
+        topic:
+          configs:
+            retention.ms: 86400000 # 메시지 보관 시간: 1일
+            cleanup.policy: "delete"
+
 
 springdoc:
   api-docs:

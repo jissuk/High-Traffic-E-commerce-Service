@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.coupon.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,7 +23,7 @@ public class CouponController {
 
     @PostMapping("/issue")
     @Operation(summary = "선착순 쿠폰 발급", description = "유저는 선착순으로 제공되는 쿠폰을 발급 받아 등록합니다.", tags = {"CouponController"})
-    public ResponseEntity<CommonResponse> issueCoupon(@RequestBody @Valid UserCouponRequest request) {
+    public ResponseEntity<CommonResponse> issueCoupon(@RequestBody @Valid UserCouponRequest request) throws JsonProcessingException {
 
         UserCouponCommand command = UserCouponCommand.from(request);
         registerUserCouponUseCase.execute(command);

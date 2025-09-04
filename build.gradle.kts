@@ -21,6 +21,7 @@ java {
 
 repositories {
 	mavenCentral()
+	maven("https://repo.spring.io/release")
 }
 
 dependencyManagement {
@@ -50,6 +51,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.redisson:redisson:3.31.0")
 
+	// kafka
+	implementation("org.springframework.kafka:spring-kafka")
+
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
@@ -59,6 +63,7 @@ dependencies {
 	testImplementation("io.rest-assured:rest-assured:5.4.0")
 	testImplementation("io.rest-assured:json-path:5.4.0")
 	testImplementation("io.rest-assured:json-schema-validator:5.4.0")
+	testImplementation("org.testcontainers:kafka")
 
 
 }

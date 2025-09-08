@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.payment.usecase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
@@ -17,11 +18,14 @@ import kr.hhplus.be.server.payment.domain.service.PaymentDomainService;
 import kr.hhplus.be.server.payment.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
+import kr.hhplus.be.server.user.domain.model.PointHistory;
 import kr.hhplus.be.server.user.domain.model.User;
+import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
-import kr.hhplus.be.server.user.event.PointUseEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 
@@ -31,16 +35,20 @@ public class RegisterPaymentUseCase {
     private final UserCouponDomainService userCouponDomainService;
     private final PaymentDomainService paymentDomainService;
 
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final KafkaTemplate<String, String> kafka;
+    private final TransactionTemplate transactionTemplate;
 
     private final UserRepository userRepository;
+    private final PointHistoryRepository pointHistoryRepository;
     private final UserCouponRepository userCouponRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
-    private final TransactionTemplate transactionTemplate;
+    private final ObjectMapper objectMapper;
+
+    private final static String PAYMENT_COMPLETE_TOPIC = "paymentComplete";
 
     @DistributedLock
     public void execute(PaymentCommand command) throws JsonProcessingException {
@@ -51,19 +59,19 @@ public class RegisterPaymentUseCase {
         OrderItem orderItem = orderItemRepository.findById(command.orderItemId());
         Product product = productRepository.findById(command.productId());
 
+        String jsonOrderItem = objectMapper.writeValueAsString(orderItem);
+
         transactionTemplate.executeWithoutResult(status -> {
             useCoupon(command, orderItem);
             usePoint(user, orderItem);
             processPayment(payment,order, orderItem, product);
 
-            applicationEventPublisher.publishEvent(new PaymentCompletedEvent(
-                    orderItem.getId(),
-                    orderItem.getQuantity(),
-                    orderItem.getPrice(),
-                    orderItem.getTotalPrice(),
-                    orderItem.getOrderId(),
-                    orderItem.getProductId())
-            );
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    kafka.send(PAYMENT_COMPLETE_TOPIC,jsonOrderItem);
+                }
+            });
         });
     }
 
@@ -88,6 +96,7 @@ public class RegisterPaymentUseCase {
     private void usePoint(User user, OrderItem orderItem) {
         user.deductPoint(orderItem.getTotalPrice());
         userRepository.save(user);
-        applicationEventPublisher.publishEvent(PointUseEvent.from(user.getId(), orderItem.getTotalPrice()));
+        PointHistory pointHistory = PointHistory.use(user);
+        pointHistoryRepository.save(pointHistory);
     }
 }

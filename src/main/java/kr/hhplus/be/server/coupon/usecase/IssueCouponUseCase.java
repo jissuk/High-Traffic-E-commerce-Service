@@ -1,40 +1,40 @@
 package kr.hhplus.be.server.coupon.usecase;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.coupon.event.IssueCouponEvent;
+import kr.hhplus.be.server.common.outbox.domain.repository.OutboxMessageRepository;
+import kr.hhplus.be.server.common.outbox.domain.OutboxStatus;
+import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
 import kr.hhplus.be.server.coupon.exception.CouponOutOfStockException;
 import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.concurrent.TimeUnit;
+import java.time.LocalDateTime;
 
 
 @UseCase
 @RequiredArgsConstructor
 public class IssueCouponUseCase {
 
-    private final RedisTemplate<String, Long> redis;
+    private final OutboxMessageRepository outBoxMessageRepository;
+    private final ObjectMapper objectMapper;
 
-    private final TransactionTemplate transactionTemplate;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final RedisTemplate<String, Long> redis;
 
     public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
     public static final String ISSUED_SUFFIX = ":issued";
     public static final String QUANTITY_SUFFIX = ":quantity";
+    public static final String ISSUE_COUPON_TOPIC = "issueCoupon";
 
     @DistributedLock
-    public void execute(UserCouponCommand command) {
-        transactionTemplate.executeWithoutResult(status -> {
-            validateDuplicateIssue(command);
-            decrementQuantity(command);
-            applicationEventPublisher.publishEvent(new IssueCouponEvent(command.userId(), command.couponId()));
-        });
+    public void execute(UserCouponCommand command) throws JsonProcessingException {
+        validateDuplicateIssue(command);
+        decrementQuantity(command);
+        saveOutboxMessage(command);
     }
 
     private void validateDuplicateIssue(UserCouponCommand command) {
@@ -54,6 +54,17 @@ public class IssueCouponUseCase {
         if(quantity == null || quantity < 0){
             throw new CouponOutOfStockException();
         }
+    }
+
+    private void saveOutboxMessage(UserCouponCommand command) throws JsonProcessingException {
+        String jsonCommand = objectMapper.writeValueAsString(command);
+        OutboxMessage outBoxMessage = OutboxMessage.builder()
+                .topic(ISSUE_COUPON_TOPIC)
+                .payload(jsonCommand)
+                .status(OutboxStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .build();
+        outBoxMessageRepository.save(outBoxMessage);
     }
 
 }

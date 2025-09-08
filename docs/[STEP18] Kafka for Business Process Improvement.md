@@ -1,0 +1,39 @@
+## [Step18] Kafka for Business Process Improvement
+- **카프카를 특징을 활용하도록 쿠폰/대기열 설계문서 작성**
+- **설계문서대로 카프카를 활용한 기능 구현**
+
+---
+## 카프카를 특징을 활용하도록 쿠폰 설계문서 작성
+
+### 카프카의 특징과 Outbox를 활용한 쿠폰 설계
+
+1. **재고 차감 및 아웃박스 등록** : [IssueCouponUseCase](https://github.com/jissuk/hhplus_eCommerce_java/blob/step17/src/main/java/kr/hhplus/be/server/coupon/usecase/IssueCouponUseCase.java)
+    - 유저 중복 발급 체크 및 쿠폰의 수량을 체크합니다.
+    - 동시에, Kafka로 보낼 메시지 내용을 **아웃박스(Outbox) 테이블**에 저장합니다.
+   
+=========================================================================
+
+2. **메시지 릴레이 작동 방식**
+    - 이제 별도로 가동되는 '모니터링' 기능이 아웃박스 테이블을 계속 **모니터링**(Polling) 하며, OutBox 테이블에 새로 커밋된 데이터가 있는지 확인합니다.
+3. **카프카로 메시지 전송**
+    - 메시지 릴레이 기능은 아웃박스 테이블에서 새로 발견한 메시지를 읽어와 **Kafka로 전송**합니다.
+4. **아웃박스 상태 변경**
+    - 메시지 릴레이 기능은 Kafka로 메시지 전송에 **성공했음을 확인**한 후, 아웃박스 테이블에 있는 해당 레코드를 삭제하거나 '전송 완료' 상태로 변경합니다.
+
+--- 
+
+## 설계문서대로 카프카를 활용한 기능 구현
+
+### 1. 구현 방식
+위에서 언급한 설계대로 구현을 진행하였으며 아래는 Outbox 관련 구현 커밋입니다.
+</br> [feat: Outbox 관련 코드 작성](https://github.com/jissuk/hhplus_eCommerce_java/pull/10/commits/1cb5d25e017ff9dd3631c3434c31629aeb942885)
+### 2. 구현 방식 결정 배경
+- UserCoupon 등록은 반드시 수행되어야 하는 **핵심 로직**이므로, `Outbox` 패턴을 적용하여 안정성을 확보했습니다.
+
+- Kafka Topic은 **코드 응집성**을 고려하여 각 클래스에서 static으로 선언하였으나, **중복 선언**이 발생하여 추후 `상수 전용 클래스로 분리`할 계획입니다.
+
+- 테스트 실행 시 **비동기 처리 완료 전에 테스트가 종료되는 문제**를 방지하기 위해, `Polling 주기에 맞춘 시간 지연` 로직을 추가했습니다
+### 3. 코드 및 테스트
+- 구현 코드 : [feat: 카프카의 특징과 Outbox를 통한 선착순 쿠폰 발급 구현](https://github.com/jissuk/hhplus_eCommerce_java/commit/25ad2024f08c033ce86f92e607d30f9460dc9a28)
+- 테스트 코드 : [테스트 코드](https://github.com/jissuk/hhplus_eCommerce_java/blob/step17/src/test/java/kr/hhplus/be/server/coupon/usecase/integration/IssueCouponUseCaseTest.java)
+  </br> => `실시간쿠폰발급_비동기()`를 통해서 테스트를 진행하였습니다.

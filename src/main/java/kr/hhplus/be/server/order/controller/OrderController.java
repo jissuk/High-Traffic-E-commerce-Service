@@ -25,10 +25,9 @@ public class OrderController {
     public ResponseEntity<CommonResponse> createOrder(@RequestBody @Valid OrderItemRequest request) {
 
         OrderItemCommand command = OrderItemCommand.from(request);
-        registerOrderUseCase.execute(command);
 
         return ResponseEntity
                 .ok()
-                .body(new CommonResponse(HttpStatus.NO_CONTENT,"success",null));
+                .body(new CommonResponse(HttpStatus.CREATED,"success",registerOrderUseCase.execute(command)));
     }
 }

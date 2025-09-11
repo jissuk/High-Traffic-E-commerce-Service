@@ -1,11 +1,13 @@
 package kr.hhplus.be.server.order.usecase;
 
+import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
 import kr.hhplus.be.server.order.domain.model.Order;
 import kr.hhplus.be.server.order.domain.model.OrderItem;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
+import kr.hhplus.be.server.order.usecase.dto.OrderItemResponse;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
 import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.product.domain.model.Product;
@@ -13,7 +15,6 @@ import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @UseCase
@@ -23,21 +24,25 @@ public class RegisterOrderUseCase {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
-    private final OrderRepository orderRepositroy;
+    private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
     private final TransactionTemplate transactionTemplate;
 
-    public void execute(OrderItemCommand command){
+    @DistributedLock
+    public OrderItemResponse execute(OrderItemCommand command){
         User user = userRepository.findById(command.userId());
         Product product = productRepository.findById(command.productId());
 
-        transactionTemplate.executeWithoutResult(status -> {
+        OrderItem orderItem = transactionTemplate.execute(status -> {
             deductProductQuantity(product, command);
             Order order = createAndSaveOrder(user);
-            OrderItem orderItem = createAndSaveOrderItem(command, order);
-            createAndSavePayment(command, orderItem);
+            OrderItem saveOrderItem = createAndSaveOrderItem(command, order);
+            createAndSavePayment(command, saveOrderItem);
+            return saveOrderItem;
         });
+
+        return OrderItemResponse.from(orderItem);
     }
 
     private void deductProductQuantity(Product product, OrderItemCommand command){
@@ -47,7 +52,7 @@ public class RegisterOrderUseCase {
 
     private Order createAndSaveOrder(User user){
         Order order = Order.createBeforeOrder(user);
-        return orderRepositroy.save(order);
+        return orderRepository.save(order);
     }
     private OrderItem createAndSaveOrderItem(OrderItemCommand command, Order order){
         OrderItem orderItem = OrderItem.createBeforeOrderItem(command, order);

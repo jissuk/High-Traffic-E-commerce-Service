@@ -9,17 +9,7 @@ export const options = {
             timeUnit: '1s',         // 단위: 1초
             duration: '60s',        // 60초 동안 실행
             preAllocatedVUs: 100,   // 사전 할당 VU 수
-            maxVUs: 300,            // 필요시 최대 VU까지 확장
-        },
-    },
-    ext: {
-        loadimpact: {
-            influxdb: {
-                url: 'http://influxdb:8086',
-                org: 'hanghae',
-                bucket: 'k6',
-                token: 'token',
-            },
+            maxVUs: 200,            // 필요시 최대 VU까지 확장
         },
     },
 };

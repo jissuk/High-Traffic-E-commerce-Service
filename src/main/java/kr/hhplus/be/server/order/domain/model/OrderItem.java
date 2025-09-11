@@ -6,6 +6,7 @@ import lombok.*;
 
 @Getter
 @Builder
+@ToString
 @AllArgsConstructor
 public class OrderItem {
 

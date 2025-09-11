@@ -22,7 +22,6 @@ public class OrderStep {
         return OrderItemCommand.builder()
                 .productId(1L)
                 .userId(1L)
-                .orderId(1L)
                 .quantity(2L)
                 .price(3000L)
                 .build();
@@ -82,7 +81,6 @@ public class OrderStep {
         return OrderItemRequest.builder()
                                     .userId(1L)
                                     .productId(1L)
-                                    .orderId(1L)
                                     .quantity(1L)
                                     .price(3000L)
                                     .build();
@@ -92,7 +90,6 @@ public class OrderStep {
         return OrderItemRequest.builder()
                 .userId(userId)
                 .productId(1L)
-                .orderId(1L)
                 .quantity(1L)
                 .price(3000L)
                 .build();
@@ -102,7 +99,6 @@ public class OrderStep {
         return OrderItemRequest.builder()
                 .userId(1L)
                 .productId(productId)
-                .orderId(1L)
                 .quantity(1L)
                 .price(3000L)
                 .build();

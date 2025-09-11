@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.payment.step;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.order.domain.model.OrderItem;
+import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.payment.domain.model.PaymentStatus;
@@ -23,7 +25,7 @@ public class PaymentStep {
     private static String PATH_URL = "/payments";
 
     public static PaymentCommand 결제커맨드_기본값() {
-        return new PaymentCommand(1L, 1L, 1L, 1L, 1L, 1L);
+        return new PaymentCommand(1L, 1L, 1L, 1L, 1L);
     }
 
     public static Payment 결제_기본값(){
@@ -51,18 +53,18 @@ public class PaymentStep {
                 .build();
     }
 
-    public static PaymentEntity 결제엔티티_기본값(UserEntity user){
+    public static PaymentEntity 결제엔티티_기본값(UserEntity user, OrderItemEntity orderItem) {
         return PaymentEntity.builder()
                 .price(3000L)
                 .paymentStatus(PaymentStatus.BEFORE_PAYMENT)
-                .userId(user.getId())
                 .createAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                .userId(user.getId())
+                .orderItemId(orderItem.getId())
                 .build();
     }
 
     public static PaymentRequest 결제요청_기본값(){
         return PaymentRequest.builder()
-                                .paymentId(1L)
                                 .userId(1L)
                                 .orderId(1L)
                                 .orderItemId(1L)
@@ -72,7 +74,6 @@ public class PaymentStep {
     }
     public static PaymentRequest 결제요청_쿠폰ID지정(Long couponId){
         return PaymentRequest.builder()
-                                .paymentId(1L)
                                 .userId(1L)
                                 .orderId(1L)
                                 .orderItemId(1L)
@@ -83,7 +84,6 @@ public class PaymentStep {
 
     public static PaymentRequest 결제요청_유저ID지정(long userId){
         return PaymentRequest.builder()
-                .paymentId(1L)
                 .userId(userId)
                 .orderId(1L)
                 .orderItemId(1L)
@@ -94,7 +94,6 @@ public class PaymentStep {
 
     public static PaymentRequest 결제요청_주문ID지정(long orderId){
         return PaymentRequest.builder()
-                .paymentId(1L)
                 .userId(1L)
                 .orderId(orderId)
                 .orderItemId(1L)
@@ -105,7 +104,6 @@ public class PaymentStep {
 
     public static PaymentRequest 결제요청_주문상세ID지정(long orderItemId){
         return PaymentRequest.builder()
-                .paymentId(1L)
                 .userId(1L)
                 .orderId(1L)
                 .orderItemId(orderItemId)
@@ -116,7 +114,6 @@ public class PaymentStep {
 
     public static PaymentRequest 결제요청_결제ID지정(long paymentId){
         return PaymentRequest.builder()
-                .paymentId(paymentId)
                 .userId(1L)
                 .orderId(1L)
                 .orderItemId(1L)
@@ -127,7 +124,6 @@ public class PaymentStep {
 
     public static PaymentRequest 결제요청_상품ID지정(long productId){
         return PaymentRequest.builder()
-                .paymentId(1L)
                 .userId(1L)
                 .orderId(1L)
                 .orderItemId(1L)

@@ -8,6 +8,8 @@ ___
 
 앞서 STEP19에서 캐싱(Redis) 사용 유무로 내용을 정리하였습니다.
 
+[STEP 19 부하 테스트 스크립트 작성 관련 문서 작성](https://github.com/jissuk/hhplus_eCommerce_java/blob/step19/docs/%5BSTEP19%5D%20Load%20Testing%20Script%20Development%20and%20Execution.md)
+
 ---
 
 ## 장애 대응 문서

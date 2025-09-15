@@ -12,6 +12,8 @@ public class PaymentMapper {
                         .price(paymentEntity.getPrice())
                         .paymentStatus(paymentEntity.getPaymentStatus())
                         .createdAt(paymentEntity.getCreateAt())
+                        .userId(paymentEntity.getUserId())
+                        .orderItemId(paymentEntity.getOrderItemId())
                         .build();
     }
 
@@ -21,6 +23,8 @@ public class PaymentMapper {
                             .price(payment.getPrice())
                             .paymentStatus(payment.getPaymentStatus())
                             .createAt(payment.getCreatedAt())
+                            .userId(payment.getUserId())
+                            .orderItemId(payment.getOrderItemId())
                             .build();
     }
 }

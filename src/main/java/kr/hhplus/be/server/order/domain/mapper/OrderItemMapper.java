@@ -12,6 +12,8 @@ public class OrderItemMapper {
                         .quantity(orderItemEntity.getQuantity())
                         .price(orderItemEntity.getPrice())
                         .totalPrice(orderItemEntity.getTotalPrice())
+                        .orderId(orderItemEntity.getOrderId())
+                        .productId(orderItemEntity.getProductId())
                         .build();
     }
 
@@ -21,6 +23,8 @@ public class OrderItemMapper {
                                 .quantity(orderItem.getQuantity())
                                 .price(orderItem.getPrice())
                                 .totalPrice(orderItem.getTotalPrice())
+                                .orderId(orderItem.getOrderId())
+                                .productId(orderItem.getProductId())
                                 .build();
     }
 }

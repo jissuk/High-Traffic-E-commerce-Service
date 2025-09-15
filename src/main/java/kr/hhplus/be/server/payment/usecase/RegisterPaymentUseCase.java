@@ -53,7 +53,7 @@ public class RegisterPaymentUseCase {
     @DistributedLock
     public void execute(PaymentCommand command) throws JsonProcessingException {
 
-        Payment payment = paymentRepository.findById(command.paymentId());
+        Payment payment = paymentRepository.findByOrderItemId(command.orderItemId());
         User user = userRepository.findById(command.userId());
         Order order = orderRepository.findById(command.orderId());
         OrderItem orderItem = orderItemRepository.findById(command.orderItemId());

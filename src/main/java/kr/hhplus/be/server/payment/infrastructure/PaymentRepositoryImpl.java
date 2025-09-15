@@ -34,4 +34,11 @@ public class PaymentRepositoryImpl implements PaymentRepository {
                 jpaPaymentRepository.save(paymentMapper.toEntity(payment))
         );
     }
+
+    @Override
+    public Payment findByOrderItemId(Long orderItemId) {
+        return jpaPaymentRepository.findByOrderItemId(orderItemId)
+                .map(paymentMapper::toDomain)
+                .orElseThrow(PaymentNotFoundException::new);
+    }
 }

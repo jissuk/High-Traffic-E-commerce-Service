@@ -12,6 +12,7 @@ import kr.hhplus.be.server.coupon.step.CouponStep;
 import kr.hhplus.be.server.order.domain.mapper.OrderMapper;
 import kr.hhplus.be.server.order.domain.model.Order;
 import kr.hhplus.be.server.order.domain.model.OrderEntity;
+import kr.hhplus.be.server.order.domain.model.OrderItemEntity;
 import kr.hhplus.be.server.order.domain.model.OrderStatus;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderItemRepository;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepository;
@@ -107,14 +108,12 @@ public class RegisterPaymentUseCaseTest {
 
     private void initTestData() {
         UserEntity user = jpaUserRepository.save(UserStep.유저엔티티_기본값());
-        jpaPaymentRepository.save(PaymentStep.결제엔티티_기본값(user));
-
         OrderEntity order = jpaOrderRepositroy.save(OrderStep.주문엔티티_기본값(user));
-        jpaOrderItemRepository.save(OrderStep.주문상세엔티티_기본값(order));
-
         CouponEntity coupon = jpaCouponRepository.save(CouponStep.쿠폰엔티티_기본값());
-        jpaUserCouponRepository.save(CouponStep.유저쿠폰엔티티_기본값(user, coupon));
+        OrderItemEntity orderItem = jpaOrderItemRepository.save(OrderStep.주문상세엔티티_기본값(order));
 
+        jpaPaymentRepository.save(PaymentStep.결제엔티티_기본값(user,orderItem));
+        jpaUserCouponRepository.save(CouponStep.유저쿠폰엔티티_기본값(user, coupon));
         jpaProductRepository.save(ProductStep.상품엔티티_기본값());
     }
 

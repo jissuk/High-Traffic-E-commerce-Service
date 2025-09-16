@@ -11,7 +11,7 @@ UseCase를 하나의<br> 도메인 기능 단위로만 구성함으로써 SRP(�
 
 ## 계층 구조 및 특징
 ```
-Controller -> Facade -> UseCase -> DomainService(선택) -> Repositroy ->  RepositoryImpl(구현체)
+Controller -> UseCase -> DomainService(선택) -> Repositroy ->  RepositoryImpl(구현체)
 ```
 
 ### Controller

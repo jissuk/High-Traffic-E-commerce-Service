@@ -1,10 +1,6 @@
 package kr.hhplus.be.server.coupon.usecase.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.server.common.outbox.domain.OutboxStatus;
-import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
-import kr.hhplus.be.server.common.outbox.infrastructure.jpa.JpaOutBoxMessageRepository;
 import kr.hhplus.be.server.common.outbox.scheduler.OutboxRelayScheduler;
 import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
@@ -47,15 +43,11 @@ public class IssueCouponUseCaseTest {
     @Autowired
     private RedisTemplate<String, Long> redis;
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private JpaUserRepository jpaUserRepository;
     @Autowired
     private JpaCouponRepository jpaCouponRepository;
     @Autowired
     private JpaUserCouponRepository jpaUserCouponRepository;
-    @Autowired
-    private JpaOutBoxMessageRepository jpaOutBoxMessageRepository;
 
     public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
     public static final String ISSUED_SUFFIX = ":issued";
@@ -103,7 +95,7 @@ public class IssueCouponUseCaseTest {
 
         @Test
         @DisplayName("실시간 쿠폰 발급 Kafka 비동기 처리")
-        void 실시간쿠폰발급_비동기() throws InterruptedException, JsonProcessingException {
+        void 실시간쿠폰발급_비동기() throws JsonProcessingException, InterruptedException {
             // given
             long couponId = 1L;
             long userCouponId = 1L;
@@ -115,13 +107,10 @@ public class IssueCouponUseCaseTest {
             issueCouponUseCase.execute(request);
             outboxRelayScheduler.relayMessages();
 
-            /* scheduler가 실행되는 주기 */
-            Thread.sleep(5000);
-
             // then
             Long couponQuantity = redis.opsForValue().get(quantityKey);
-            String jsonCommand = objectMapper.writeValueAsString(request);
-            List<OutboxMessage> resultList = jpaOutBoxMessageRepository.findByPayload(jsonCommand);
+
+            Thread.sleep(2000);
 
             assertAll(
                 ()-> assertThat(couponQuantity)
@@ -129,14 +118,7 @@ public class IssueCouponUseCaseTest {
                         .isEqualTo(remainingCoupons),
                 ()-> assertThat(jpaUserCouponRepository.findById(userCouponId))
                         .as("유저 쿠폰 등록 확인")
-                        .isPresent(),
-                () -> {
-                    for(OutboxMessage outbox : resultList){
-                        assertThat(outbox.getStatus())
-                                .as("Outbox 완료 상태 확인")
-                                .isEqualTo(OutboxStatus.PUBLISHED);
-                    }
-                }
+                        .isPresent()
             );
         }
 

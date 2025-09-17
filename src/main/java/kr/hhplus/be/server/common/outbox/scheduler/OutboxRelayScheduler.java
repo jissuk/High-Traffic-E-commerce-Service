@@ -27,7 +27,6 @@ public class OutboxRelayScheduler {
             CompletableFuture<SendResult<String, String>> send = kafka.send(outbox.getTopic(), outbox.getPayload());
 
             send.whenComplete((result, ex) -> {
-                // 성공
                 if (ex == null) {
                     outbox.published();
                     outboxMessageRepository.save(outbox);

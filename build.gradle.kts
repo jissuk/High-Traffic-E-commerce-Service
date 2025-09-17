@@ -64,8 +64,6 @@ dependencies {
 	testImplementation("io.rest-assured:json-path:5.4.0")
 	testImplementation("io.rest-assured:json-schema-validator:5.4.0")
 	testImplementation("org.testcontainers:kafka")
-
-
 }
 
 tasks.withType<Test> {

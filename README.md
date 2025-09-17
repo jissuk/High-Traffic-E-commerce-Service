@@ -35,9 +35,8 @@ E-커머스 서비스로서 아래의 API를 제공합니다.
 </br>
 
 ## 아키텍처 설명
-해당 프로젝트는 Clean Architecture
-이번 과제는 Clean Architecture와 Facade를 사용하여 진행하였습니다.
-<br> 도메인 기능 하나를 수행하는 UseCase들을 Facade에서 관리, 조합하는 방식으로 코드를 구현하였으며
+해당 프로젝트는 Clean Architecture를 사용하였습니다.
+<br> Clean Architecture 기반으로 UseCase 설계와 DI를 적용하여 확장성 보장하는 방식으로 코드를 구현하였으며
 <br> 각기 다른 도메인의 로직을 처리해야될 부분은 DomainService에서 처리를 하였습니다.
 <br>
 ### 아키텍처 선택 이유

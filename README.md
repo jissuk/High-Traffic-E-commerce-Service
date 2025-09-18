@@ -181,6 +181,42 @@ UserCouponRepository ->> RegisterUserCouponListener: 저장 완료
 
 ### 구현 방식
 ```mermaid
+sequenceDiagram
+
+    participant RegisterPaymentUsecase
+    participant RegisterTop3DaysProductsUsecase
+    participant ProductController
+    participant GetPopularProductUseCase
+    participant Redis
+    participant ProductRepository
+
+    RegisterPaymentUsecase ->> RegisterPaymentUsecase: 결제 완료 처리
+    RegisterPaymentUsecase ->> Redis: 판매된 상품 ID를 Sorted Set에 주입
+    note right of Redis: Key: product:sales:YYYY-MM-DD<br>Value: 상품 ID<br>Score: 주문 수량 (누적)
+
+alt 매일 00:05, 최근 3일 데이터 집계
+    RegisterTop3DaysProductsUsecase ->> Redis: 최근 3일 상품/주문 정보 조회
+    Redis ->> RegisterTop3DaysProductsUsecase: 조회 결과 반환
+    RegisterTop3DaysProductsUsecase ->> RegisterTop3DaysProductsUsecase: Score 기준으로 집계
+    RegisterTop3DaysProductsUsecase ->> Redis: 집계 결과 저장
+    note right of Redis: Key: product:sales:3days:total<br>Score 역순으로 인기 상품 조회 가능
+    Redis ->> RegisterTop3DaysProductsUsecase: 저장 완료
+end
+
+    ProductController ->> GetPopularProductUseCase: 인기 상품 조회 요청
+    GetPopularProductUseCase ->> Redis: 집계된 인기 상품 ID 조회
+    note right of Redis: Key: product:sales:3days:total
+    Redis ->> GetPopularProductUseCase: 상품 ID 리스트 반환
+
+alt Redis 캐시 존재
+    GetPopularProductUseCase ->> ProductRepository: ID 기반 상품 상세 정보 조회
+    ProductRepository ->> GetPopularProductUseCase: 조회 결과 반환
+else Redis 캐시 없음
+    GetPopularProductUseCase ->> ProductRepository: 인기 상품 직접 조회
+    ProductRepository ->> GetPopularProductUseCase: 조회 결과 반환
+end
+
+    GetPopularProductUseCase ->> ProductController: 인기 상품 정보 반환
 
 ```
 1. **결제 시 Redis Sorted Set에 판매된 상품의 데이터 주입**

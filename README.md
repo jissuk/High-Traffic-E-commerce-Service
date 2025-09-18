@@ -6,7 +6,8 @@ E-커머스 서비스로서 아래의 API를 제공합니다.
 - 선착순 쿠폰 API
 - 인기 판매 상품 API
 
-</br>
+---
+
 
 # 요구사항 정리
 ### 기능적 요구사항
@@ -32,9 +33,56 @@ E-커머스 서비스로서 아래의 API를 제공합니다.
 ### 비기능적 요구사항
 * 선착순 쿠폰 발급로 인해 특정 시간대에 트래픽이 몰려 짧은 시간에 많은 요청이 들어오더라도 버틸수 있어야합니다.
 
-</br>
+---
+
 
 # API 구현 로직 설명
+## 공통 부분
+### TestContainer를 활용한 테스트 코드 실행
+테스트 코드는 **Junit5**와 **AssertJ**를 활용하여 작성하였습니다.  
+테스트는 **단위 테스트**와 **통합 테스트**로 구분하여, 각 레이어의 특성에 따라 아래 기준으로 설계했습니다.
+
+- **Controller 계층 [통합 테스트]**  
+  실제 요청과 응답을 검증하는 것이 목적이므로 통합 테스트로 진행하였습니다.  
+  - 사용 도구: `@WebMvcTest`, `MockMvc`
+
+- **Service 계층 [단위/통합 테스트]**  
+  트랜잭션(DB 의존성)이 필요한 경우 외부 의존성이 강하다고 판단하여 통합 테스트로,  
+  그렇지 않은 경우는 단위 테스트로 진행하였습니다.  
+  - 사용 도구: `@ExtendWith(MockitoExtension.class)`, `@InjectMocks`, `@Mock`
+
+- **Repository 계층 [통합 테스트]**  
+  DB와의 안정적인 상호작용을 검증하는 것이 주 목적이므로 통합 테스트로 진행하였습니다.  
+  - 사용 도구: `@DataJpaTest` (JPA), `@MybatisTest` (MyBatis)
+
+</br>
+
+### 테스트 객체 팩토리 (Step 클래스)
+테스트 코드의 가독성과 재사용성을 높이기 위해, 테스트 전용 팩토리 클래스(`Step`)를 정의하였습니다.
+
+```java
+public class CouponStep {
+    private static final Long DEFAULT_USER_ID = 1L;
+    private static final Long DEFAULT_COUPON_ID = 1L;
+
+    public static UserCouponCommand defaultUserCouponCommand() {
+        return new UserCouponCommand(DEFAULT_USER_ID, DEFAULT_COUPON_ID);
+    }
+
+    public static UserCouponCommand userCouponCommandWithUserId(Long userId) {
+        return new UserCouponCommand(userId, DEFAULT_COUPON_ID);
+    }
+}
+```
+
+---
+
+###  Redis 분산 락을 AOP 기반으로 구현하여 동시성 문제 해결
+
+
+
+---
+
 ## 선착순 쿠폰 발급
 
 ### 구현 방식
@@ -53,6 +101,8 @@ E-커머스 서비스로서 아래의 API를 제공합니다.
 - **Redis**의 빠른 읽기·쓰기 성능과 **Kafka**의 분산·비동기 처리 특성이 **대규모 트래픽을 안정적으로 처리**하는 데 적합하다고 판단하여 채택하였습니다.
 - Redis는 **쿠폰 수량과 유저 발급 정보를 관리**하여 즉시 발급 가능 여부를 판단하고, 중복 발급을 방지합니다.
 - Kafka는 **메시지 버퍼링과 비동기 처리**를 통해 DB에 몰리는 부하를 완화하고, 트래픽 폭주에도 **안정적으로 처리**할 수 있도록 합니다.
+
+---
 
 
 ## 인기 판매 상품 조회(3일)
@@ -123,6 +173,32 @@ RepositoryImpl은 Repository 인터페이스를 실제 데이터베이스 맞게
 </br>
 
 ## 패키지 구조
+
+```
+Product 예시
+📦 product
+│
+├── 📁 controller                  ← [Presentation Layer] API 진입점
+│
+├── 📁 domain                      ← [Domain Layer]
+│   ├── 📁 mapper                  ← 엔티티 ↔ DTO 변환 처리
+│   ├── 📁 model                   ← 순수 도메인 모델(Entity, VO 등)
+│   └── 📁 repository              ← 저장소 인터페이스 (도메인 중심)
+│
+├── 📁 exception                   ← [도메인/유스케이스 예외 정의]
+│
+├── 📁 infrastructure              ← [Infrastructure Layer]
+│   └── 📁 jpa                     ← JPA 기반 Repository 구현체
+│       └── ProductRepositoryImpl.java
+│
+├── 📁 listener                    ← [이벤트 리스너] 도메인 이벤트 처리
+│
+├── 📁 scheduler                   ← [Scheduler Layer] 배치/정기 실행 작업
+│
+└── 📁 usecase                     ← [UseCase Layer / Application Layer]
+    └── 📁 command                 ← UseCase 실행에 필요한 요청/응답 DTO
+    
+```
 
 ### 도메인 구조의 패키지 구조를 선택한 이유
 계층 구조의 패키지 구조를 선택하게 될 경우 여러 UseCase들을 한번에 파악하기 쉽다는 장점도 있지만

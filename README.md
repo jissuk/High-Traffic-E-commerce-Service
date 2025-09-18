@@ -6,8 +6,11 @@ E-커머스 서비스로서 아래의 API를 제공합니다.
 - 선착순 쿠폰 API
 - 인기 판매 상품 API
 
+</br>
+
 ---
 
+</br>
 
 # 요구사항 정리
 ### 기능적 요구사항
@@ -33,8 +36,11 @@ E-커머스 서비스로서 아래의 API를 제공합니다.
 ### 비기능적 요구사항
 * 선착순 쿠폰 발급로 인해 특정 시간대에 트래픽이 몰려 짧은 시간에 많은 요청이 들어오더라도 버틸수 있어야합니다.
 
+</br>
+
 ---
 
+</br>
 
 # API 구현 로직 설명
 ## 공통 부분
@@ -74,14 +80,48 @@ public class CouponStep {
     }
 }
 ```
+</br>
 
 ---
+
+</br>
 
 ###  Redis 분산 락을 AOP 기반으로 구현하여 동시성 문제 해결
+초기에는 **비관적 락**을 통해 동시성 문제를 해결했으나, 이는 DB에 부하를 줄 수 있다고 판단하여 **Redis 기반 분산 락**으로 전환하였습니다.  
+또한, 분산 락을 **AOP로 구현**함으로써 핵심 비지니스 로직과의 **관심사 분리**와 함께 로직 중복 문제를 해결하였습니다.
+```java
+
+public class DistributedLockAspect {
+
+    private final RedissonClient  redissonClient;
+
+    @Around("@annotation(distributedLock)")
+    public Object around(ProceedingJoinPoint joinPoint, DistributedLock distributedLock) throws Throwable {
+        String key = distributedLock.key();
+
+        RLock lock = redissonClient.getLock(key);
+        boolean acquired = lock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), TimeUnit.SECONDS);
+
+        if (!acquired) {
+            throw new RuntimeException("락 획득 실패");
+        }
+
+        try {
+            return joinPoint.proceed();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+
+```
 
 
+</br>
 
 ---
+
+</br>
 
 ## 선착순 쿠폰 발급
 
@@ -101,9 +141,11 @@ public class CouponStep {
 - **Redis**의 빠른 읽기·쓰기 성능과 **Kafka**의 분산·비동기 처리 특성이 **대규모 트래픽을 안정적으로 처리**하는 데 적합하다고 판단하여 채택하였습니다.
 - Redis는 **쿠폰 수량과 유저 발급 정보를 관리**하여 즉시 발급 가능 여부를 판단하고, 중복 발급을 방지합니다.
 - Kafka는 **메시지 버퍼링과 비동기 처리**를 통해 DB에 몰리는 부하를 완화하고, 트래픽 폭주에도 **안정적으로 처리**할 수 있도록 합니다.
+</br>
 
 ---
 
+</br>
 
 ## 인기 판매 상품 조회(3일)
 
@@ -131,6 +173,11 @@ public class CouponStep {
 - 기존 집계 함수와 다중 조인으로 인한 **조회 성능 저하 구간**만 Redis 캐싱으로 대체하고, PK 기반 DB 조회를 유지하여 **데이터 정합성과 성능**을 동시에 확보했습니다.  
 - 상품 정보를 직접 캐싱하지 않고 **ID만 저장**한 이유는 데이터 정합성을 유지하면서, MySQL의 **클러스터링 인덱스**로도 충분한 성능을 확보할 수 있다고 판단했기 때문입니다.
 
+</br>
+
+---
+
+</br>
 
 ## 아키텍처 설명
 해당 프로젝트는 **Clean Architecture**를 적용하였습니다.  
@@ -143,6 +190,12 @@ public class CouponStep {
 - UseCase를 **도메인 기능 단위로 구성**하여 **SRP(단일 책임 원칙)**을 철저히 준수할 수 있습니다.
 - 외부 의존성을 최소화하여 **애플리케이션의 범용성과 유지보수성**을 향상이 됩니다.  
 - 이러한 이유로 Clean Architecture가 Layered Architecture보다 **우수한 설계 방식**이라고 판단했습니다.
+
+</br>
+
+---
+
+</br>
 
 ## 계층 구조 및 특징
 ```
@@ -169,6 +222,10 @@ Controller -> UseCase -> DomainService(선택) -> Repositroy ->  RepositoryImpl(
 ### Repository(구현체)
 RepositoryImpl은 Repository 인터페이스를 실제 데이터베이스 맞게 구현한 구체 클래스입니다.
 <br> 인터페이스와 분리되어 있어 데이터 베이스 구현 및 변경 시 도메인이나 상위 계층에 영향을 최소화합니다.
+
+</br>
+
+---
 
 </br>
 

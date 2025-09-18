@@ -126,6 +126,36 @@ public class DistributedLockAspect {
 ## 선착순 쿠폰 발급
 
 ### 구현 방식
+```mermaid
+sequenceDiagram
+  participant CouponController
+  participant IssueCouponUseCase
+  participant Redis
+  participant Kafka
+  participant RegisterUserCouponListener
+  participant UserCouponRepository
+
+CouponController ->> IssueCouponUseCase: 선착순 쿠폰 발급 요청
+
+IssueCouponUseCase ->> Redis: 쿠폰 남은 발급 수량 조회
+Redis ->> IssueCouponUseCase: 조회 결과 반환
+IssueCouponUseCase ->> IssueCouponUseCase: 발급 가능 수량 확인
+
+IssueCouponUseCase ->> Redis: 유저 중복 쿠폰 발급 여부 조회
+Redis ->> IssueCouponUseCase: 조회 결과 반환
+IssueCouponUseCase ->> IssueCouponUseCase: 중복 발급 여부 확인
+
+IssueCouponUseCase -) Kafka: 유저 쿠폰 등록 이벤트 메시지 발행
+Note right of Kafka: 비동기 처리 시작
+
+IssueCouponUseCase ->> CouponController: 쿠폰 발급 결과 반환
+
+RegisterUserCouponListener ->> Kafka: Poll 메시지
+Kafka ->> RegisterUserCouponListener: 메시지 반환
+RegisterUserCouponListener ->> UserCouponRepository: 유저 쿠폰 등록
+UserCouponRepository ->> RegisterUserCouponListener: 저장 완료
+```
+
 1. **Redis에 쿠폰 수량 관리**
    - 쿠폰의 남은 수량을 Redis에서 관리하여 **발급 가능 여부를 빠르게 판단**합니다.
    - 중복 발급 여부는 Byte 단위가 아닌 Bit 단위로 저장하는 **Bitmap**으로 관리하여 **메모리 효율**에 신경을 썻습니다.
@@ -150,6 +180,9 @@ public class DistributedLockAspect {
 ## 인기 판매 상품 조회(3일)
 
 ### 구현 방식
+```mermaid
+
+```
 1. **결제 시 Redis Sorted Set에 판매된 상품의 데이터 주입**
 
       | 항목 | 설명 |

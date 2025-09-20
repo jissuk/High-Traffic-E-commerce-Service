@@ -43,7 +43,7 @@ public class GetAllProductUseCaseTest {
         @DisplayName("상품이 존재 시 모든 상품 조회 시 예외가 발생하지 않는다.")
         void 전체상품조회 (){
             // given
-            when(productRepository.findAll()).thenReturn(ProductStep.전체상품_기본값());
+            when(productRepository.findAll()).thenReturn(ProductStep.defaultAllProduct());
             // when
             getAllProductUseCase.execute();
             // then

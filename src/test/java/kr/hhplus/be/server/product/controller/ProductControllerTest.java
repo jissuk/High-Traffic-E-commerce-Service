@@ -48,7 +48,7 @@ public class ProductControllerTest {
     }
     private void initTestData() throws Exception {
     // MySql
-        jpaProductRepository.save(ProductStep.상품엔티티_기본값());
+        jpaProductRepository.save(ProductStep.defaultProductEntity());
     }
 
     @Nested
@@ -61,7 +61,7 @@ public class ProductControllerTest {
             // given
             long productId = 1L;
             // when
-            ResultActions result = ProductStep.단건상품조회요청(mockMvc, productId);
+            ResultActions result = ProductStep.getProductsRequest(mockMvc, productId);
 
             // then
             result.andExpect(status().isOk());
@@ -73,7 +73,7 @@ public class ProductControllerTest {
             // given
 
             // when
-            ResultActions result = ProductStep.전체상품조회요청(mockMvc);
+            ResultActions result = ProductStep.getAllProductsRequest(mockMvc);
 
             // then
             result.andExpect(status().isOk());
@@ -85,7 +85,7 @@ public class ProductControllerTest {
             // given
 
             // when
-            ResultActions result = ProductStep.인기판매상품조회요청(mockMvc);
+            ResultActions result = ProductStep.getPopularProductsRequest(mockMvc);
 
             // then
             result.andExpect(status().isOk());
@@ -103,7 +103,7 @@ public class ProductControllerTest {
             long productId = 0L;
 
             // when
-            ResultActions result = ProductStep.단건상품조회요청(mockMvc, productId);
+            ResultActions result = ProductStep.getProductsRequest(mockMvc, productId);
 
             // then
             result.andExpect(jsonPath("$.code").value("ProductNotFound"));

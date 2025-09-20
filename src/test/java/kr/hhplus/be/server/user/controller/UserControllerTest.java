@@ -49,7 +49,7 @@ public class UserControllerTest {
     }
 
     private void initTestData() {
-        jpaUserRepository.save(UserStep.유저엔티티_기본값());
+        jpaUserRepository.save(UserStep.defualtUserEntity());
     }
 
 
@@ -61,10 +61,10 @@ public class UserControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 포인트를 충전한다.")
         void 포인트충전() throws Exception {
             // given
-            UserRequest request = UserStep.유저요청생성_기본값();
+            UserRequest request = UserStep.defaultUserRequest();
 
             // when
-            ResultActions result = UserStep.유저포인트충전요청(mockMvc, objectMapper, request);
+            ResultActions result = UserStep.chargePointRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(jsonPath("$.status").value(201));
@@ -79,10 +79,10 @@ public class UserControllerTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 포인트충전() throws Exception {
             // given
-            UserRequest request = UserStep.유저요청생성_유저ID지정(2L);
+            UserRequest request = UserStep.userRequestWithUserId(2L);
 
             // when
-            ResultActions result = UserStep.유저포인트충전요청(mockMvc, objectMapper, request);
+            ResultActions result = UserStep.chargePointRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(jsonPath("$.code").value("UserNotFound"));

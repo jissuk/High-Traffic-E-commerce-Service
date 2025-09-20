@@ -76,10 +76,10 @@ public class GetPopularProductUseCaseTest {
     }
 
     void initTestDBData(){
-        ProductEntity product1 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
-        ProductEntity product2 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
-        ProductEntity product3 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
-        ProductEntity product4 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
+        ProductEntity product1 = jpaProductRepository.save(ProductStep.defaultProductEntity());
+        ProductEntity product2 = jpaProductRepository.save(ProductStep.defaultProductEntity());
+        ProductEntity product3 = jpaProductRepository.save(ProductStep.defaultProductEntity());
+        ProductEntity product4 = jpaProductRepository.save(ProductStep.defaultProductEntity());
 
         // 예상 스코어
         // product1 : 3
@@ -122,10 +122,10 @@ public class GetPopularProductUseCaseTest {
     }
 
     void initTestRedisData() throws Exception {
-        Product product1 = ProductStep.상품_기본값_ID지정(1);
-        Product product2 = ProductStep.상품_기본값_ID지정(2);
-        Product product3 = ProductStep.상품_기본값_ID지정(3);
-        Product product4 = ProductStep.상품_기본값_ID지정(4);
+        Product product1 = ProductStep.productWithProductId(1);
+        Product product2 = ProductStep.productWithProductId(2);
+        Product product3 = ProductStep.productWithProductId(3);
+        Product product4 = ProductStep.productWithProductId(4);
 
         LocalDate toDay = LocalDate.now(ZoneId.of("Asia/Seoul"));
 

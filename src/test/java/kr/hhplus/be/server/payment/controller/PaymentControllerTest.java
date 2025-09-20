@@ -79,13 +79,13 @@ public class PaymentControllerTest {
     }
 
     private void initTestData() {
-        UserEntity user = jpaUserRepository.save(UserStep.유저엔티티_기본값());
+        UserEntity user = jpaUserRepository.save(UserStep.defualtUserEntity());
         CouponEntity coupon = jpaCouponRepository.save(CouponStep.defaultCouponEntity());
         OrderEntity order = jpaOrderRepositroy.save(OrderStep.defaultOrderEntity(user));
         OrderItemEntity orderItem = jpaOrderItemRepository.save(OrderStep.defaultOrderItemEntity(order));
 
         jpaUserCouponRepository.save(CouponStep.defaultUserCouponEntity(user, coupon));
-        jpaProductRepository.save(ProductStep.상품엔티티_기본값());
+        jpaProductRepository.save(ProductStep.defaultProductEntity());
         jpaPaymentRepository.save(PaymentStep.defaultPaymentEntity(user,orderItem));
     }
 
@@ -100,7 +100,7 @@ public class PaymentControllerTest {
             PaymentRequest request = PaymentStep.defaultPaymentRequest();
 
             // when
-            ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
+            ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(status().isOk());
@@ -113,7 +113,7 @@ public class PaymentControllerTest {
             PaymentRequest request = PaymentStep.paymentRequestWithCouponId(null);
 
             // when
-            ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
+            ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(status().isOk());
@@ -130,7 +130,7 @@ public class PaymentControllerTest {
             PaymentRequest request = PaymentStep.paymentRequestWithUserId(2L);
 
             // when
-            ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
+            ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(jsonPath("$.code").value("UserNotFound"));
@@ -140,10 +140,10 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 주문일 경우 OrderNotFoundException이 발생한다.")
         void 결제_존재하지않는_주문일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.결제요청_주문ID지정(2L);
+            PaymentRequest request = PaymentStep.paymentRequestWithOrderId(2L);
 
             // when
-            ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
+            ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(jsonPath("$.code").value("OrderNotFound"));
@@ -153,10 +153,10 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 주문상세일 경우 OrderItemNotFoundException이 발생한다.")
         void 결제_존재하지않는_주문상세일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.결제요청_주문상세ID지정(2L);
+            PaymentRequest request = PaymentStep.paymentRequestWithOrderItemId(2L);
 
             // when
-            ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
+            ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(jsonPath("$.code").value("OrderItemNotFound"));
@@ -166,10 +166,10 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 결제일 경우 PaymentNotFoundException이 발생한다.")
         void 결제_존재하지않는_결제일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.결제요청_결제ID지정(2L);
+            PaymentRequest request = PaymentStep.paymentRequestWithPaymentId(2L);
 
             // when
-            ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
+            ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(jsonPath("$.code").value("PaymentNotFound"));
@@ -179,10 +179,10 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 결제_존재하지않는_상품일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.결제요청_상품ID지정(2L);
+            PaymentRequest request = PaymentStep.paymentRequestWithProductId(2L);
 
             // when
-            ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
+            ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(jsonPath("$.code").value("ProductNotFound"));

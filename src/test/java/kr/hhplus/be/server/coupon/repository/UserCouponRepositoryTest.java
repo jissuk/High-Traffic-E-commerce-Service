@@ -37,7 +37,7 @@ public class UserCouponRepositoryTest {
         @Test
         void 유저쿠폰_쿠폰아이디_조회() {
             // given
-            User user = userRepository.save(UserStep.유저_기본값());
+            User user = userRepository.save(UserStep.defualtUser());
             Coupon coupon = couponRepository.save(CouponStep.defaultCoupon());
             UserCoupon saved = userCouponRepository.save(CouponStep.defaultUserCoupon(user.getId(), coupon.getId()));
 

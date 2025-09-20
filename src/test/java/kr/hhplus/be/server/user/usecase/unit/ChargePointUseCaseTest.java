@@ -7,7 +7,6 @@ import kr.hhplus.be.server.user.step.UserStep;
 import kr.hhplus.be.server.user.usecase.ChargePointUseCase;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.usecase.dto.UserResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 
@@ -51,7 +49,7 @@ public class ChargePointUseCaseTest {
         @DisplayName("유저가 존재할 경우 유저의 포인트를 충전한다.")
         void 포인트충전(){
             // given
-            UserCommand command = UserStep.유저커맨드_기본값(); // point: 3000L
+            UserCommand command = UserStep.defaultUserCommand(); // point: 3000L
             when(userRepository.findById(command.userId())).thenReturn(new User(1L, 10_000L));
 
             // when
@@ -70,7 +68,7 @@ public class ChargePointUseCaseTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 포인트충전_존재하지않는_유저일_경우(){
             // given
-            UserCommand command = UserStep.유저커맨드_기본값();
+            UserCommand command = UserStep.defaultUserCommand();
             when(userRepository.findById(command.userId())).thenThrow(new UserNotFoundException());
 
             // when & then

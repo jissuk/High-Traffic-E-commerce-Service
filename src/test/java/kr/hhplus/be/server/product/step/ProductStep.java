@@ -16,8 +16,7 @@ public class ProductStep {
 
     private static String PATH_URL = "/products";
 
-    public static Product 상품_기본값(){
-
+    public static Product defaultProduct(){
         return Product.builder()
                 .productName("기본 상품")
                 .price(2000L)
@@ -25,8 +24,7 @@ public class ProductStep {
                 .build();
     }
 
-    public static Product 상품_기본값_ID지정(long id){
-
+    public static Product productWithProductId(long id){
         return Product.builder()
                 .id(id)
                 .productName("기본 상품")
@@ -35,8 +33,7 @@ public class ProductStep {
                 .build();
     }
 
-    public static ProductEntity 상품엔티티_기본값(){
-
+    public static ProductEntity defaultProductEntity(){
         return ProductEntity.builder()
                             .productName("기본 상품")
                             .price(2000L)
@@ -44,17 +41,7 @@ public class ProductStep {
                             .build();
     }
 
-    public static ProductEntity 상품엔티티_기본값_ID지정(long id){
-
-        return ProductEntity.builder()
-                .id(id)
-                .productName("기본 상품")
-                .price(2000L)
-                .quantity(200L)
-                .build();
-    }
-
-    public static List<Product> 전체상품_기본값(){
+    public static List<Product> defaultAllProduct(){
         List<Product> productList = new ArrayList<>();
         Product product = Product.builder()
                                 .productName("기본 상품")
@@ -65,19 +52,19 @@ public class ProductStep {
         return productList;
     }
 
-    public static ResultActions 단건상품조회요청(MockMvc mockMvc, long prodcutId) throws Exception {
+    public static ResultActions getProductsRequest(MockMvc mockMvc, long prodcutId) throws Exception {
         return mockMvc.perform(get(PATH_URL + "/{productId}", prodcutId)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andDo(print());
     }
 
-    public static ResultActions 전체상품조회요청(MockMvc mockMvc) throws Exception {
+    public static ResultActions getAllProductsRequest(MockMvc mockMvc) throws Exception {
         return mockMvc.perform(get(PATH_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andDo(print());
     }
 
-    public static ResultActions 인기판매상품조회요청(MockMvc mockMvc) throws Exception {
+    public static ResultActions getPopularProductsRequest(MockMvc mockMvc) throws Exception {
         return mockMvc.perform(get(PATH_URL + "/popular")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());

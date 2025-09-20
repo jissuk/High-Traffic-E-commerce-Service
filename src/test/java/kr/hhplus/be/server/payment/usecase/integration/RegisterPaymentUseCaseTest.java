@@ -107,14 +107,14 @@ public class RegisterPaymentUseCaseTest {
     }
 
     private void initTestData() {
-        UserEntity user = jpaUserRepository.save(UserStep.유저엔티티_기본값());
+        UserEntity user = jpaUserRepository.save(UserStep.defualtUserEntity());
         OrderEntity order = jpaOrderRepositroy.save(OrderStep.defaultOrderEntity(user));
         CouponEntity coupon = jpaCouponRepository.save(CouponStep.defaultCouponEntity());
         OrderItemEntity orderItem = jpaOrderItemRepository.save(OrderStep.defaultOrderItemEntity(order));
 
         jpaPaymentRepository.save(PaymentStep.defaultPaymentEntity(user,orderItem));
         jpaUserCouponRepository.save(CouponStep.defaultUserCouponEntity(user, coupon));
-        jpaProductRepository.save(ProductStep.상품엔티티_기본값());
+        jpaProductRepository.save(ProductStep.defaultProductEntity());
     }
 
     @Nested

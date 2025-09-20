@@ -58,8 +58,8 @@ public class OrderControllerTest {
     }
 
     private void initTestData() {
-        jpaUserRepository.save(UserStep.유저엔티티_기본값());
-        jpaProductRepository.save(ProductStep.상품엔티티_기본값());
+        jpaUserRepository.save(UserStep.defualtUserEntity());
+        jpaProductRepository.save(ProductStep.defaultProductEntity());
     }
 
 

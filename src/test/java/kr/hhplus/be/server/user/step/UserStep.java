@@ -17,37 +17,37 @@ public class UserStep {
 
     private static String PATH_URL = "/user";
 
-    public static UserRequest 유저요청생성_기본값(){
+    public static UserRequest defaultUserRequest(){
         return UserRequest.builder()
                                 .userId(1L)
                                 .point(3000L)
                                 .build();
     }
 
-    public static UserRequest 유저요청생성_유저ID지정(long userId){
+    public static UserRequest userRequestWithUserId(long userId){
         return UserRequest.builder()
                 .userId(userId)
                 .point(3000L)
                 .build();
     }
 
-    public static UserCommand 유저커맨드_기본값() {
+    public static UserCommand defaultUserCommand() {
         return new UserCommand(1L, 3000L);
     }
 
-    public static User 유저_기본값(){
+    public static User defualtUser(){
         return User.builder()
                     .point(10000L)
                     .build();
     }
 
-    public static UserEntity 유저엔티티_기본값(){
+    public static UserEntity defualtUserEntity(){
         return UserEntity.builder()
                 .point(40000L)
                 .build();
     }
 
-    public static ResultActions 유저포인트충전요청(MockMvc mockMvc, ObjectMapper objectMapper, UserRequest request) throws Exception {
+    public static ResultActions chargePointRequest(MockMvc mockMvc, ObjectMapper objectMapper, UserRequest request) throws Exception {
         return mockMvc.perform(post(PATH_URL+ "/chargePoint")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))

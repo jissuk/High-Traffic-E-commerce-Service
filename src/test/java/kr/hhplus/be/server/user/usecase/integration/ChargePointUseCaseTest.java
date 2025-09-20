@@ -1,8 +1,5 @@
 package kr.hhplus.be.server.user.usecase.integration;
 
-import kr.hhplus.be.server.coupon.domain.model.CouponEntity;
-import kr.hhplus.be.server.coupon.step.CouponStep;
-import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
@@ -50,7 +47,7 @@ public class ChargePointUseCaseTest {
         jdbcTemplate.execute("TRUNCATE TABLE users;");
     }
     private void initTestData() {
-        jpaUserRepository.save(UserStep.유저엔티티_기본값());
+        jpaUserRepository.save(UserStep.defualtUserEntity());
     }
 
     @Nested
@@ -68,7 +65,7 @@ public class ChargePointUseCaseTest {
             for (int i = 0; i < threadCount; i++) {
                 futures.add(executor.submit(() -> {
                     try {
-                        chargePointUseCase.execute(UserStep.유저커맨드_기본값());
+                        chargePointUseCase.execute(UserStep.defaultUserCommand());
                         return null;
                     } finally {
                         latch.countDown();

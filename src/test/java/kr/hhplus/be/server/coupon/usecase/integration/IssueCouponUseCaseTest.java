@@ -73,7 +73,7 @@ public class IssueCouponUseCaseTest {
     }
     private void initTestDBData() {
         for (int i = 1; i <= 10; i++) {
-            jpaUserRepository.save(UserStep.유저엔티티_기본값());
+            jpaUserRepository.save(UserStep.defualtUserEntity());
         }
         jpaCouponRepository.save(CouponStep.defaultCouponEntity());
     }

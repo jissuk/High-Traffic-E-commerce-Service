@@ -45,10 +45,10 @@ public class ProductRepositoryTest {
     }
 
     void initDBTestDBData(){
-        ProductEntity product1 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
-        ProductEntity product2 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
-        ProductEntity product3 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
-        ProductEntity product4 = jpaProductRepository.save(ProductStep.상품엔티티_기본값());
+        ProductEntity product1 = jpaProductRepository.save(ProductStep.defaultProductEntity());
+        ProductEntity product2 = jpaProductRepository.save(ProductStep.defaultProductEntity());
+        ProductEntity product3 = jpaProductRepository.save(ProductStep.defaultProductEntity());
+        ProductEntity product4 = jpaProductRepository.save(ProductStep.defaultProductEntity());
 
         // 예상 스코어
         // product1 : 3

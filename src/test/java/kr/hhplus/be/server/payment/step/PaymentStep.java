@@ -75,7 +75,7 @@ public class PaymentStep {
                 .build();
     }
 
-    public static PaymentRequest 결제요청_주문ID지정(long orderId){
+    public static PaymentRequest paymentRequestWithOrderId(long orderId){
         return PaymentRequest.builder()
                 .userId(1L)
                 .orderId(orderId)
@@ -85,7 +85,7 @@ public class PaymentStep {
                 .build();
     }
 
-    public static PaymentRequest 결제요청_주문상세ID지정(long orderItemId){
+    public static PaymentRequest paymentRequestWithOrderItemId(long orderItemId){
         return PaymentRequest.builder()
                 .userId(1L)
                 .orderId(1L)
@@ -95,7 +95,7 @@ public class PaymentStep {
                 .build();
     }
 
-    public static PaymentRequest 결제요청_결제ID지정(long paymentId){
+    public static PaymentRequest paymentRequestWithPaymentId(long paymentId){
         return PaymentRequest.builder()
                 .userId(1L)
                 .orderId(1L)
@@ -105,7 +105,7 @@ public class PaymentStep {
                 .build();
     }
 
-    public static PaymentRequest 결제요청_상품ID지정(long productId){
+    public static PaymentRequest paymentRequestWithProductId(long productId){
         return PaymentRequest.builder()
                 .userId(1L)
                 .orderId(1L)
@@ -115,7 +115,7 @@ public class PaymentStep {
                 .build();
     }
 
-    public static ResultActions 결제요청(MockMvc mockMvc, ObjectMapper objectMapper, PaymentRequest request) throws Exception {
+    public static ResultActions paymentRequest(MockMvc mockMvc, ObjectMapper objectMapper, PaymentRequest request) throws Exception {
 
         return mockMvc.perform(post(PATH_URL)
                                     .content(objectMapper.writeValueAsString(request))

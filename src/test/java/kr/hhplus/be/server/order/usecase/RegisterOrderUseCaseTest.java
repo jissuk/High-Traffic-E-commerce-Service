@@ -44,8 +44,8 @@ public class RegisterOrderUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        userRepository.save(UserStep.유저_기본값());
-        productRepository.save(ProductStep.상품_기본값()); // quantity : 5
+        userRepository.save(UserStep.defualtUser());
+        productRepository.save(ProductStep.defaultProduct()); // quantity : 5
     }
 
     @Nested

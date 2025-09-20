@@ -61,7 +61,7 @@ public class CouponControllerTest {
 
     private void initTestData() {
         jpaUserRepository.save(UserStep.유저엔티티_기본값());
-        jpaCouponRepository.save(CouponStep.쿠폰엔티티_기본값());
+        jpaCouponRepository.save(CouponStep.defaultCouponEntity());
     }
 
     private void initTestRedisData(){
@@ -82,9 +82,9 @@ public class CouponControllerTest {
         @DisplayName("요청 데이터가 정상적이며 쿠폰 수량이 남아있을 경우 쿠폰을 발급한다.")
         void 선착순쿠폰발급() throws Exception {
             // given
-            UserCouponRequest request = CouponStep.유저쿠폰요청_기본값();
+            UserCouponRequest request = CouponStep.defaultUserCouponRequest();
             // when
-            ResultActions result = CouponStep.선착순쿠폰발급요청(mockMvc, objectMapper, request);
+            ResultActions result = CouponStep.issueCouponRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(status().isOk());

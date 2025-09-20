@@ -13,7 +13,6 @@ import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.payment.infrastructure.jpa.JpaPaymentRepository;
 import kr.hhplus.be.server.payment.step.PaymentStep;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentRequest;
-import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
@@ -81,13 +80,13 @@ public class PaymentControllerTest {
 
     private void initTestData() {
         UserEntity user = jpaUserRepository.save(UserStep.유저엔티티_기본값());
-        CouponEntity coupon = jpaCouponRepository.save(CouponStep.쿠폰엔티티_기본값());
-        OrderEntity order = jpaOrderRepositroy.save(OrderStep.주문엔티티_기본값(user));
-        OrderItemEntity orderItem = jpaOrderItemRepository.save(OrderStep.주문상세엔티티_기본값(order));
+        CouponEntity coupon = jpaCouponRepository.save(CouponStep.defaultCouponEntity());
+        OrderEntity order = jpaOrderRepositroy.save(OrderStep.defaultOrderEntity(user));
+        OrderItemEntity orderItem = jpaOrderItemRepository.save(OrderStep.defaultOrderItemEntity(order));
 
-        jpaUserCouponRepository.save(CouponStep.유저쿠폰엔티티_기본값(user, coupon));
+        jpaUserCouponRepository.save(CouponStep.defaultUserCouponEntity(user, coupon));
         jpaProductRepository.save(ProductStep.상품엔티티_기본값());
-        jpaPaymentRepository.save(PaymentStep.결제엔티티_기본값(user,orderItem));
+        jpaPaymentRepository.save(PaymentStep.defaultPaymentEntity(user,orderItem));
     }
 
     @Nested
@@ -98,7 +97,7 @@ public class PaymentControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 쿠폰과 포인트를 사용하여 결제한다.")
         void 결제() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.결제요청_기본값();
+            PaymentRequest request = PaymentStep.defaultPaymentRequest();
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
@@ -111,7 +110,7 @@ public class PaymentControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 포인트만 사용하여 결제한다.")
         void 결제_쿠폰이존재하지않을_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.결제요청_쿠폰ID지정(null);
+            PaymentRequest request = PaymentStep.paymentRequestWithCouponId(null);
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);
@@ -128,7 +127,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 결제_존재하지않는_유저일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.결제요청_유저ID지정(2L);
+            PaymentRequest request = PaymentStep.paymentRequestWithUserId(2L);
 
             // when
             ResultActions result = PaymentStep.결제요청(mockMvc, objectMapper, request);

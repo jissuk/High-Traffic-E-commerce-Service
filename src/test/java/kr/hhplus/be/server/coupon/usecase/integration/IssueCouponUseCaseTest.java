@@ -75,7 +75,7 @@ public class IssueCouponUseCaseTest {
         for (int i = 1; i <= 10; i++) {
             jpaUserRepository.save(UserStep.유저엔티티_기본값());
         }
-        jpaCouponRepository.save(CouponStep.쿠폰엔티티_기본값());
+        jpaCouponRepository.save(CouponStep.defaultCouponEntity());
     }
 
     private void initTestRedisData(){
@@ -100,7 +100,7 @@ public class IssueCouponUseCaseTest {
             long couponId = 1L;
             long userCouponId = 1L;
             long remainingCoupons = 9L;
-            UserCouponCommand request = CouponStep.유저쿠폰커맨드_기본값();
+            UserCouponCommand request = CouponStep.defaultUserCouponCommand();
             String quantityKey = COUPON_ISSUE_PREFIX +couponId + QUANTITY_SUFFIX;
 
             // when
@@ -135,7 +135,7 @@ public class IssueCouponUseCaseTest {
                 long userId = i+1;
                 futures.add(executor.submit(() -> {
                     try {
-                        issueCouponUseCase.execute(CouponStep.유저쿠폰커맨드_유저ID지정(userId));
+                        issueCouponUseCase.execute(CouponStep.userCouponCommandWithUserId(userId));
                         return null;
                     } finally {
                         latch.countDown();
@@ -187,7 +187,7 @@ public class IssueCouponUseCaseTest {
         @DisplayName("실시간 쿠폰 발급 동일 유저 발급")
         void 실시간쿠폰발급_동일유저발급() throws JsonProcessingException {
             // given
-            UserCouponCommand request = CouponStep.유저쿠폰커맨드_기본값();
+            UserCouponCommand request = CouponStep.defaultUserCouponCommand();
             issueCouponUseCase.execute(request);
 
             // when & then

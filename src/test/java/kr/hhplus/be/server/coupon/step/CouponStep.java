@@ -17,76 +17,65 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 public class CouponStep {
 
     private static String PATH_URL = "/coupons";
+    private static final Long DEFAULT_USER_ID = 1L;
+    private static final Long DEFAULT_COUPON_ID = 1L;
+    private static final Long DEFAULT_COUPON_DISCOUNT = 3000L;
+    private static final Long DEFAULT_COUPON_QUANTITY = 500L;
+    private static final String DEFAULT_COUPON_DESCRIPTION = "여름 특별 할인 쿠폰";
 
-    public static UserCouponCommand 유저쿠폰커맨드_기본값(){
-        return new UserCouponCommand(1L, 1L);
+    public static UserCouponCommand defaultUserCouponCommand(){
+        return new UserCouponCommand(DEFAULT_USER_ID, DEFAULT_COUPON_ID);
     }
-    public static UserCouponCommand 유저쿠폰커맨드_유저ID지정(Long userId){
-        return new UserCouponCommand(userId, 1L);
+    public static UserCouponCommand userCouponCommandWithUserId(Long userId){
+        return new UserCouponCommand(userId, DEFAULT_COUPON_ID);
     }
 
-    public static UserCouponRequest 유저쿠폰요청_기본값(){
+    public static UserCouponRequest defaultUserCouponRequest(){
         return UserCouponRequest.builder()
-                .userId(1L)
-                .couponId(1L)
+                .userId(DEFAULT_USER_ID)
+                .couponId(DEFAULT_COUPON_ID)
                 .build();
     }
 
-    public static UserCouponRequest 유저쿠폰요청_유저ID지정(long userId){
-        return UserCouponRequest.builder()
-                .userId(userId)
-                .couponId(1L)
-                .build();
-    }
-
-    public static UserCouponRequest 유저쿠폰요청_쿠폰ID지정(long couponId){
-        return UserCouponRequest.builder()
-                .userId(1L)
-                .couponId(couponId)
-                .build();
-    }
-
-    public static Coupon 쿠폰_기본값(){
+    public static Coupon defaultCoupon(){
         return Coupon.builder()
-                        .discount(2000L)
-                        .description("여름특별할인쿠폰")
-                        .quantity(500L)
+                        .discount(DEFAULT_COUPON_DISCOUNT)
+                        .description(DEFAULT_COUPON_DESCRIPTION)
+                        .quantity(DEFAULT_COUPON_QUANTITY)
                         .expiredAt(LocalDateTime.now().plusMonths(3))
                         .build();
     }
 
-    public static UserCoupon 유저쿠폰_기본값(long userId, long couponId){
+    public static UserCoupon defaultUserCoupon(long userId, long couponId){
         return UserCoupon.builder()
-                .discount(3000L)
+                .discount(DEFAULT_COUPON_DISCOUNT)
                 .couponStatus(CouponStatus.ISSUED)
-                .description("여름 특별 할인 쿠폰")
+                .description(DEFAULT_COUPON_DESCRIPTION)
                 .userId(userId)
                 .couponId(couponId)
                 .build();
     }
 
-
-    public static CouponEntity 쿠폰엔티티_기본값(){
+    public static CouponEntity defaultCouponEntity(){
         return CouponEntity.builder()
-                        .discount(3000L)
-                        .description("여름특별할인쿠폰")
-                        .quantity(500L)
+                        .discount(DEFAULT_COUPON_DISCOUNT)
+                        .description(DEFAULT_COUPON_DESCRIPTION)
+                        .quantity(DEFAULT_COUPON_QUANTITY)
                         .expiredAt(LocalDateTime.now().plusMonths(3))
                         .build();
     }
 
-    public static UserCouponEntity 유저쿠폰엔티티_기본값(UserEntity user, CouponEntity coupon){
+    public static UserCouponEntity defaultUserCouponEntity(UserEntity user, CouponEntity coupon){
         return UserCouponEntity.builder()
-                .discount(3000L)
+                .discount(DEFAULT_COUPON_DISCOUNT)
                 .couponStatus(CouponStatus.ISSUED)
-                .description("여름 특별 할인 쿠폰")
+                .description(DEFAULT_COUPON_DESCRIPTION)
                 .couponId(coupon.getId())
                 .userId(user.getId())
                 .build();
     }
 
-
-    public static ResultActions 선착순쿠폰발급요청(MockMvc mockMvc, ObjectMapper objectMapper, UserCouponRequest request) throws Exception {
+    public static ResultActions issueCouponRequest(MockMvc mockMvc, ObjectMapper objectMapper, UserCouponRequest request) throws Exception {
         return mockMvc.perform(post(PATH_URL + "/issue")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))

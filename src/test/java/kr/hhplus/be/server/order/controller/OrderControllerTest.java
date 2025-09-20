@@ -71,10 +71,10 @@ public class OrderControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 주문을 등록한다.")
         void 주문() throws Exception {
             // given
-            OrderItemRequest request = OrderStep.주문상세요청_기본값();
+            OrderItemRequest request = OrderStep.defaultOrderItemRequest();
 
             // when
-            ResultActions result = OrderStep.주문요청(mockMvc, objectMapper, request);
+            ResultActions result = OrderStep.orderRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(status().isOk());
@@ -89,10 +89,10 @@ public class OrderControllerTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 주문_존재하지않는_유저일_경우() throws Exception {
             // given
-            OrderItemRequest request = OrderStep.주문상세요청_유저ID지정(2L);
+            OrderItemRequest request = OrderStep.orderItemRequestWithUserId(2L);
 
             // when
-            ResultActions result = OrderStep.주문요청(mockMvc, objectMapper, request);
+            ResultActions result = OrderStep.orderRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(jsonPath("$.code").value("UserNotFound"));
@@ -102,10 +102,10 @@ public class OrderControllerTest {
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 주문_존재하지않는_상품일_경우() throws Exception {
             // given
-            OrderItemRequest request = OrderStep.주문상세요청_상품ID지정(2L);
+            OrderItemRequest request = OrderStep.orderItemRequestWithProductId(2L);
 
             // when
-            ResultActions result = OrderStep.주문요청(mockMvc, objectMapper, request);
+            ResultActions result = OrderStep.orderRequest(mockMvc, objectMapper, request);
 
             // then
             result.andExpect(jsonPath("$.code").value("ProductNotFound"));

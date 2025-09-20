@@ -10,7 +10,6 @@ public class UserMapper {
         return User.builder()
                     .id(userEntity.getId())
                     .point(userEntity.getPoint())
-                    .version(userEntity.getVersion())
                     .build();
     };
 
@@ -18,7 +17,6 @@ public class UserMapper {
         return UserEntity.builder()
                             .id(user.getId())
                             .point(user.getPoint())
-                            .version(user.getVersion())
                             .build();
     }
 }

@@ -18,7 +18,7 @@ public class OrderStep {
 
     private static String PATH_URL = "/orders";
 
-    public static OrderItemCommand 주문커맨드_기본값(){
+    public static OrderItemCommand defaultOrderCommand(){
         return OrderItemCommand.builder()
                 .productId(1L)
                 .userId(1L)
@@ -27,7 +27,7 @@ public class OrderStep {
                 .build();
     }
 
-    public static OrderEntity 주문엔티티_기본값(UserEntity user){
+    public static OrderEntity defaultOrderEntity(UserEntity user){
         return OrderEntity.builder()
                 .orderStatus(OrderStatus.PENDING)
                 .createdAt(LocalDateTime.now())
@@ -35,23 +35,7 @@ public class OrderStep {
                 .build();
     }
 
-    public static OrderItem 주문상세_기본값() {
-        return OrderItem.builder()
-                .quantity(2L)
-                .price(3000L)
-                .totalPrice(6000L)
-                .build();
-    }
-
-    public static OrderItemEntity 주문상세엔티티_기본값(){
-        return OrderItemEntity.builder()
-                .quantity(2L)
-                .price(3000L)
-                .totalPrice(6000L)
-                .build();
-    }
-
-    public static OrderItemEntity 주문상세엔티티_기본값(OrderEntity order){
+    public static OrderItemEntity defaultOrderItemEntity(OrderEntity order){
         return OrderItemEntity.builder()
                 .quantity(2L)
                 .price(3000L)
@@ -59,15 +43,8 @@ public class OrderStep {
                 .orderId(order.getId())
                 .build();
     }
-    public static OrderItemEntity 주문상세엔티티_기본값_상품ID지정(long id) {
-        return OrderItemEntity.builder()
-                .quantity(2L)
-                .price(3000L)
-                .totalPrice(6000L)
-                .productId(id)
-                .build();
-    }
-    public static OrderItemEntity 주문상세엔티티_기본값_상품ID_수량_지정(long productId, long quantity) {
+
+    public static OrderItemEntity orderItemWithProductIdAndQuantity(long productId, long quantity) {
         return OrderItemEntity.builder()
                 .productId(productId)
                 .quantity(quantity)
@@ -77,7 +54,7 @@ public class OrderStep {
     }
 
 
-    public static OrderItemRequest 주문상세요청_기본값(){
+    public static OrderItemRequest defaultOrderItemRequest(){
         return OrderItemRequest.builder()
                                     .userId(1L)
                                     .productId(1L)
@@ -86,7 +63,7 @@ public class OrderStep {
                                     .build();
     }
 
-    public static OrderItemRequest 주문상세요청_유저ID지정(long userId){
+    public static OrderItemRequest orderItemRequestWithUserId(long userId){
         return OrderItemRequest.builder()
                 .userId(userId)
                 .productId(1L)
@@ -95,7 +72,7 @@ public class OrderStep {
                 .build();
     }
 
-    public static OrderItemRequest 주문상세요청_상품ID지정(long productId){
+    public static OrderItemRequest orderItemRequestWithProductId(long productId){
         return OrderItemRequest.builder()
                 .userId(1L)
                 .productId(productId)
@@ -104,7 +81,7 @@ public class OrderStep {
                 .build();
     }
 
-    public static ResultActions 주문요청(MockMvc mockMvc, ObjectMapper objectMapper, OrderItemRequest request) throws Exception {
+    public static ResultActions orderRequest(MockMvc mockMvc, ObjectMapper objectMapper, OrderItemRequest request) throws Exception {
         return mockMvc.perform(post(PATH_URL)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))

@@ -108,12 +108,12 @@ public class RegisterPaymentUseCaseTest {
 
     private void initTestData() {
         UserEntity user = jpaUserRepository.save(UserStep.유저엔티티_기본값());
-        OrderEntity order = jpaOrderRepositroy.save(OrderStep.주문엔티티_기본값(user));
-        CouponEntity coupon = jpaCouponRepository.save(CouponStep.쿠폰엔티티_기본값());
-        OrderItemEntity orderItem = jpaOrderItemRepository.save(OrderStep.주문상세엔티티_기본값(order));
+        OrderEntity order = jpaOrderRepositroy.save(OrderStep.defaultOrderEntity(user));
+        CouponEntity coupon = jpaCouponRepository.save(CouponStep.defaultCouponEntity());
+        OrderItemEntity orderItem = jpaOrderItemRepository.save(OrderStep.defaultOrderItemEntity(order));
 
-        jpaPaymentRepository.save(PaymentStep.결제엔티티_기본값(user,orderItem));
-        jpaUserCouponRepository.save(CouponStep.유저쿠폰엔티티_기본값(user, coupon));
+        jpaPaymentRepository.save(PaymentStep.defaultPaymentEntity(user,orderItem));
+        jpaUserCouponRepository.save(CouponStep.defaultUserCouponEntity(user, coupon));
         jpaProductRepository.save(ProductStep.상품엔티티_기본값());
     }
 
@@ -127,7 +127,7 @@ public class RegisterPaymentUseCaseTest {
             int threadCount = 10;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
             CountDownLatch latch = new CountDownLatch(threadCount);
-            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            PaymentCommand command = PaymentStep.defaultPaymentCommand();
             List<Future<Void>> futures = new ArrayList<>();
 
             for (int i = 0; i < threadCount; i++) {
@@ -179,7 +179,7 @@ public class RegisterPaymentUseCaseTest {
         @DisplayName("동시에 10건의 쿠폰사용 요청을 보낼 경우 1건만 성공")
         void 쿠폰사용_동시성() throws InterruptedException {
             // given
-            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            PaymentCommand command = PaymentStep.defaultPaymentCommand();
             UserCouponEntity userCouponEntity = jpaUserCouponRepository.findByCouponId(command.couponId()).get();
 
             UserCoupon userCoupon = userCouponMapper.toDomain(userCouponEntity);
@@ -245,7 +245,7 @@ public class RegisterPaymentUseCaseTest {
         @DisplayName("동시에 10건의 포인트사용 요청을 보낼 경우 1건만 성공")
         void 포인트사용_동시성() throws InterruptedException {
             // given
-            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            PaymentCommand command = PaymentStep.defaultPaymentCommand();
             UserEntity userEntity = jpaUserRepository.findById(command.userId()).get();
 
             User user = userMapper.toDomain(userEntity);
@@ -315,7 +315,7 @@ public class RegisterPaymentUseCaseTest {
             int threadCount = 100;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
             CountDownLatch latch = new CountDownLatch(threadCount);
-            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            PaymentCommand command = PaymentStep.defaultPaymentCommand();
 
             List<Future<Void>> futures = new ArrayList<>();
 
@@ -375,7 +375,7 @@ public class RegisterPaymentUseCaseTest {
         @DisplayName("동시에 10건의 결제상태변경 요청을 보낼 경우 1건만 성공")
         void 결제상태변경_동시성() throws InterruptedException {
             // given
-            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            PaymentCommand command = PaymentStep.defaultPaymentCommand();
             PaymentEntity paymentEntity = jpaPaymentRepository.findById(command.productId()).get();
 
             Payment payment = paymentMapper.toDomain(paymentEntity);
@@ -441,7 +441,7 @@ public class RegisterPaymentUseCaseTest {
         @DisplayName("동시에 10건의 주문상태변경 요청을 보낼 경우 1건만 성공")
         void 주문상태변경_동시성() throws InterruptedException {
             // given
-            PaymentCommand command = PaymentStep.결제커맨드_기본값();
+            PaymentCommand command = PaymentStep.defaultPaymentCommand();
             OrderEntity orderEntity = jpaOrderRepositroy.findById(command.productId()).get();
 
             Order order = orderMapper.toDomain(orderEntity);

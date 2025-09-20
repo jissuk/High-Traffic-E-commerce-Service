@@ -54,7 +54,7 @@ public class RegisterOrderUseCaseTest {
         @Test
         void 주문() {
             // given
-            OrderItemCommand request = OrderStep.주문커맨드_기본값(); // quantity : 2
+            OrderItemCommand request = OrderStep.defaultOrderCommand(); // quantity : 2
 
             // when
             registerOrderUseCase.execute(request);

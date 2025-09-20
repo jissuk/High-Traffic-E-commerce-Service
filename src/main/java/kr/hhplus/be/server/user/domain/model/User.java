@@ -22,7 +22,6 @@ public class User {
 
     private long id;
     private long point;
-    private long version;
 
     public void charegePoint(long amount) {
         this.point += amount;

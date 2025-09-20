@@ -38,8 +38,8 @@ public class UserCouponRepositoryTest {
         void 유저쿠폰_쿠폰아이디_조회() {
             // given
             User user = userRepository.save(UserStep.유저_기본값());
-            Coupon coupon = couponRepository.save(CouponStep.쿠폰_기본값());
-            UserCoupon saved = userCouponRepository.save(CouponStep.유저쿠폰_기본값(user.getId(), coupon.getId()));
+            Coupon coupon = couponRepository.save(CouponStep.defaultCoupon());
+            UserCoupon saved = userCouponRepository.save(CouponStep.defaultUserCoupon(user.getId(), coupon.getId()));
 
             // when
             UserCoupon found = userCouponRepository.findByCouponId(coupon.getId());

@@ -86,12 +86,12 @@ public class GetPopularProductUseCaseTest {
         // product2 : 4
         // product3 : 1
         // product4 : 5
-        OrderItemEntity orderItem1 = OrderStep.주문상세엔티티_기본값_상품ID_수량_지정(product1.getId(), 3L);
-        OrderItemEntity orderItem2 = OrderStep.주문상세엔티티_기본값_상품ID_수량_지정(product2.getId(), 2L);
-        OrderItemEntity orderItem3 = OrderStep.주문상세엔티티_기본값_상품ID_수량_지정(product3.getId(), 1L);
-        OrderItemEntity orderItem4 = OrderStep.주문상세엔티티_기본값_상품ID_수량_지정(product2.getId(), 2L);
-        OrderItemEntity orderItem5 = OrderStep.주문상세엔티티_기본값_상품ID_수량_지정(product1.getId(), 3L);
-        OrderItemEntity orderItem6 = OrderStep.주문상세엔티티_기본값_상품ID_수량_지정(product4.getId(), 5L);
+        OrderItemEntity orderItem1 = OrderStep.orderItemWithProductIdAndQuantity(product1.getId(), 3L);
+        OrderItemEntity orderItem2 = OrderStep.orderItemWithProductIdAndQuantity(product2.getId(), 2L);
+        OrderItemEntity orderItem3 = OrderStep.orderItemWithProductIdAndQuantity(product3.getId(), 1L);
+        OrderItemEntity orderItem4 = OrderStep.orderItemWithProductIdAndQuantity(product2.getId(), 2L);
+        OrderItemEntity orderItem5 = OrderStep.orderItemWithProductIdAndQuantity(product1.getId(), 3L);
+        OrderItemEntity orderItem6 = OrderStep.orderItemWithProductIdAndQuantity(product4.getId(), 5L);
 
         jpaOrderItemRepository.save(orderItem1);
         jpaOrderItemRepository.save(orderItem2);
@@ -102,13 +102,13 @@ public class GetPopularProductUseCaseTest {
 
         LocalDateTime nowDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
-        PaymentEntity payment1 = PaymentStep.결제엔티티_기본값_주문상세ID_생성일_성공상태_지정(orderItem1.getId(), nowDateTime.minusDays(2));
-        PaymentEntity payment2 = PaymentStep.결제엔티티_기본값_주문상세ID_생성일_성공상태_지정(orderItem2.getId(), nowDateTime.minusDays(1));
-        PaymentEntity payment3 = PaymentStep.결제엔티티_기본값_주문상세ID_생성일_성공상태_지정(orderItem3.getId(), nowDateTime.minusDays(3));
-        PaymentEntity payment4 = PaymentStep.결제엔티티_기본값_주문상세ID_생성일_성공상태_지정(orderItem4.getId(), nowDateTime.minusDays(3));
+        PaymentEntity payment1 = PaymentStep.paymentEntityWithOrderItemIdAndCreateAt(orderItem1.getId(), nowDateTime.minusDays(2));
+        PaymentEntity payment2 = PaymentStep.paymentEntityWithOrderItemIdAndCreateAt(orderItem2.getId(), nowDateTime.minusDays(1));
+        PaymentEntity payment3 = PaymentStep.paymentEntityWithOrderItemIdAndCreateAt(orderItem3.getId(), nowDateTime.minusDays(3));
+        PaymentEntity payment4 = PaymentStep.paymentEntityWithOrderItemIdAndCreateAt(orderItem4.getId(), nowDateTime.minusDays(3));
         // 카운트 x
-        PaymentEntity payment5 = PaymentStep.결제엔티티_기본값_주문상세ID_생성일_성공상태_지정(orderItem5.getId(), nowDateTime.minusDays(4));
-        PaymentEntity payment6 = PaymentStep.결제엔티티_기본값_주문상세ID_생성일_성공상태_지정(orderItem6.getId(), nowDateTime.minusDays(1));
+        PaymentEntity payment5 = PaymentStep.paymentEntityWithOrderItemIdAndCreateAt(orderItem5.getId(), nowDateTime.minusDays(4));
+        PaymentEntity payment6 = PaymentStep.paymentEntityWithOrderItemIdAndCreateAt(orderItem6.getId(), nowDateTime.minusDays(1));
 
         jpaPaymentRepository.save(payment1);
         jpaPaymentRepository.save(payment2);

@@ -1,3 +1,22 @@
+ # 📚목차
+- [프로젝트 개요](#프로젝트-개요)
+- [요구사항 정리](#요구사항-정리)
+  - [기능적 요구사항](#기능적-요구사항)
+  - [비기능적 요구사항](#비기능적-요구사항)
+- [아키텍처](#아키텍처)
+  - [아키텍처 선택 이유](#아키텍처-선택-이유)
+- [API 구현 로직 설명](#api-구현-로직-설명)
+  - [공통 부분](#공통-부분)
+    - [TestContainer를 활용한 테스트 코드 실행](#testcontainer를-활용한-테스트-코드-실행)
+    - [Redis 분산 락을 AOP 기반으로 구현하여 동시성 문제 해결](#redis-분산-락을-aop-기반으로-구현하여-동시성-문제-해결)
+  - [선착순 쿠폰 발급](#선착순-쿠폰-발급)
+  - [인기 판매 상품 조회(3일)](#인기-판매-상품-조회3일)
+</br>
+
+---
+
+</br>
+
 # 프로젝트 개요
 E-커머스 서비스로서 아래의 API를 제공합니다.
 - 잔액 충전/조회 API
@@ -35,6 +54,91 @@ E-커머스 서비스로서 아래의 API를 제공합니다.
 
 ### 비기능적 요구사항
 * 선착순 쿠폰 발급로 인해 특정 시간대에 트래픽이 몰려 짧은 시간에 많은 요청이 들어오더라도 버틸수 있어야합니다.
+
+</br>
+
+---
+
+</br>
+
+# 아키텍처
+해당 프로젝트는 **Clean Architecture**를 적용하였습니다.  
+- UseCase 중심 설계와 **DI(Dependency Injection)**를 활용하여 **확장성과 유지보수성**을 보장하도록 구현하였습니다.  
+- 서로 다른 도메인의 로직 처리 필요 시에는 **DomainService**에서 담당하도록 분리하였습니다.
+
+</br>
+
+### 아키텍처 선택 이유
+많은 프로젝트에서 널리 사용되는 Layered Architecture 대신 **Clean Architecture**를 선택한 이유는 아래와 같습니다.  
+- UseCase를 **도메인 기능 단위로 구성**하여 **SRP(단일 책임 원칙)**을 철저히 준수할 수 있습니다.
+- 외부 의존성을 최소화하여 **애플리케이션의 범용성과 유지보수성**을 향상이 됩니다.  
+- 이러한 이유로 Clean Architecture가 Layered Architecture보다 **우수한 설계 방식**이라고 판단했습니다.
+
+</br>
+
+## 계층 구조 및 특징
+```
+Controller -> UseCase -> DomainService(선택) -> Repositroy ->  RepositoryImpl(구현체)
+```
+
+### Controller
+클라이언트로부터의 HTTP 요청을 받아 처리하는 계층입니다. 
+<br> `@Valid`을 통해 requestDTO에서 검증을 진행하는 것이 특징입니다.
+
+### UseCase
+한가지 기능 또는 목적에 집중된 서비스(Application Service) 계층 입니다.
+<br> 도메인 규칙을 사용하여 한가지 기능을 처리하는 계층이며 실질적인 비지니스 로직은 UseCase가 아니라 Domain 내부에서 처리됩니다.
+
+### DomainService(선택)
+여러 도메인 로직을 처리하는 도메인 계층입니다. 
+<br> 앞서 언급드린대로 이름은 Service이지만 도메인 로직을 처리하는 로직입니다. 이번의 경우 쿠폰을 사용하는 유스케이스에서  <br> 
+`쿠폰 사용 여부 확인`, `주문상세의 총금액 계산`, `쿠폰 상태 변경`을 하나의 도메인 서비스 로직으로 묶어서 처리하였습니다.
+
+### Repositroy
+도메인이 데이터 베이스 와 상호작용하기 위한 추상화된 계층입니다.
+<br> 도메인이 데이터베이스 세부 구현에 의존하지 않도록 하여 결합도를 낮추고, 유연한 구조를 만듭니다.
+
+### Repository(구현체)
+RepositoryImpl은 Repository 인터페이스를 실제 데이터베이스 맞게 구현한 구체 클래스입니다.
+<br> 인터페이스와 분리되어 있어 데이터 베이스 구현 및 변경 시 도메인이나 상위 계층에 영향을 최소화합니다.
+
+</br>
+
+---
+
+</br>
+
+## 패키지 구조
+
+```
+Product 예시
+📦 product
+│
+├── 📁 controller                  ← [Presentation Layer] API 진입점
+│
+├── 📁 domain                      ← [Domain Layer]
+│   ├── 📁 mapper                  ← 엔티티 ↔ DTO 변환 처리
+│   ├── 📁 model                   ← 순수 도메인 모델(Entity, VO 등)
+│   └── 📁 repository              ← 저장소 인터페이스 (도메인 중심)
+│
+├── 📁 exception                   ← [도메인/유스케이스 예외 정의]
+│
+├── 📁 infrastructure              ← [Infrastructure Layer]
+│   └── 📁 jpa                     ← JPA 기반 Repository 구현체
+│       └── ProductRepositoryImpl.java
+│
+├── 📁 listener                    ← [이벤트 리스너] 도메인 이벤트 처리
+│
+├── 📁 scheduler                   ← [Scheduler Layer] 배치/정기 실행 작업
+│
+└── 📁 usecase                     ← [UseCase Layer / Application Layer]
+    └── 📁 command                 ← UseCase 실행에 필요한 요청/응답 DTO
+    
+```
+
+### 도메인 구조의 패키지 구조를 선택한 이유
+추후 도메인별로 계층 구조가 달라지거나 특정 도메인에 추가적인 외부 의존성이 생길 경우,
+</br> 패키지 구조를 **도메인 중심으로 구성**하는 편이 **클린 아키텍처**와 **DDD(도메인 주도 설계)** 가 지향하는 바에 더 적합하다고 생각됩니다.
 
 </br>
 
@@ -80,10 +184,8 @@ public class CouponStep {
     }
 }
 ```
+
 </br>
-
----
-
 </br>
 
 ###  Redis 분산 락을 AOP 기반으로 구현하여 동시성 문제 해결
@@ -241,96 +343,6 @@ end
 - 집계에 사용되는 데이터는 **휘발성이 높고 빠른 읽기·쓰기**가 필요하여, **Redis**를 채택하였습니다.  
 - 기존 집계 함수와 다중 조인으로 인한 **조회 성능 저하 구간**만 Redis 캐싱으로 대체하고, PK 기반 DB 조회를 유지하여 **데이터 정합성과 성능**을 동시에 확보했습니다.  
 - 상품 정보를 직접 캐싱하지 않고 **ID만 저장**한 이유는 데이터 정합성을 유지하면서, MySQL의 **클러스터링 인덱스**로도 충분한 성능을 확보할 수 있다고 판단했기 때문입니다.
-
-</br>
-
----
-
-</br>
-
-## 아키텍처 설명
-해당 프로젝트는 **Clean Architecture**를 적용하였습니다.  
-- UseCase 중심 설계와 **DI(Dependency Injection)**를 활용하여 **확장성과 유지보수성**을 보장하도록 구현하였습니다.  
-- 서로 다른 도메인의 로직 처리 필요 시에는 **DomainService**에서 담당하도록 분리하였습니다.
-
-  
-### 아키텍처 선택 이유
-많은 프로젝트에서 널리 사용되는 Layered Architecture 대신 **Clean Architecture**를 선택한 이유는 아래와 같습니다.  
-- UseCase를 **도메인 기능 단위로 구성**하여 **SRP(단일 책임 원칙)**을 철저히 준수할 수 있습니다.
-- 외부 의존성을 최소화하여 **애플리케이션의 범용성과 유지보수성**을 향상이 됩니다.  
-- 이러한 이유로 Clean Architecture가 Layered Architecture보다 **우수한 설계 방식**이라고 판단했습니다.
-
-</br>
-
----
-
-</br>
-
-## 계층 구조 및 특징
-```
-Controller -> UseCase -> DomainService(선택) -> Repositroy ->  RepositoryImpl(구현체)
-```
-
-### Controller
-클라이언트로부터의 HTTP 요청을 받아 처리하는 계층입니다. 
-<br> `@Valid`을 통해 requestDTO에서 검증을 진행하는 것이 특징입니다.
-
-### UseCase
-한가지 기능 또는 목적에 집중된 서비스(Application Service) 계층 입니다.
-<br> 도메인 규칙을 사용하여 한가지 기능을 처리하는 계층이며 실질적인 비지니스 로직은 UseCase가 아니라 Domain 내부에서 처리됩니다.
-
-### DomainService(선택)
-여러 도메인 로직을 처리하는 도메인 계층입니다. 
-<br> 앞서 언급드린대로 이름은 Service이지만 도메인 로직을 처리하는 로직입니다. 이번의 경우 쿠폰을 사용하는 유스케이스에서  <br> 
-`쿠폰 사용 여부 확인`, `주문상세의 총금액 계산`, `쿠폰 상태 변경`을 하나의 도메인 서비스 로직으로 묶어서 처리하였습니다.
-
-### Repositroy
-도메인이 데이터 베이스 와 상호작용하기 위한 추상화된 계층입니다.
-<br> 도메인이 데이터베이스 세부 구현에 의존하지 않도록 하여 결합도를 낮추고, 유연한 구조를 만듭니다.
-
-### Repository(구현체)
-RepositoryImpl은 Repository 인터페이스를 실제 데이터베이스 맞게 구현한 구체 클래스입니다.
-<br> 인터페이스와 분리되어 있어 데이터 베이스 구현 및 변경 시 도메인이나 상위 계층에 영향을 최소화합니다.
-
-</br>
-
----
-
-</br>
-
-## 패키지 구조
-
-```
-Product 예시
-📦 product
-│
-├── 📁 controller                  ← [Presentation Layer] API 진입점
-│
-├── 📁 domain                      ← [Domain Layer]
-│   ├── 📁 mapper                  ← 엔티티 ↔ DTO 변환 처리
-│   ├── 📁 model                   ← 순수 도메인 모델(Entity, VO 등)
-│   └── 📁 repository              ← 저장소 인터페이스 (도메인 중심)
-│
-├── 📁 exception                   ← [도메인/유스케이스 예외 정의]
-│
-├── 📁 infrastructure              ← [Infrastructure Layer]
-│   └── 📁 jpa                     ← JPA 기반 Repository 구현체
-│       └── ProductRepositoryImpl.java
-│
-├── 📁 listener                    ← [이벤트 리스너] 도메인 이벤트 처리
-│
-├── 📁 scheduler                   ← [Scheduler Layer] 배치/정기 실행 작업
-│
-└── 📁 usecase                     ← [UseCase Layer / Application Layer]
-    └── 📁 command                 ← UseCase 실행에 필요한 요청/응답 DTO
-    
-```
-
-### 도메인 구조의 패키지 구조를 선택한 이유
-계층 구조의 패키지 구조를 선택하게 될 경우 여러 UseCase들을 한번에 파악하기 쉽다는 장점도 있지만
-<br> 반대로 내가 원하는 도메인의 UseCase들을 찾는데에는 어려움이 있을 것이라고 생각하였습니다.
-<br> 그리고 추후 도메인 별로 계층 구조가 달라지거나 특정 도메인에 추가적인 외부 의존성이 추가가 될 경우
-<br> 패키지 구조를 도메인 구조로 하는 편이 클린 아키텍처와 DDD가 지향하는 바에 더욱 적합하다고 생각이 되었습니다.
 
 </br>
 

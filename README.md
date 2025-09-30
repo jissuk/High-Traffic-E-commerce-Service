@@ -256,7 +256,7 @@ RegisterUserCouponListener ->> UserCouponRepository: 유저 쿠폰 등록
 UserCouponRepository ->> RegisterUserCouponListener: 저장 완료
 ```
 
-1. **Redis에 쿠폰 수량 관리**
+1. **Redis에서 쿠폰 수량 관리**
    - 쿠폰의 남은 수량을 Redis에서 관리하여 **발급 가능 여부를 빠르게 판단**합니다.
    - 중복 발급 여부는 Byte 단위가 아닌 Bit 단위로 저장하는 **Bitmap**으로 관리하여 **메모리 효율**에 신경을 썻습니다.
 

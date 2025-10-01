@@ -61,7 +61,7 @@
 
 # 아키텍처
 해당 프로젝트는 **Clean Architecture**를 적용하였습니다.  
-- UseCase 중심 설계와 **DI(Dependency Injection)**를 활용하여 **확장성과 유지보수성**을 보장하도록 구현하였습니다.  
+- UseCase 중심 설계와 DI(Dependency Injection)를 활용하여 **확장성과 유지보수성**을 보장하도록 구현하였습니다.  
 - 서로 다른 도메인의 로직 처리 필요 시에는 **DomainService**에서 담당하도록 분리하였습니다.
 
 </br>

@@ -5,6 +5,7 @@
   - [비기능적 요구사항](#비기능적-요구사항)
 - [아키텍처](#아키텍처)
   - [아키텍처 선택 이유](#아키텍처-선택-이유)
+- [DB설계](#DB설계)
 - **[API 구현 로직 설명](#api-구현-로직-설명)**
   - [공통 부분](#공통-부분)
   - **[선착순 쿠폰 발급](#선착순-쿠폰-발급)**
@@ -99,6 +100,20 @@ Controller -> UseCase -> DomainService(선택) -> Repositroy ->  RepositoryImpl(
 ### Repository(구현체)
 RepositoryImpl은 Repository 인터페이스를 실제 데이터베이스 맞게 구현한 구체 클래스입니다.
 <br> 인터페이스와 분리되어 있어 데이터 베이스 구현 및 변경 시 도메인이나 상위 계층에 영향을 최소화합니다.
+
+</br>
+
+---
+
+</br>
+
+## DB설계
+![ERD이미지](https://github.com/user-attachments/assets/c6e56a1f-0fa7-41e1-af5e-6ba5a283c135)
+
+### 적용된 Index 목록
+```
+CREATE INDEX idx_payment_status_createat_orderitem ON tbl_payment(create_at, payment_status, order_item_id);
+```
 
 </br>
 

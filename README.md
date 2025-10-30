@@ -244,235 +244,44 @@ public class DistributedLockAspect {
 
 ## 테스트 케이스 정리
 
-<!-- ✅ 1. 쿠폰 관련 -->
-<h2>1. 쿠폰 관련</h2>
 
-<table style="table-layout: fixed; width: 100%; border-collapse: collapse;">
-  <colgroup>
-    <col style="width: 120px;">
-    <col style="width: 300px;">
-    <col style="width: 180px;">
-    <col style="width: 240px;">
-    <col style="width: 260px;">
-    <col style="width: 140px;">
-  </colgroup>
-  <thead>
-    <tr>
-      <th>구분</th>
-      <th>테스트 대상</th>
-      <th>테스트 조건</th>
-      <th>입력 값</th>
-      <th>기대 결과</th>
-      <th>테스트 유형</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>성공</td>
-      <td>실시간 쿠폰 발급<br/>(Kafka 비동기 처리)</td>
-      <td>Kafka 비동기 발급 환경 구성</td>
-      <td>쿠폰 ID=1, 유저 ID=1</td>
-      <td>1. Redis 잔여 쿠폰 수량이 1 감소<br/>2. DB에 유저 쿠폰 데이터 정상 저장</td>
-      <td>통합 / 비동기</td>
-    </tr>
-    <tr>
-      <td>성공</td>
-      <td>실시간 쿠폰 발급<br/>(동시성 제어)</td>
-      <td>쿠폰 수량 10, 10명의 유저 존재</td>
-      <td>쿠폰 ID=1, 유저 ID=1~10<br/>선착순 쿠폰 발급 요청 10건</td>
-      <td>- 잔여 쿠폰 수량: 0<br/>- 성공한 요청 수: 1건<br/>- 실패한 요청 수: 9건 (<code>ObjectOptimisticLockingFailureException</code> 발생)</td>
-      <td>통합 / 동시성 / 분산락</td>
-    </tr>
-    <tr>
-      <td>실패</td>
-      <td>실시간 쿠폰 발급<br/>(중복 방지)</td>
-      <td>동일 유저가 중복 발급 요청</td>
-      <td>유저 ID=1, 쿠폰 ID=1<br/>쿠폰 발급 요청 2건</td>
-      <td>1. <code>DuplicateCouponIssueException</code> 발생<br/>2. DB 중복 데이터 없음</td>
-      <td>예외 / 단위 / 통합</td>
-    </tr>
-  </tbody>
-</table>
+## 1. 쿠폰 관련
 
-<hr/>
+| 구분 | 테스트 대상                         | 테스트 조건 | 입력 값                                      | 기대 결과                                                                                             | 테스트 유형         |
+|------|--------------------------------|--------------|-------------------------------------------|---------------------------------------------------------------------------------------------------|----------------|
+| 성공 | 실시간 쿠폰 발급 <br/>(Kafka 비동기 처리) | Kafka 비동기 발급 환경 구성 | 쿠폰 ID=1, 유저 ID=1                          | 1. Redis 잔여 쿠폰 수량이 1 감소 <br/>2. DB에 유저 쿠폰 데이터 정상 저장                                               | 통합 / 비동기       |
+| 성공 | 실시간 쿠폰 발급 <br/>(동시성 제어)        | 쿠폰 수량 10, 10명의 유저 존재 | 쿠폰  ID=1, 유저 ID=1~10<br/>선착순 쿠폰 발급 요청 10건 | - 잔여 쿠폰 수량: 0<br/>- 성공한 요청 수: 1건<br>- 실패한 요청 수: 9건 (`ObjectOptimisticLockingFailureException` 발생) | 통합 / 동시성 / 분산락 |
+| 실패 | 실시간 쿠폰 발급 <br/>(중복 방지)         | 동일 유저가 중복 발급 요청 | 유저 ID=1, 쿠폰 ID=1<br/>쿠폰 발급 요청 2건          | 1. `DuplicateCouponIssueException` 발생 <br/>2 .DB 중복 데이터 없음                                        | 예외 / 단위 / 통합   |
 
-<!-- ✅ 2. 주문 / 결제 관련 -->
-<h2>2. 주문 / 결제 관련</h2>
+## 2. 주문 / 결제 관련
 
-<table style="table-layout: fixed; width: 100%; border-collapse: collapse;">
-  <colgroup>
-    <col style="width: 120px;">
-    <col style="width: 300px;">
-    <col style="width: 180px;">
-    <col style="width: 240px;">
-    <col style="width: 260px;">
-    <col style="width: 140px;">
-  </colgroup>
-  <thead>
-    <tr>
-      <th>구분</th>
-      <th>테스트 대상</th>
-      <th>테스트 조건</th>
-      <th>입력 값</th>
-      <th>기대 결과</th>
-      <th>테스트 유형</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>성공</td>
-      <td>주문 생성</td>
-      <td>상품 재고 존재 (예: 재고 5개)</td>
-      <td>상품 ID=1, 유저 ID=1, 주문 수량=2, 상품 가격=3000</td>
-      <td>1. 상품 재고 3개로 감소<br/>2. 주문(Order) 생성<br/>3. 주문 상세(OrderItem) 생성<br/>4. 결제(Payment) 생성</td>
-      <td>통합 / 트랜잭션</td>
-    </tr>
-    <tr>
-      <td>성공</td>
-      <td>결제 요청<br/>(동시성 제어)</td>
-      <td>동일 주문에 대한 중복 결제 요청</td>
-      <td>유저 ID=1, 주문 ID=1, 주문 상세 ID=1, 상품 ID=1<br/>결제 요청 10건</td>
-      <td>- 성공한 요청 수: 1건<br/>- 실패한 요청 수: 9건 (<code>ObjectOptimisticLockingFailureException</code> 발생)</td>
-      <td>통합 / 동시성 / 분산락</td>
-    </tr>
-  </tbody>
-</table>
+| 구분 | 테스트 대상                 | 테스트 조건                   | 입력 값                                                 | 기대 결과                                                                              | 테스트 유형         |
+|------|------------------------|--------------------------|------------------------------------------------------|------------------------------------------------------------------------------------|----------------|
+| 성공 | 주문 생성                  | 상품 재고 존재 <br/> (예: 재고 5개)     | 상품 ID=1, 유저 ID=1, 주문 수량=2, 상품 가격 = 3000              | 1. 상품 재고가 3개로 감소<br>2. 주문(Order)이 생성됨<br>3. 주문 상세(OrderItem)가 생성됨<br>4. 결제(Payment)가 생성됨 | 통합 / 트랜잭션      |
+| 성공 | 결제 요청 <br/> (동시성 제어)      | 동일 주문에 대한 중복 결제 요청       | 유저 ID=1, 주문 ID=1, 주문 상세 ID=1, 상품 ID =1<br/>결제 요청 10건 | - 성공한 요청 수: 1건<br>- 실패한 요청 수: 9건 (`ObjectOptimisticLockingFailureException` 발생)| 통합 / 동시성 / 분산락 |
 
-<hr/>
 
-<!-- ✅ 3. 상품 관련 -->
-<h2>3. 상품 관련</h2>
+## 3. 상품 관련
 
-<table style="table-layout: fixed; width: 100%; border-collapse: collapse;">
-  <colgroup>
-    <col style="width: 120px;">
-    <col style="width: 300px;">
-    <col style="width: 180px;">
-    <col style="width: 240px;">
-    <col style="width: 260px;">
-    <col style="width: 140px;">
-  </colgroup>
-  <thead>
-    <tr>
-      <th>구분</th>
-      <th>테스트 대상</th>
-      <th>테스트 조건</th>
-      <th>입력 값</th>
-      <th>기대 결과</th>
-      <th>테스트 유형</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>성공</td>
-      <td>인기판매상품 조회[3일] (MySQL)</td>
-      <td>DB에 최근 3일 판매 데이터 존재</td>
-      <td>DB에 판매량 데이터 3일치 존재</td>
-      <td>상위 3개 상품이 판매량 기준으로 정확히 조회</td>
-      <td>통합</td>
-    </tr>
-    <tr>
-      <td>성공</td>
-      <td>인기판매상품 조회[3일] (Redis)</td>
-      <td>Redis에 집계된 3일 판매 캐시 데이터 존재<br/>(Key="product:sales:3days:total", Value=상품 ID, Score=판매수량)</td>
-      <td>Redis에 상위 3개 상품 데이터 존재</td>
-      <td>상위 3개 상품이 판매량(Score) 기준으로 정확히 조회</td>
-      <td>통합 / 캐시</td>
-    </tr>
-    <tr>
-      <td>성공</td>
-      <td>인기판매상품 집계 캐시 삭제</td>
-      <td>Redis에 지난 날짜(3일 이전)의 상품 판매량 캐시 존재<br/>(Key="product:sales:2025-10-02")</td>
-      <td>Redis에 "product:sales:{오늘-4일}" Key 존재</td>
-      <td>ClearProductSalesCacheUseCase 실행 후 해당 Key 삭제 (<code>hasKey()</code> 결과: false)</td>
-      <td>통합 / 캐시</td>
-    </tr>
-    <tr>
-      <td>성공</td>
-      <td>전체 상품 조회</td>
-      <td>상품 존재</td>
-      <td>상품 데이터 다수 존재</td>
-      <td>예외 미발생, 전체 상품 리스트 반환</td>
-      <td>단위</td>
-    </tr>
-    <tr>
-      <td>성공</td>
-      <td>상품 조회</td>
-      <td>상품 존재 (상품 ID=1)</td>
-      <td>상품 ID=1</td>
-      <td>예외 미발생, 상품 반환</td>
-      <td>단위</td>
-    </tr>
-    <tr>
-      <td>실패</td>
-      <td>상품 조회 실패</td>
-      <td>존재하지 않는 상품 ID 요청</td>
-      <td>상품 ID=999</td>
-      <td><code>ProductNotFoundException</code> 발생</td>
-      <td>단위 / 예외</td>
-    </tr>
-  </tbody>
-</table>
+| 구분 | 테스트 대상                | 테스트 조건                                                                                                    | 입력 값                                    | 기대 결과                                                                         | 테스트 유형 |
+|----|-----------------------|-----------------------------------------------------------------------------------------------------------|-----------------------------------------|-------------------------------------------------------------------------------|--------------|
+| 성공 | 인기판매상품 조회[3일] (MySQL) | DB에 최근 3일 판매 데이터 존재                                                                                       | DB에 판매량 데이터 3일치 존재                      | 상위 3개 상품이 판매량 기준으로 정확히 조회                                                  |  통합 |
+| 성공 | 인기판매상품 조회[3일] (Redis) | Redis에 집계된 3일 판매 캐시 데이터 존재<br/>(Key = "product:sales:3days:total",<br/>Value = 상품 ID,Score = 판매수량)   | Redis에 상위 3개 상품 데이터 존재                  | 상위 3개 상품이 판매량(Score)기준으로 정확히 조회                                            | 통합 / 캐시 |
+| 성공 | 인기판매상품 집계 캐시 삭제       | Redis에 지난 날짜(3일 이전)의 상품 판매량 캐시가 존재<br/>(Key = "product:sales:2025-10-02",<br/>Value = 상품 ID, Score= 판매수량) | Redis에 "product:sales:{오늘-4일}"의 Key가 존재 | ClearProductSalesCacheUseCase 실행 후 해당 Key가 Redis에서 삭제됨 (`hasKey()` 결과: false) | 통합 / 캐시  |
+| 성공 | 전체 상품 조회              | 상품 존재                                                                                                     | 상품 데이터 다수 존재                            | 예외 미발생, 전체 상품 리스트 반환                                                          | 단위 |
+| 성공 | 상품 조회                 | 상품 존재<br/>(상품 ID=1)                                                                                       | 상품 ID=1                                 | 예외 미발생, 상품 반환                                                                 | 단위 |
+| 실패 | 상품 조회 실패              | 존재하지 않는 상품 ID 요청                                                                                          | 상품 ID=999                               | `ProductNotFoundException` 발생                                                 | 단위 / 예외 |
 
-<hr/>
 
-<!-- ✅ 4. 유저 관련 -->
-<h2>4. 유저 관련</h2>
+## 4. 유저 관련
 
-<table style="table-layout: fixed; width: 100%; border-collapse: collapse;">
-  <colgroup>
-    <col style="width: 120px;">
-    <col style="width: 300px;">
-    <col style="width: 180px;">
-    <col style="width: 240px;">
-    <col style="width: 260px;">
-    <col style="width: 140px;">
-  </colgroup>
-  <thead>
-    <tr>
-      <th>구분</th>
-      <th>테스트 대상</th>
-      <th>테스트 조건</th>
-      <th>입력 값</th>
-      <th>기대 결과</th>
-      <th>테스트 유형</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>성공</td>
-      <td>포인트 충전<br/>(동시성)</td>
-      <td>동일 유저에 대해 1000건의 충전 요청을 동시에 전송</td>
-      <td>유저 ID=1, 충전 포인트=3,000<br/>충전 요청=1000건 (멀티스레드 실행)</td>
-      <td>- 성공한 요청 수: 1건<br/>- 실패한 요청 수: 999건 (<code>ObjectOptimisticLockingFailureException</code> 발생)<br/>- 최종 포인트=43,000원</td>
-      <td>통합 / 동시성 / 분산락</td>
-    </tr>
-    <tr>
-      <td>성공</td>
-      <td>포인트 충전<br/>(정상 케이스)</td>
-      <td>유효한 유저 존재 (유저 ID=1, 포인트=10,000)</td>
-      <td>유저 ID=1, 충전 포인트=3,000</td>
-      <td>포인트 증가 반영, 충전 이력 정상 등록<br/>(유저 ID=1, 포인트=13,000)</td>
-      <td>단위</td>
-    </tr>
-    <tr>
-      <td>성공</td>
-      <td>유저 생성</td>
-      <td>신규 유저 등록 요청</td>
-      <td>충전 포인트=3,000</td>
-      <td>유저 정보와 포인트 내역이 함께 생성됨</td>
-      <td>단위 / 트랜잭션</td>
-    </tr>
-    <tr>
-      <td>실패</td>
-      <td>유저 조회 실패</td>
-      <td>존재하지 않는 유저 ID 요청</td>
-      <td>유저 ID=999</td>
-      <td><code>UserNotFoundException</code> 발생</td>
-      <td>단위 / 예외</td>
-    </tr>
-  </tbody>
-</table>
+| 구분 | 테스트 대상               | 테스트 조건                             | 입력 값                                                 | 기대 결과                                                                                                                   | 테스트 유형          |
+|------|----------------------|------------------------------------|------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|-----------------|
+| 성공 | 포인트 충전 <br/>(동시성) | 동일 유저에 대해 1000건의 충전 요청을 동시에 전송     | 유저 ID = 1, 충전 포인트=3,000<br/>충전 요청 = 1000건 (멀티스레드 실행) | - 성공한 요청 수: 1건<br>- 실패한 요청 수: 999건 (`ObjectOptimisticLockingFailureException` 발생)<br>- 최종 포인트 = 43,000원 | 통합 / 동시성 /  분산락 |
+| 성공 | 포인트 충전 <br/>(정상 케이스) | 유효한 유저 존재<br/>(유저ID=1, 포인트=10,000) | 유저 ID=1, 충전 포인트=3,000                                | 포인트 증가 반영, 충전 이력 정상 등록<br/>(유저 ID=1, 포인트=13,000)                                                                        | 단위              |
+| 성공 | 유저 생성                | 신규 유저 등록 요청                        | 충전 포인트=3,000                                         | 유저 정보와 포인트 내역이 함께 생성됨                                                                                                   | 단위 / 트랜잭션       |
+| 실패 | 유저 조회 실패             | 존재하지 않는 유저 ID 요청                   | 유저 ID=999                                            | `UserNotFoundException` 발생                                                                                              | 단위 / 예외         |
+
 
 
 

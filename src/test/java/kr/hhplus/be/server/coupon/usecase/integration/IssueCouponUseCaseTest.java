@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.coupon.usecase.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import kr.hhplus.be.server.common.outbox.scheduler.OutboxRelayScheduler;
 import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
@@ -35,6 +36,8 @@ public class IssueCouponUseCaseTest {
     
     @Autowired
     private IssueCouponUseCase issueCouponUseCase;
+    @Autowired
+    private OutboxRelayScheduler outboxRelayScheduler;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
@@ -102,6 +105,7 @@ public class IssueCouponUseCaseTest {
 
             // when
             issueCouponUseCase.execute(request);
+            outboxRelayScheduler.relayMessages();
 
             // then
             Long couponQuantity = redis.opsForValue().get(quantityKey);

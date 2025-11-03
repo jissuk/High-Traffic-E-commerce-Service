@@ -70,7 +70,7 @@ public class GetUserUseCaseTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 유저조회_존재하지않는_유저일_경우(){
             // given
-            long userId = 1L;
+            long userId = 999L;
             when(userRepository.findById(userId)).thenThrow(new UserNotFoundException());
 
             // when & then

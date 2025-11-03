@@ -60,7 +60,7 @@ public class GetProductUseCaseTest {
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 상품조회_존재하지않는_상품일_경우() {
             // given
-            long productId = 1L;
+            long productId = 999L;
             when(productRepository.findById(productId)).thenThrow(new ProductNotFoundException());
 
             // when & then

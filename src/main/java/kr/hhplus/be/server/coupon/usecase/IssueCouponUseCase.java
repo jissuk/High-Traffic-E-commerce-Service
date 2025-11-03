@@ -1,21 +1,29 @@
 package kr.hhplus.be.server.coupon.usecase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
+import kr.hhplus.be.server.common.outbox.domain.repository.OutboxMessageRepository;
+import kr.hhplus.be.server.common.outbox.domain.OutboxStatus;
+import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
 import kr.hhplus.be.server.coupon.exception.CouponOutOfStockException;
 import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.kafka.core.KafkaTemplate;
+
+import java.time.LocalDateTime;
+
 
 @UseCase
 @RequiredArgsConstructor
 public class IssueCouponUseCase {
 
+    private final OutboxMessageRepository outBoxMessageRepository;
+    private final ObjectMapper objectMapper;
+
     private final RedisTemplate<String, Long> redis;
-    private final KafkaTemplate<String, UserCouponCommand> kafka;
 
     public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
     public static final String ISSUED_SUFFIX = ":issued";
@@ -26,7 +34,7 @@ public class IssueCouponUseCase {
     public void execute(UserCouponCommand command) throws JsonProcessingException {
         validateDuplicateIssue(command);
         decrementQuantity(command);
-        kafka.send(ISSUE_COUPON_TOPIC, command);
+        saveOutboxMessage(command);
     }
 
     private void validateDuplicateIssue(UserCouponCommand command) {
@@ -47,4 +55,16 @@ public class IssueCouponUseCase {
             throw new CouponOutOfStockException();
         }
     }
+
+    private void saveOutboxMessage(UserCouponCommand command) throws JsonProcessingException {
+        String jsonCommand = objectMapper.writeValueAsString(command);
+        OutboxMessage outBoxMessage = OutboxMessage.builder()
+                .topic(ISSUE_COUPON_TOPIC)
+                .payload(jsonCommand)
+                .status(OutboxStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .build();
+        outBoxMessageRepository.save(outBoxMessage);
+    }
+
 }

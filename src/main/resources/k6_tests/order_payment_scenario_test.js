@@ -12,16 +12,6 @@
 //             maxVUs: 200,           // 필요시 최대 VU까지 확장
 //         },
 //     },
-//     ext: {
-//         loadimpact: {
-//             influxdb: {
-//                 url: 'http://influxdb:8086',
-//                 org: 'hanghae',
-//                 bucket: 'k6',
-//                 token: 'token',
-//             },
-//         },
-//     },
 // };
 //
 // export default function () {

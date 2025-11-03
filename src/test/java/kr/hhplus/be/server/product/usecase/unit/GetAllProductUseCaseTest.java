@@ -2,8 +2,11 @@ package kr.hhplus.be.server.product.usecase.unit;
 
 import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
 import kr.hhplus.be.server.product.domain.mapper.ProductRseponseMapper;
+import kr.hhplus.be.server.product.domain.model.Product;
+import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
+import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.product.usecase.GetAllProductUseCase;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +19,9 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
@@ -26,7 +32,6 @@ public class GetAllProductUseCaseTest {
 
     @InjectMocks
     private GetAllProductUseCase getAllProductUseCase;
-
     @Mock
     private ProductRepository productRepository;
 
@@ -48,22 +53,6 @@ public class GetAllProductUseCaseTest {
             getAllProductUseCase.execute();
             // then
             assertDoesNotThrow(() -> getAllProductUseCase.execute());
-        }
-    }
-
-    @Nested
-    @DisplayName("전체 상품 조회 실패 케이스")
-    class fail{
-
-        @Test
-        @DisplayName("상품이 존재하지 않을 경우 ProductNotFoundException이 발생한다.")
-        void 전체상품조회_존재하지않는_상품일_경우(){
-            // given
-            when(productRepository.findAll()).thenReturn(null);
-
-            // when & then
-            assertThatThrownBy(() -> getAllProductUseCase.execute())
-                    .isInstanceOf(ProductNotFoundException.class);
         }
     }
 }

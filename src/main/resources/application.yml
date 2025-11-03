@@ -22,6 +22,7 @@ spring:
       hibernate.jdbc.time_zone: UTC
 
 ---
+
 spring.config.activate.on-profile: local, test
 
 spring:
@@ -37,13 +38,22 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: registerUserCoupon-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "kr.hhplus.*"
+        spring.json.value.default.type: "kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand"
+      enable-auto-commit: true
     admin:
       properties:
         topic:
           configs:
             retention.ms: 86400000 # 메시지 보관 시간: 1일
             cleanup.policy: "delete"
-
+    bootstrap-servers: localhost:9092
 
 springdoc:
   api-docs:

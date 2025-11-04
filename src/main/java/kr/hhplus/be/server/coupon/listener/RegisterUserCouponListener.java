@@ -2,6 +2,7 @@ package kr.hhplus.be.server.coupon.listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.common.consant.KafkaKey;
 import kr.hhplus.be.server.coupon.domain.model.Coupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
@@ -24,10 +25,9 @@ public class RegisterUserCouponListener {
     private final UserCouponRepository userCouponRepository;
 
     private final ObjectMapper objectMapper;
-    public static final String ISSUE_COUPON_TOPIC = "issueCoupon";
     public static final String REGISTER_USER_COUPON = "registerUserCoupon-service";
 
-    @KafkaListener(topics = ISSUE_COUPON_TOPIC, groupId = REGISTER_USER_COUPON)
+    @KafkaListener(topics = KafkaKey.Coupon.ISSUE_COUPON_TOPIC, groupId = REGISTER_USER_COUPON)
     public void queueIssueCoupon(String message) throws JsonProcessingException {
         UserCouponCommand userCommand = objectMapper.readValue(message, UserCouponCommand.class);
 

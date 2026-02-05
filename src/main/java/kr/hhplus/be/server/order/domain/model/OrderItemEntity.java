@@ -26,7 +26,6 @@ public class OrderItemEntity {
     @Column
     private long totalPrice;
 
-
     @Column
     private long orderId;
 

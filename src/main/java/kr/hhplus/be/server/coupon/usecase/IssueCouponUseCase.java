@@ -13,6 +13,7 @@ import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,8 @@ public class IssueCouponUseCase {
     private final OutboxMessageRepository outBoxMessageRepository;
     private final ObjectMapper objectMapper;
 
+    private final TransactionTemplate transactionTemplate;
+
     private final RedisTemplate<String, Long> redis;
 
     public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
@@ -31,10 +34,23 @@ public class IssueCouponUseCase {
     public static final String QUANTITY_SUFFIX = ":quantity";
 
     @DistributedLock
-    public void execute(UserCouponCommand command) throws JsonProcessingException {
+    public void execute(UserCouponCommand command){
+        /**
+         * 1. 중복 쿠폰 발급 여부 (Redis 캐시)
+         * 2. 쿠폰 수량 차감     (Redis 캐시)
+         * 3. 쿠폰 발급
+         * */
+
         validateDuplicateIssue(command);
         decrementQuantity(command);
-        saveOutboxMessage(command);
+        transactionTemplate.execute(status -> {
+            try {
+                saveOutboxMessage(command);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
     }
 
     private void validateDuplicateIssue(UserCouponCommand command) {
@@ -67,5 +83,4 @@ public class IssueCouponUseCase {
                 .build();
         outBoxMessageRepository.save(outBoxMessage);
     }
-
 }

@@ -1,7 +1,5 @@
 package kr.hhplus.be.server.common.annotation;
 
-import org.springframework.core.annotation.Order;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

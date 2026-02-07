@@ -34,7 +34,7 @@ public class RegisterPaymentUseCase {
     private final UserCouponDomainService userCouponDomainService;
     private final PaymentDomainService paymentDomainService;
 
-    private final KafkaTemplate<String, String> kafka;
+    private final KafkaTemplate<String, Object> kafka;
     private final TransactionTemplate transactionTemplate;
 
     private final UserRepository userRepository;
@@ -57,21 +57,17 @@ public class RegisterPaymentUseCase {
         OrderItem orderItem = orderItemRepository.findById(command.orderItemId());
         Product product = productRepository.findById(command.productId());
 
-        String jsonOrderItem = objectMapper.writeValueAsString(orderItem);
-
         transactionTemplate.executeWithoutResult(status -> {
-            useCoupon(command, orderItem);
-            usePoint(user, orderItem);
-            deductQuantity(product, orderItem);
-            processPayment(order,payment);
-
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCommit() {
-                    kafka.send(PAYMENT_COMPLETE_TOPIC,jsonOrderItem);
-                }
-            });
+            completePayment(command, user, product, order, orderItem, payment);
+            publishPaymentCompleteAfterCommit(orderItem);
         });
+    }
+
+    private void completePayment(PaymentCommand command, User user, Product product, Order order, OrderItem orderItem, Payment payment){
+        useCoupon(command, orderItem);
+        usePoint(user, orderItem);
+        deductQuantity(product, orderItem);
+        processPayment(order, payment);
     }
 
     private void useCoupon(PaymentCommand command, OrderItem orderItem) {
@@ -97,10 +93,18 @@ public class RegisterPaymentUseCase {
         productRepository.save(product);
     }
 
-    private void processPayment(Order order, Payment payment){
+    private void processPayment(Order order, Payment payment) {
         paymentDomainService.paymentComplete(order, payment);
-
         orderRepository.save(order);
         paymentRepository.save(payment);
+    }
+
+    private void publishPaymentCompleteAfterCommit(OrderItem orderItem) {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                kafka.send(PAYMENT_COMPLETE_TOPIC,orderItem);
+            }
+        });
     }
 }

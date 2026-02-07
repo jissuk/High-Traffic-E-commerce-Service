@@ -34,15 +34,17 @@ public class RegisterOrderUseCase {
         User user = userRepository.findById(command.userId());
         Product product = productRepository.findById(command.productId());
 
-        OrderItem orderItem = transactionTemplate.execute(status -> {
-            deductProductQuantity(product, command);
-            Order order = createAndSaveOrder(user);
-            OrderItem saveOrderItem = createAndSaveOrderItem(command, order);
-            createAndSavePayment(command, saveOrderItem);
-            return saveOrderItem;
-        });
+        OrderItem orderItem = transactionTemplate.execute(status -> completeOrder(command, user, product));
 
         return OrderItemResponse.from(orderItem);
+    }
+
+    private OrderItem completeOrder(OrderItemCommand command, User user, Product product) {
+        deductProductQuantity(product, command);
+        Order order = createAndSaveOrder(user);
+        OrderItem orderItem = createAndSaveOrderItem(command, order);
+        createAndSavePayment(command, orderItem);
+        return orderItem;
     }
 
     private void deductProductQuantity(Product product, OrderItemCommand command){

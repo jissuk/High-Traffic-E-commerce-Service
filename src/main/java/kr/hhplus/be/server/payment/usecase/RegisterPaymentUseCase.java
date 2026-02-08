@@ -11,7 +11,6 @@ import kr.hhplus.be.server.order.domain.model.Order;
 import kr.hhplus.be.server.order.domain.model.OrderItem;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
-import kr.hhplus.be.server.payment.event.PaymentCompletedEvent;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
 import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.payment.domain.service.PaymentDomainService;

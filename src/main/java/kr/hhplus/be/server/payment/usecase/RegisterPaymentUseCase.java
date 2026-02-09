@@ -51,7 +51,6 @@ public class RegisterPaymentUseCase {
 
     @DistributedLock
     public void execute(PaymentCommand command) throws JsonProcessingException {
-
         Payment payment = paymentRepository.findByOrderItemId(command.orderItemId());
         User user = userRepository.findById(command.userId());
         Order order = orderRepository.findById(command.orderId());
@@ -63,7 +62,8 @@ public class RegisterPaymentUseCase {
         transactionTemplate.executeWithoutResult(status -> {
             useCoupon(command, orderItem);
             usePoint(user, orderItem);
-            processPayment(payment,order, orderItem, product);
+            deductQuantity(product, orderItem);
+            processPayment(order,payment);
 
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
@@ -83,19 +83,24 @@ public class RegisterPaymentUseCase {
         }
     }
 
-    private void processPayment(Payment payment, Order order, OrderItem orderItem, Product product) {
-        product.deductQuantity(orderItem.getQuantity());
-        paymentDomainService.paymentComplate(payment, order);
-
-        productRepository.save(product);
-        paymentRepository.save(payment);
-        orderRepository.save(order);
-    }
-
     private void usePoint(User user, OrderItem orderItem) {
         user.deductPoint(orderItem.getTotalPrice());
-        userRepository.save(user);
         PointHistory pointHistory = PointHistory.use(user);
+
+        userRepository.save(user);
         pointHistoryRepository.save(pointHistory);
+    }
+
+    private void deductQuantity(Product product, OrderItem orderItem) {
+        product.deductQuantity(orderItem.getQuantity());
+
+        productRepository.save(product);
+    }
+
+    private void processPayment(Order order, Payment payment){
+        paymentDomainService.paymentComplete(order, payment);
+
+        orderRepository.save(order);
+        paymentRepository.save(payment);
     }
 }

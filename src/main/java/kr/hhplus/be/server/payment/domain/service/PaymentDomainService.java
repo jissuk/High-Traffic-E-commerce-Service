@@ -7,10 +7,10 @@ import kr.hhplus.be.server.payment.domain.model.Payment;
 @DomainService
 public class PaymentDomainService {
 
-    public void paymentComplate(Payment payment, Order order) {
-        payment.checkPayment();
-        payment.complete();
+    public void paymentComplete(Order order, Payment payment) {
         order.checkNotCompletedOrder();
         order.complete();
+        payment.checkPayment();
+        payment.complete();
     }
 }

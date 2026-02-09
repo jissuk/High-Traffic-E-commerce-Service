@@ -22,7 +22,6 @@ public class PaymentController {
     @PostMapping
     @Operation(summary = "결제 요청", description = "유저는 취소되지 않은 주문에 대해 포인트를 사용하여 결제를 요청할 수 있습니다.")
     public ResponseEntity<CommonResponse> requestPayment(@RequestBody @Valid PaymentRequest request) throws Exception {
-
         PaymentCommand command = PaymentCommand.from(request);
         registerPaymentUseCase.execute(command);
 

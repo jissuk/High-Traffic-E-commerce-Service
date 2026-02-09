@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.common.consant.KafkaKey;
+import kr.hhplus.be.server.common.consant.KafkaTopic;
 import kr.hhplus.be.server.common.outbox.domain.repository.OutboxMessageRepository;
 import kr.hhplus.be.server.common.outbox.domain.OutboxStatus;
 import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
@@ -74,7 +74,7 @@ public class IssueCouponUseCase {
 
     private void saveOutboxMessage(UserCouponCommand command) throws JsonProcessingException {
         String jsonCommand = objectMapper.writeValueAsString(command);
-        String issueCouponTopic = KafkaKey.Coupon.ISSUE_COUPON_TOPIC;
+        String issueCouponTopic = KafkaTopic.Coupon.ISSUE_COUPON_TOPIC;
         OutboxMessage outBoxMessage = OutboxMessage.builder()
                 .topic(issueCouponTopic)
                 .payload(jsonCommand)

@@ -1,11 +1,10 @@
 package kr.hhplus.be.server.common.consant;
 
-public class KafkaKey {
+public class KafkaTopic {
 
-    private KafkaKey(){}
+    private KafkaTopic(){}
 
     public static class Coupon{
-
         public static final String ISSUE_COUPON_TOPIC = "issueCouponTopic";
     }
 }

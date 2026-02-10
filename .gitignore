@@ -37,3 +37,6 @@ out/
 .vscode/
 
 data
+
+### yml ###
+src/main/resources/application-toss.yml

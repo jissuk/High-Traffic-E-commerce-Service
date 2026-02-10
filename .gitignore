@@ -40,3 +40,9 @@ data
 
 ### yml ###
 src/main/resources/application-toss.yml
+
+### html ###
+src/main/resources/paymentTest.html
+
+### http ###
+http/**

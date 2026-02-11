@@ -28,4 +28,13 @@ public class OutboxMessage {
     public void published(){
         this.status = OutboxStatus.PUBLISHED;
     }
+
+    public static OutboxMessage of(String topic,  String payload){
+        return OutboxMessage.builder()
+                            .topic(topic)
+                            .payload(payload)
+                            .status(OutboxStatus.PENDING)
+                            .createdAt(LocalDateTime.now())
+                            .build();
+    }
 }

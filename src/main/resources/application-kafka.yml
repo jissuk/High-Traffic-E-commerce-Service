@@ -1,0 +1,10 @@
+kafka:
+  consumer:
+    group-id:
+      payment-approved: approved-payment-group
+      coupon-issued: issued-coupon-group
+
+
+  topics:
+    payment-approved: order.payment.approved
+    coupon-issued: coupon.issue.requested

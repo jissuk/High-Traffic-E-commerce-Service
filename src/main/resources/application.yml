@@ -54,6 +54,11 @@ spring:
             retention.ms: 86400000 # 메시지 보관 시간: 1일
             cleanup.policy: "delete"
     bootstrap-servers: localhost:9092
+  config:
+    import:
+      - optional:application-toss.yml
+      - optional:application-kafka.yml
+
 
 springdoc:
   api-docs:
@@ -61,3 +66,7 @@ springdoc:
     path: /v3/api-docs.yaml
   swagger-ui:
     enabled: true
+
+logging:
+  level:
+    root: INFO

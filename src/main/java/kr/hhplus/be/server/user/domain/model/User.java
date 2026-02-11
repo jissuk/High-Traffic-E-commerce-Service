@@ -19,7 +19,6 @@ public class User {
      *    (잔고 포인트보다 결제 포인트가 더 클 경우 잔고 부족으로 인한 실패처리)
      * 3. 0원 이하의 포인트 충전은 불가능합니다.
      * */
-
     private long id;
     private long point;
 

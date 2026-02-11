@@ -9,7 +9,7 @@ public class PaymentMapper {
     public Payment toDomain(PaymentEntity paymentEntity){
         return Payment.builder()
                         .id(paymentEntity.getId())
-                        .price(paymentEntity.getPrice())
+                        .amount(paymentEntity.getPrice())
                         .paymentStatus(paymentEntity.getPaymentStatus())
                         .createdAt(paymentEntity.getCreateAt())
                         .userId(paymentEntity.getUserId())
@@ -20,7 +20,7 @@ public class PaymentMapper {
     public PaymentEntity toEntity(Payment payment){
         return PaymentEntity.builder()
                             .id(payment.getId())
-                            .price(payment.getPrice())
+                            .price(payment.getAmount())
                             .paymentStatus(payment.getPaymentStatus())
                             .createAt(payment.getCreatedAt())
                             .userId(payment.getUserId())

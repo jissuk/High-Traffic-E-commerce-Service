@@ -32,5 +32,4 @@ public class SpringRedisConfig {
 
         return template;
     }
-
 }

@@ -32,5 +32,4 @@ public class CouponController {
                 .ok()
                 .body(new CommonResponse(HttpStatus.NO_CONTENT, "success", null));
     }
-
 }

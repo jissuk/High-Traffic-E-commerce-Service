@@ -16,19 +16,12 @@ public class OrderItemEntity {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @Column
     private long quantity;
-
     @Column
     private long price;
-
-    @Column
-    private long totalPrice;
-
     @Column
     private long orderId;
-
     @Column
     private long productId;
 

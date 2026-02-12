@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.order.domain.model;
 
-import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
-import kr.hhplus.be.server.product.domain.model.Product;
+import kr.hhplus.be.server.order.usecase.command.OrderCommand;
 import lombok.*;
 
 @Getter
@@ -16,29 +15,16 @@ public class OrderItem {
 
     private long price;
 
-    private long totalPrice;
-
     private long productId;
 
     private long orderId;
 
-    public void deductCouponAmount(long discount) {
-        this.totalPrice -= discount;
-
-        if(this.totalPrice <= 0) {
-            this.totalPrice = 0;
-        }
-    }
-
-    public static OrderItem createBeforeOrderItem(OrderItemCommand command, Order order) {
+    public static OrderItem createBeforeOrderItem(OrderCommand command, Order order) {
         return OrderItem.builder()
-                .quantity(command.quantity())
-                .price(command.price())
-                .totalPrice(command.price() * command.quantity())
-                .productId(command.productId())
-                .orderId(order.getId())
-                .build();
+                        .quantity(command.quantity())
+                        .price(command.price())
+                        .productId(command.productId())
+                        .orderId(order.getId())
+                        .build();
     }
-
-
 }

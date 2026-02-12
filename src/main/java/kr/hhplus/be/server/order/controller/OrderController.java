@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.common.response.CommonResponse;
 import kr.hhplus.be.server.order.usecase.RegisterOrderUseCase;
-import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequest;
+import kr.hhplus.be.server.order.usecase.command.OrderCommand;
+import kr.hhplus.be.server.order.usecase.dto.OrderRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +22,10 @@ public class OrderController {
 
     @PostMapping
     @Operation(summary = "상품 주문", description = "유저는 아직 재고가 남아있는 상품을 주문합니다.", tags = {"OrderController"})
-    public ResponseEntity<CommonResponse> createOrder(@RequestBody @Valid OrderItemRequest request) {
+    public ResponseEntity<CommonResponse> createOrder(@RequestBody @Valid OrderRequest request) {
+        OrderCommand command = OrderCommand.from(request);
+        registerOrderUseCase.execute(command);
 
-        OrderItemCommand command = OrderItemCommand.from(request);
-
-        return ResponseEntity
-                .ok()
-                .body(new CommonResponse(HttpStatus.CREATED,"success",registerOrderUseCase.execute(command)));
+        return ResponseEntity.ok().build();
     }
 }

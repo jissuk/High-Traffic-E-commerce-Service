@@ -1,17 +1,24 @@
 package kr.hhplus.be.server.order.usecase.command;
 
 import kr.hhplus.be.server.common.provider.LockKeyProvider;
-import kr.hhplus.be.server.order.usecase.dto.OrderItemRequest;
+import kr.hhplus.be.server.order.usecase.dto.OrderRequest;
 import lombok.Builder;
 
 @Builder
-public record OrderItemCommand(Long productId, Long userId, Long orderItemId, Long quantity, Long price, Long totalPrice ) implements LockKeyProvider {
-    public static OrderItemCommand from(OrderItemRequest dto){
-        return OrderItemCommand.builder()
+public record OrderCommand(
+        Long productId,
+        Long userId,
+        Long couponId,
+        Long quantity,
+        Long point
+        ) implements LockKeyProvider {
+    public static OrderCommand from(OrderRequest dto){
+        return OrderCommand.builder()
                                 .productId(dto.productId())
                                 .userId(dto.userId())
+                                .couponId(dto.couponId())
                                 .quantity(dto.quantity())
-                                .price(dto.price())
+                                .point(dto.point())
                                 .build();
     }
 

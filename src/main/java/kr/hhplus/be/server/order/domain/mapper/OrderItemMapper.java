@@ -11,7 +11,6 @@ public class OrderItemMapper {
                         .id(orderItemEntity.getId())
                         .quantity(orderItemEntity.getQuantity())
                         .price(orderItemEntity.getPrice())
-                        .totalPrice(orderItemEntity.getTotalPrice())
                         .orderId(orderItemEntity.getOrderId())
                         .productId(orderItemEntity.getProductId())
                         .build();
@@ -22,7 +21,6 @@ public class OrderItemMapper {
                                 .id(orderItem.getId())
                                 .quantity(orderItem.getQuantity())
                                 .price(orderItem.getPrice())
-                                .totalPrice(orderItem.getTotalPrice())
                                 .orderId(orderItem.getOrderId())
                                 .productId(orderItem.getProductId())
                                 .build();

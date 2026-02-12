@@ -22,6 +22,8 @@ public class OrderEntity {
     @Column
     private LocalDateTime createdAt;
     @Column
+    private long totalPrice;
+    @Column
     private long userId;
     @Version
     private long version;

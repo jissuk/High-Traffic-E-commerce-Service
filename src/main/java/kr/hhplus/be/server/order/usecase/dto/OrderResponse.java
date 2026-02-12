@@ -5,10 +5,10 @@ import kr.hhplus.be.server.order.domain.model.OrderItem;
 import lombok.Builder;
 
 @Builder
-public record OrderItemResponse(long id, long quantity, long price, long totalPrice, long productId, long orderId) {
+public record OrderResponse(long id, long quantity, long price, long totalPrice, long productId, long orderId) {
 
-    public static OrderItemResponse from(OrderItem orderItem){
-        return OrderItemResponse.builder()
+    public static OrderResponse from(OrderItem orderItem){
+        return OrderResponse.builder()
                                 .id(orderItem.getId())
                                 .quantity(orderItem.getQuantity())
                                 .price(orderItem.getPrice())

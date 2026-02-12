@@ -11,6 +11,7 @@ public class OrderMapper {
                     .id(orderEntity.getId())
                     .orderStatus(orderEntity.getOrderStatus())
                     .createdAt(orderEntity.getCreatedAt())
+                    .totalPrice(orderEntity.getTotalPrice())
                     .build();
     };
 
@@ -19,6 +20,7 @@ public class OrderMapper {
                             .id(order.getId())
                             .orderStatus(order.getOrderStatus())
                             .createdAt(order.getCreatedAt())
+                            .totalPrice(order.getTotalPrice())
                             .build();
     };
 

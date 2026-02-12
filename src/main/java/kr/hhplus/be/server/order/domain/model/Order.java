@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.order.domain.model;
 
-import kr.hhplus.be.server.user.domain.model.User;
+import kr.hhplus.be.server.coupon.domain.model.Coupon;
+import kr.hhplus.be.server.order.usecase.command.OrderCommand;
+import kr.hhplus.be.server.product.domain.model.Product;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,6 +16,7 @@ public class Order {
     private long id;
     private OrderStatus orderStatus;
     private LocalDateTime createdAt;
+    private long totalPrice;
     private long userId;
 
     public void complete() {
@@ -26,9 +29,14 @@ public class Order {
         }
     }
 
-    public static Order createBeforeOrder(User user){
-        return Order.builder()
-                .orderStatus(OrderStatus.PENDING).build();
-    }
+    public static Order createPendingOrder(OrderCommand command, Product product, Coupon coupon) {
+        long totalPrice = command.quantity() * product.getPrice() - coupon.getDiscount();
 
+        return Order.builder()
+                    .orderStatus(OrderStatus.PENDING)
+                    .userId(command.userId())
+                    .createdAt(LocalDateTime.now())
+                    .totalPrice(totalPrice)
+                    .build();
+    }
 }

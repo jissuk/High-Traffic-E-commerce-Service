@@ -25,8 +25,16 @@ public class OutboxMessage {
     private OutboxStatus status; // PENDING, PUBLISHED
     private LocalDateTime createdAt;
 
+    public void processing(){
+        this.status = OutboxStatus.PROCESSING;
+    }
+
     public void published(){
         this.status = OutboxStatus.PUBLISHED;
+    }
+
+    public void failed(){
+        this.status = OutboxStatus.FAILED;
     }
 
     public static OutboxMessage of(String topic,  String payload){

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
 import kr.hhplus.be.server.common.outbox.domain.repository.OutboxMessageRepository;
-import kr.hhplus.be.server.payment.usecase.command.PaymentConfirmCommand;
+import kr.hhplus.be.server.payment.event.PaymentApprovedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +35,8 @@ public class OutboxService {
 
     /* event 객체가 Topic 정보를 알고 있음 */
     private String resolveTopic(Object event){
-        if (event instanceof PaymentConfirmCommand){
-            return "approvePaymentTopic";
+        if (event instanceof PaymentApprovedEvent){
+            return "payment-approved-topic";
         }
         return "";
     }

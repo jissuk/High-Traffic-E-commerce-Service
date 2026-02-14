@@ -23,4 +23,10 @@ public class Product implements Serializable {
 
         this.quantity -= quantity;
     }
+
+    public void checkQuantity(Long quantity) {
+        if (this.quantity < quantity) {
+            throw new InsufficientStockException();
+        }
+    }
 }

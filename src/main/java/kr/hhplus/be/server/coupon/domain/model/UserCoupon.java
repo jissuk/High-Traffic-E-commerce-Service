@@ -17,14 +17,10 @@ public class UserCoupon {
     private long userId;
     private long couponId;
 
-    public void useCheckCoupon() {
+    public void useCoupon() {
         if (couponStatus.equals(CouponStatus.USED)) {
             throw new InvalidCouponException();
-        }
-        ;
-    }
-
-    public void useCoupon() {
+        };
         this.couponStatus = CouponStatus.USED;
     }
 

@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.payment.usecase.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
@@ -23,5 +24,15 @@ public record PaymentRequest(
 
         @NotNull(message ="상품 ID는 필수 입니다.")
         @Min(value =1, message = "상품 ID는 1 이상이어야 합니다.")
-        Long productId
+        Long productId,
+
+        @NotBlank(message = "토스의 주문 ID는 필수 입니다.")
+        String tossOrderId,
+
+        @NotBlank(message = "토스의 결제 Key는 필수 입니다.")
+        String tossPaymentKey,
+
+        @NotNull(message ="결제 금액은 필수 입니다.")
+        @Min(value =0, message = "결제 금액은 0 이상이어야 합니다.")
+        Long amount
 ) {}

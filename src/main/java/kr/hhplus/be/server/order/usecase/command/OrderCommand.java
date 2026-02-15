@@ -8,7 +8,7 @@ import lombok.Builder;
 public record OrderCommand(
         Long productId,
         Long userId,
-        Long couponId,
+        Long userCouponId,
         Long quantity,
         Long point
         ) implements LockKeyProvider {
@@ -16,7 +16,7 @@ public record OrderCommand(
         return OrderCommand.builder()
                                 .productId(dto.productId())
                                 .userId(dto.userId())
-                                .couponId(dto.couponId())
+                                .userCouponId(dto.userCouponId())
                                 .quantity(dto.quantity())
                                 .point(dto.point())
                                 .build();

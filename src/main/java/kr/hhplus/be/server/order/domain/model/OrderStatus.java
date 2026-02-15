@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.order.domain.model;
 
 public enum OrderStatus {
-    CANCELLED,     // 주문취소
-    PENDING,       // 결제 전
-    COMPLETED      // 결제완료
+    CREATED,      // 생성됨
+    COMPLETED,    // 결제 완료
+    CANCELLED     // 주문 취소
 }

@@ -40,7 +40,6 @@ public class User {
         if (this.point < 0) {
             throw new InsufficientPointBalanceException();
         }
-
     }
 
     public static User createBeforeUser(UserCommand command) {
@@ -48,5 +47,4 @@ public class User {
                     .point(command.point())
                     .build();
     }
-
 }

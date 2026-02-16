@@ -1,16 +1,19 @@
 package kr.hhplus.be.server.user.domain.model;
 
+import jakarta.persistence.*;
 import kr.hhplus.be.server.user.exception.InsufficientPointBalanceException;
 import kr.hhplus.be.server.user.exception.InvalidPointAmountException;
 import kr.hhplus.be.server.user.exception.PointLimitExceededException;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import lombok.*;
 
+@Entity
+@Table(name = "USERS")
 @Getter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class User {
-
     /*
      * 정책 정의
      * 1. 포인트 잔고는 100,000원을 넘어갈 수 없습니다
@@ -19,10 +22,16 @@ public class User {
      *    (잔고 포인트보다 결제 포인트가 더 클 경우 잔고 부족으로 인한 실패처리)
      * 3. 0원 이하의 포인트 충전은 불가능합니다.
      * */
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column
     private long point;
+    @Version
+    private long version;
 
-    public void charegePoint(long amount) {
+    public void chargePoint(long amount) {
         this.point += amount;
 
         if (this.point < 0) {
@@ -44,7 +53,7 @@ public class User {
 
     public static User createBeforeUser(UserCommand command) {
         return User.builder()
-                    .point(command.point())
-                    .build();
+                .point(command.point())
+                .build();
     }
 }

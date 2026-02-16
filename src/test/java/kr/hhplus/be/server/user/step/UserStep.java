@@ -2,7 +2,6 @@ package kr.hhplus.be.server.user.step;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.user.domain.model.User;
-import kr.hhplus.be.server.user.domain.model.UserEntity;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.usecase.dto.UserRequest;
 import org.springframework.http.MediaType;
@@ -41,8 +40,8 @@ public class UserStep {
                     .build();
     }
 
-    public static UserEntity defualtUserEntity(){
-        return UserEntity.builder()
+    public static User defualtUserEntity(){
+        return User.builder()
                 .point(40000L)
                 .build();
     }

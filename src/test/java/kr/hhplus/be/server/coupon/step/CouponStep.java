@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.coupon.domain.model.*;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequest;
-import kr.hhplus.be.server.user.domain.model.UserEntity;
+import kr.hhplus.be.server.user.domain.model.User;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -65,7 +65,7 @@ public class CouponStep {
                         .build();
     }
 
-    public static UserCoupon defaultUserCouponEntity(UserEntity user, Coupon coupon){
+    public static UserCoupon defaultUserCouponEntity(User user, Coupon coupon){
         return UserCoupon.builder()
                 .discount(DEFAULT_COUPON_DISCOUNT)
                 .couponStatus(CouponStatus.ISSUED)

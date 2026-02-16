@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.user.usecase.unit;
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
-import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;

@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.user.usecase;
 
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.user.domain.mapper.UserMapper;
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
 import kr.hhplus.be.server.user.domain.model.PointHistory;
 import kr.hhplus.be.server.user.domain.model.User;

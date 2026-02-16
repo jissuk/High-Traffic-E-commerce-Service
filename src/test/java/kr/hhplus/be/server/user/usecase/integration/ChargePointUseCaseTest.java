@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.user.usecase.integration;
 
-import kr.hhplus.be.server.user.domain.model.UserEntity;
+import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
 import kr.hhplus.be.server.user.usecase.ChargePointUseCase;
@@ -93,7 +93,7 @@ public class ChargePointUseCaseTest {
             System.out.println("실패한 요청 수: " + failureCount);
 
             // then
-            UserEntity user = jpaUserRepository.findById(1L).get();
+            User user = jpaUserRepository.findById(1L).get();
             assertAll(
 
                     ()-> assertThat(successCount.get())

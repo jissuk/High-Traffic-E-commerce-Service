@@ -1,9 +1,7 @@
 package kr.hhplus.be.server.user.usecase.unit;
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
-import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
-import kr.hhplus.be.server.user.step.UserStep;
 import kr.hhplus.be.server.user.usecase.GetUserUseCase;
 import kr.hhplus.be.server.user.usecase.dto.UserResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;

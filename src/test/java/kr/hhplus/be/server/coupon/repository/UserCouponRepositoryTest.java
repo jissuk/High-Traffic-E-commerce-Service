@@ -5,7 +5,6 @@ import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.coupon.step.CouponStep;
-import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.step.UserStep;
 import org.junit.jupiter.api.DisplayName;

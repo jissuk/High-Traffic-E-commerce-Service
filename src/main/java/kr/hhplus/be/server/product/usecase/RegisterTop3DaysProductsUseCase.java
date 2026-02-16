@@ -12,7 +12,7 @@ import java.time.ZoneId;
 
 @UseCase
 @RequiredArgsConstructor
-public class RegisterTop3DaysProductsUsecase {
+public class RegisterTop3DaysProductsUseCase {
 
     private final RedisTemplate<String, Long> redis;
 

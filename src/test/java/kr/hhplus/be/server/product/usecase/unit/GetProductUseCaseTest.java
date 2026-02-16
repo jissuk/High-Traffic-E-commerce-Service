@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.product.usecase.unit;
 
 
-import kr.hhplus.be.server.product.domain.mapper.ProductRseponseMapper;
+import kr.hhplus.be.server.product.domain.mapper.ProductResponseMapper;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
 import kr.hhplus.be.server.product.step.ProductStep;
@@ -30,7 +30,7 @@ public class GetProductUseCaseTest {
     private ProductRepository productRepository;
 
     @Spy
-    private ProductRseponseMapper productRseponseMapper;
+    private ProductResponseMapper productRseponseMapper;
 
 
     @Nested

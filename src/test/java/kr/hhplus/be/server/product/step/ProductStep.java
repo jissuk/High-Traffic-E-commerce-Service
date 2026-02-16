@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.product.step;
 
 import kr.hhplus.be.server.product.domain.model.Product;
-import kr.hhplus.be.server.product.domain.model.ProductEntity;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,8 +32,8 @@ public class ProductStep {
                 .build();
     }
 
-    public static ProductEntity defaultProductEntity(){
-        return ProductEntity.builder()
+    public static Product defaultProductEntity(){
+        return Product.builder()
                             .productName("기본 상품")
                             .price(2000L)
                             .quantity(200L)

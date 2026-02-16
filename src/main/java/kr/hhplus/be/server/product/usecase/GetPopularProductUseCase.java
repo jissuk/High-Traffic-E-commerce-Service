@@ -2,7 +2,7 @@ package kr.hhplus.be.server.product.usecase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.product.domain.mapper.ProductRseponseMapper;
+import kr.hhplus.be.server.product.domain.mapper.ProductResponseMapper;
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.usecase.dto.ProductResponse;
@@ -17,7 +17,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class GetPopularProductUseCase {
 
-    private final ProductRseponseMapper productRseponseMapper;
+    private final ProductResponseMapper productResponseMapper;
     private final RedisTemplate<String, Long> redis;
     private final ProductRepository productRepository;
 
@@ -37,7 +37,7 @@ public class GetPopularProductUseCase {
 
     private List<ProductResponse> popularProduct3DaysMysql(){
         List<Product> productList = productRepository.findPopularProduct3Days();
-        return productList.stream().map(productRseponseMapper::toDto).toList();
+        return productList.stream().map(productResponseMapper::toDto).toList();
     }
 
     private List<ProductResponse> popularProduct3DaysRedis(Set<Long> redisZSetData ){
@@ -45,6 +45,6 @@ public class GetPopularProductUseCase {
         for (Long productId : redisZSetData) {
             resultList.add(productRepository.findById(productId));
         }
-        return resultList.stream().map(productRseponseMapper::toDto).toList();
+        return resultList.stream().map(productResponseMapper::toDto).toList();
     }
 }

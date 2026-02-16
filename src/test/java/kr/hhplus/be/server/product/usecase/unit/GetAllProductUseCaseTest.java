@@ -1,12 +1,7 @@
 package kr.hhplus.be.server.product.usecase.unit;
 
-import kr.hhplus.be.server.product.domain.mapper.ProductMapper;
-import kr.hhplus.be.server.product.domain.mapper.ProductRseponseMapper;
-import kr.hhplus.be.server.product.domain.model.Product;
-import kr.hhplus.be.server.product.domain.model.ProductEntity;
+import kr.hhplus.be.server.product.domain.mapper.ProductResponseMapper;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
-import kr.hhplus.be.server.product.exception.ProductNotFoundException;
-import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.product.usecase.GetAllProductUseCase;
 import org.junit.jupiter.api.DisplayName;
@@ -18,9 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -34,11 +26,8 @@ public class GetAllProductUseCaseTest {
     private GetAllProductUseCase getAllProductUseCase;
     @Mock
     private ProductRepository productRepository;
-
     @Spy
-    private ProductRseponseMapper productRseponseMapper;
-    @Spy
-    private ProductMapper productMapper;
+    private ProductResponseMapper productRseponseMapper;
 
     @Nested
     @DisplayName("전체 상품 조회 성공 케이스")

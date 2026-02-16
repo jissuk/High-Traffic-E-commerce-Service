@@ -1,26 +1,29 @@
 package kr.hhplus.be.server.product.domain.model;
 
+import jakarta.persistence.*;
 import kr.hhplus.be.server.product.exception.InsufficientStockException;
 import lombok.*;
 
-import java.io.Serializable;
-
+@Entity
+@Table(name = "PRODUCTS")
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Product implements Serializable {
-
+public class Product {
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column
     private String productName;
+    @Column
     private long price;
+    @Column
     private long quantity;
 
     public void deductQuantity(long quantity) {
-        if (this.quantity < quantity) {
-            throw new InsufficientStockException();
-        }
-
+        checkQuantity(quantity);
         this.quantity -= quantity;
     }
 

@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.product.infrastructure.jpa;
 
 import jakarta.persistence.LockModeType;
-import kr.hhplus.be.server.product.domain.model.ProductEntity;
+import kr.hhplus.be.server.product.domain.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -9,13 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface JpaProductRepository extends JpaRepository<ProductEntity, Long> {
+public interface JpaProductRepository extends JpaRepository<Product, Long> {
 
-    Optional<ProductEntity> findById(long id);
+    Optional<Product> findById(long id);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT p FROM ProductEntity p WHERE p.id = :productId")
-    Optional<ProductEntity> findByIdForUpdate(long productId);
+    @Query("SELECT p FROM Product p WHERE p.id = :productId")
+    Optional<Product> findByIdForUpdate(long productId);
 
     @Query(value = """
         SELECT 
@@ -33,5 +33,5 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
         ORDER BY SUM(oi.quantity) DESC
         LIMIT 3
         """, nativeQuery = true)
-    List<ProductEntity> findPopularProduct3Days();
+    List<Product> findPopularProduct3Days();
 }

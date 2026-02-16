@@ -5,7 +5,7 @@ import kr.hhplus.be.server.product.usecase.dto.ProductResponse;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductRseponseMapper {
+public class ProductResponseMapper {
     public ProductResponse toDto(Product domain){
         return ProductResponse.builder()
                 .id(domain.getId())

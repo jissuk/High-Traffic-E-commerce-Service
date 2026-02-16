@@ -11,7 +11,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class OrderItemEntity {
-
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +18,7 @@ public class OrderItemEntity {
     @Column
     private long quantity;
     @Column
-    private long price;
-    @Column
     private long orderId;
     @Column
     private long productId;
-
 }

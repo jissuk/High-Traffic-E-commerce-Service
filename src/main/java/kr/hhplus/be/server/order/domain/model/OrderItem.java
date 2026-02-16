@@ -8,21 +8,14 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 public class OrderItem {
-
     private long id;
-
     private long quantity;
-
-    private long price;
-
     private long productId;
-
     private long orderId;
 
     public static OrderItem createBeforeOrderItem(OrderCommand command, Order order) {
         return OrderItem.builder()
                         .quantity(command.quantity())
-                        .price(command.price())
                         .productId(command.productId())
                         .orderId(order.getId())
                         .build();

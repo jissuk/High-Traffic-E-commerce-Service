@@ -2,14 +2,11 @@ package kr.hhplus.be.server.payment.infrastructure;
 
 import kr.hhplus.be.server.payment.domain.mapper.PaymentMapper;
 import kr.hhplus.be.server.payment.domain.model.Payment;
-import kr.hhplus.be.server.payment.domain.model.PaymentEntity;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
 import kr.hhplus.be.server.payment.exception.PaymentNotFoundException;
 import kr.hhplus.be.server.payment.infrastructure.jpa.JpaPaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 
 @Repository
@@ -36,8 +33,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public Payment findByOrderItemId(Long orderItemId) {
-        return jpaPaymentRepository.findByOrderItemId(orderItemId)
+    public Payment findByOrderId(Long orderItemId) {
+        return jpaPaymentRepository.findByOrderId(orderItemId)
                 .map(paymentMapper::toDomain)
                 .orElseThrow(PaymentNotFoundException::new);
     }

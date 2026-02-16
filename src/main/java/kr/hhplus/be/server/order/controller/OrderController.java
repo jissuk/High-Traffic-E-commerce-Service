@@ -8,7 +8,6 @@ import kr.hhplus.be.server.order.usecase.RegisterOrderUseCase;
 import kr.hhplus.be.server.order.usecase.command.OrderCommand;
 import kr.hhplus.be.server.order.usecase.dto.OrderRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

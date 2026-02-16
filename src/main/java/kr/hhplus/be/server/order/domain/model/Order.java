@@ -13,19 +13,11 @@ import java.time.LocalDateTime;
 @ToString
 @AllArgsConstructor
 public class Order {
-
     private long id;
     private OrderStatus orderStatus;
     private LocalDateTime createdAt;
     private long totalPrice;
     private long userId;
-
-    public void complete() {
-        if(this.orderStatus.equals(OrderStatus.COMPLETED)){
-            throw new RuntimeException("이미 완료된 주문입니다.");
-        }
-        this.orderStatus = OrderStatus.COMPLETED;
-    }
 
     public static Order createPendingOrder(OrderCommand command, Product product, UserCoupon coupon) {
         long totalPrice = command.quantity() * product.getPrice() - coupon.getDiscount();

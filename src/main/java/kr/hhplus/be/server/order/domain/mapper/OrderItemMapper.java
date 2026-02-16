@@ -10,7 +10,6 @@ public class OrderItemMapper {
         return OrderItem.builder()
                         .id(orderItemEntity.getId())
                         .quantity(orderItemEntity.getQuantity())
-                        .price(orderItemEntity.getPrice())
                         .orderId(orderItemEntity.getOrderId())
                         .productId(orderItemEntity.getProductId())
                         .build();
@@ -20,7 +19,6 @@ public class OrderItemMapper {
         return OrderItemEntity.builder()
                                 .id(orderItem.getId())
                                 .quantity(orderItem.getQuantity())
-                                .price(orderItem.getPrice())
                                 .orderId(orderItem.getOrderId())
                                 .productId(orderItem.getProductId())
                                 .build();

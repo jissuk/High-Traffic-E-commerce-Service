@@ -1,11 +1,11 @@
 package kr.hhplus.be.server.order.infrastructure.jpa;
 
-import kr.hhplus.be.server.order.domain.model.OrderEntity;
+import kr.hhplus.be.server.order.domain.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface JpaOrderRepository extends JpaRepository<OrderEntity, Integer> {
+public interface JpaOrderRepository extends JpaRepository<Order, Integer> {
 
-    Optional<OrderEntity> findById(long id);
+    Optional<Order> findById(long id);
 }

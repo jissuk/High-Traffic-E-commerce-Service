@@ -16,7 +16,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 
-
 @UseCase
 @RequiredArgsConstructor
 public class IssueCouponUseCase {

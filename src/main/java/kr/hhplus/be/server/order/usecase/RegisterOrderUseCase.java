@@ -2,7 +2,6 @@ package kr.hhplus.be.server.order.usecase;
 
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.coupon.domain.model.Coupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.order.domain.model.Order;

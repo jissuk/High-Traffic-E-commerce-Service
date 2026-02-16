@@ -56,8 +56,8 @@ public class CouponStep {
                 .build();
     }
 
-    public static CouponEntity defaultCouponEntity(){
-        return CouponEntity.builder()
+    public static Coupon defaultCouponEntity(){
+        return Coupon.builder()
                         .discount(DEFAULT_COUPON_DISCOUNT)
                         .description(DEFAULT_COUPON_DESCRIPTION)
                         .quantity(DEFAULT_COUPON_QUANTITY)
@@ -65,8 +65,8 @@ public class CouponStep {
                         .build();
     }
 
-    public static UserCouponEntity defaultUserCouponEntity(UserEntity user, CouponEntity coupon){
-        return UserCouponEntity.builder()
+    public static UserCoupon defaultUserCouponEntity(UserEntity user, Coupon coupon){
+        return UserCoupon.builder()
                 .discount(DEFAULT_COUPON_DISCOUNT)
                 .couponStatus(CouponStatus.ISSUED)
                 .description(DEFAULT_COUPON_DESCRIPTION)

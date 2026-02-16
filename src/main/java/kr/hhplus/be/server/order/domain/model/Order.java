@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.order.domain.model;
 
-import kr.hhplus.be.server.coupon.domain.model.Coupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.order.usecase.command.OrderCommand;
 import kr.hhplus.be.server.product.domain.model.Product;

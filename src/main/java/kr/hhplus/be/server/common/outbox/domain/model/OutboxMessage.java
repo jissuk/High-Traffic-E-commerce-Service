@@ -19,10 +19,14 @@ public class OutboxMessage {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String topic;
+    @Column
     private String payload;
+    @Column
     @Enumerated(EnumType.STRING)
     private OutboxStatus status; // PENDING, PUBLISHED
+    @Column
     private LocalDateTime createdAt;
 
     public void processing(){
@@ -37,7 +41,7 @@ public class OutboxMessage {
         this.status = OutboxStatus.FAILED;
     }
 
-    public static OutboxMessage of(String topic,  String payload){
+    public static OutboxMessage of(String topic, String payload){
         return OutboxMessage.builder()
                             .topic(topic)
                             .payload(payload)

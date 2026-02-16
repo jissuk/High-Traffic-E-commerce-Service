@@ -16,13 +16,17 @@ public class OutboxMessageRepositoryImpl implements OutboxMessageRepository {
     private final JpaOutBoxMessageRepository jpaOutBoxMessageRepository;
 
     @Override
+    public OutboxMessage findById(Long messageId) {
+        return jpaOutBoxMessageRepository.findById(messageId).orElseThrow();
+    }
+
+    @Override
     public OutboxMessage save(OutboxMessage outBoxMessage) {
         return jpaOutBoxMessageRepository.save(outBoxMessage);
     }
 
     @Override
-    public List<OutboxMessage> findByStatusForUpdate(long limit) {
-        return jpaOutBoxMessageRepository.findByStatusForUpdate(limit);
+    public List<OutboxMessage> lockPendingMessages(long limit) {
+        return jpaOutBoxMessageRepository.lockPendingMessages(limit);
     }
-
 }

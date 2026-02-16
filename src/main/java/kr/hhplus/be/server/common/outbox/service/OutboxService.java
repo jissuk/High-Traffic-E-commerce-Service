@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
 import kr.hhplus.be.server.common.outbox.domain.repository.OutboxMessageRepository;
-import kr.hhplus.be.server.payment.event.PaymentApprovedEvent;
+import kr.hhplus.be.server.payment.event.PaymentRequestEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,6 @@ public class OutboxService {
     private final OutboxMessageRepository outboxMessageRepository;
 
     public void save(Object event)  {
-
         try{
             String payload = objectMapper.writeValueAsString(event);
             OutboxMessage outBoxMessage = OutboxMessage.of(
@@ -30,13 +29,12 @@ public class OutboxService {
         } catch (JsonProcessingException e){
             throw new IllegalStateException(e);
         }
-
     }
 
     /* event 객체가 Topic 정보를 알고 있음 */
     private String resolveTopic(Object event){
-        if (event instanceof PaymentApprovedEvent){
-            return "payment-approved-topic";
+        if (event instanceof PaymentRequestEvent){
+            return "payment-request-topic";
         }
         return "";
     }

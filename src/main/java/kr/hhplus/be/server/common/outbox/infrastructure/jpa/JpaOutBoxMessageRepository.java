@@ -8,8 +8,12 @@ import java.util.List;
 
 public interface JpaOutBoxMessageRepository extends JpaRepository<OutboxMessage, Long> {
     @Query(
-            value = "SELECT * FROM outbox_messages WHERE status = 'PENDING' ORDER BY id FOR UPDATE SKIP LOCKED LIMIT :limit",
+            value = "SELECT * FROM outbox_messages " +
+                    "WHERE status = 'PENDING' " +
+                    "ORDER BY id " +
+                    "LIMIT :limit " +
+                    "FOR UPDATE SKIP LOCKED",
             nativeQuery = true
     )
-    List<OutboxMessage> findByStatusForUpdate(long limit);
+    List<OutboxMessage> lockPendingMessages(long limit);
 }

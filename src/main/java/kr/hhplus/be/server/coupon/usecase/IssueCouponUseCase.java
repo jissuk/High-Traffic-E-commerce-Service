@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.common.consant.KafkaTopic;
 import kr.hhplus.be.server.common.outbox.domain.repository.OutboxMessageRepository;
 import kr.hhplus.be.server.common.outbox.domain.OutboxStatus;
 import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
@@ -34,22 +33,20 @@ public class IssueCouponUseCase {
     public static final String QUANTITY_SUFFIX = ":quantity";
 
     @DistributedLock
-    public void execute(UserCouponCommand command){
+    public void execute(UserCouponCommand command) {
         /**
          * 1. 중복 쿠폰 발급 여부 (Redis 캐시)
          * 2. 쿠폰 수량 차감     (Redis 캐시)
          * 3. 쿠폰 발급
          * */
-
         validateDuplicateIssue(command);
         decrementQuantity(command);
-        transactionTemplate.execute(status -> {
+        transactionTemplate.executeWithoutResult(status -> {
             try {
                 saveOutboxMessage(command);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
-            return null;
         });
     }
 
@@ -74,13 +71,13 @@ public class IssueCouponUseCase {
 
     private void saveOutboxMessage(UserCouponCommand command) throws JsonProcessingException {
         String jsonCommand = objectMapper.writeValueAsString(command);
-        String issueCouponTopic = KafkaTopic.Coupon.ISSUE_COUPON_TOPIC;
+        String issueCouponTopic = "issueCouponTopic";
         OutboxMessage outBoxMessage = OutboxMessage.builder()
-                .topic(issueCouponTopic)
-                .payload(jsonCommand)
-                .status(OutboxStatus.PENDING)
-                .createdAt(LocalDateTime.now())
-                .build();
+                                                    .topic(issueCouponTopic)
+                                                    .payload(jsonCommand)
+                                                    .status(OutboxStatus.PENDING)
+                                                    .createdAt(LocalDateTime.now())
+                                                    .build();
         outBoxMessageRepository.save(outBoxMessage);
     }
 }

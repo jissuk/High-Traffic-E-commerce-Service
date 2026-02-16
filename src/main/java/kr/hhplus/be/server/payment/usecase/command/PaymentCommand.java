@@ -5,19 +5,24 @@ import kr.hhplus.be.server.payment.usecase.dto.PaymentRequest;
 import lombok.Builder;
 
 @Builder
-public record PaymentCommand(Long userId, Long orderId, Long orderItemId, Long couponId, Long productId) implements LockKeyProvider{
+public record PaymentCommand(
+        Long orderId,
+        String tossOrderId,
+        String tossPaymentKey,
+        Long amount
+) implements LockKeyProvider{
+
     public static PaymentCommand from(PaymentRequest dto) {
         return PaymentCommand.builder()
-                                .userId(dto.userId())
                                 .orderId(dto.orderId())
-                                .orderItemId(dto.orderItemId())
-                                .couponId(dto.couponId())
-                                .productId(dto.productId())
+                                .tossOrderId(dto.tossOrderId())
+                                .tossPaymentKey(dto.tossPaymentKey())
+                                .amount(dto.amount())
                                 .build();
     }
 
     @Override
     public String lockKey() {
-        return "payment:register:" + orderItemId +":lock";
+        return "payment:register:" + orderId +":lock";
     }
 }

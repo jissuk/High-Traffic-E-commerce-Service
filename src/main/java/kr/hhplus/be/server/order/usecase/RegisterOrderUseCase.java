@@ -3,7 +3,8 @@ package kr.hhplus.be.server.order.usecase;
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
 import kr.hhplus.be.server.coupon.domain.model.Coupon;
-import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
+import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
+import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
 import kr.hhplus.be.server.order.domain.model.Order;
 import kr.hhplus.be.server.order.domain.model.OrderItem;
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
@@ -23,7 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class RegisterOrderUseCase {
 
     private final UserRepository userRepository;
-    private final CouponRepository couponRepository;
+    private final UserCouponRepository userCouponRepository;
     private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
@@ -32,15 +33,16 @@ public class RegisterOrderUseCase {
     private final TransactionTemplate transactionTemplate;
 
     @DistributedLock
-    public void execute(OrderCommand command){
+    public void
+    execute(OrderCommand command){
         Product product = productRepository.findById(command.productId());
-        Coupon coupon = couponRepository.findById(command.couponId());
+        UserCoupon coupon = userCouponRepository.findById(command.userCouponId());
         User user = userRepository.findById(command.userId());
 
         transactionTemplate.executeWithoutResult(status -> completeOrder(command, product, user, coupon));
     }
 
-    private void completeOrder(OrderCommand command, Product product, User user, Coupon coupon) {
+    private void completeOrder(OrderCommand command, Product product, User user, UserCoupon coupon) {
         product.checkQuantity(command.quantity());
         user.deductPoint(command.point());
 
@@ -49,7 +51,8 @@ public class RegisterOrderUseCase {
         createAndSavePayment(command, order);
     }
 
-    private Order createAndSaveOrder(OrderCommand command, Product product, Coupon coupon) {
+    private Order createAndSaveOrder(OrderCommand command, Product product, UserCoupon coupon) {
+        coupon.useCoupon();
 
         Order order = Order.createPendingOrder(command, product, coupon);
         return orderRepository.save(order);

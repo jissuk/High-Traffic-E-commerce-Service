@@ -105,7 +105,7 @@ public class IssueCouponUseCaseTest {
 
             // when
             issueCouponUseCase.execute(request);
-            outboxRelayScheduler.relayMessages();
+//            outboxRelayScheduler.relayMessages();
 
             // then
             Long couponQuantity = redis.opsForValue().get(quantityKey);

@@ -9,22 +9,26 @@ public class PaymentMapper {
     public Payment toDomain(PaymentEntity paymentEntity){
         return Payment.builder()
                         .id(paymentEntity.getId())
-                        .amount(paymentEntity.getPrice())
+                        .amount(paymentEntity.getAmount())
+                        .tossOrderId(paymentEntity.getTossOrderId())
+                        .tossPaymentKey(paymentEntity.getTossPaymentKey())
                         .paymentStatus(paymentEntity.getPaymentStatus())
                         .createdAt(paymentEntity.getCreateAt())
                         .userId(paymentEntity.getUserId())
-                        .orderItemId(paymentEntity.getOrderItemId())
+                        .orderId(paymentEntity.getOrderId())
                         .build();
     }
 
     public PaymentEntity toEntity(Payment payment){
         return PaymentEntity.builder()
                             .id(payment.getId())
-                            .price(payment.getAmount())
+                            .amount(payment.getAmount())
+                            .tossOrderId(payment.getTossOrderId())
+                            .tossPaymentKey(payment.getTossPaymentKey())
                             .paymentStatus(payment.getPaymentStatus())
                             .createAt(payment.getCreatedAt())
                             .userId(payment.getUserId())
-                            .orderItemId(payment.getOrderItemId())
+                            .orderId(payment.getOrderId())
                             .build();
     }
 }

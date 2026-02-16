@@ -12,7 +12,6 @@ import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderRepository;
 import kr.hhplus.be.server.order.step.OrderStep;
 import kr.hhplus.be.server.payment.infrastructure.jpa.JpaPaymentRepository;
 import kr.hhplus.be.server.payment.step.PaymentStep;
-import kr.hhplus.be.server.payment.usecase.dto.PaymentRequest;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
 import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.user.domain.model.UserEntity;
@@ -97,7 +96,7 @@ public class PaymentControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 쿠폰과 포인트를 사용하여 결제한다.")
         void 결제() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.defaultPaymentRequest();
+            PaymentRequestRequest request = PaymentStep.defaultPaymentRequest();
 
             // when
             ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
@@ -110,7 +109,7 @@ public class PaymentControllerTest {
         @DisplayName("요청 데이터가 정상적일 경우 포인트만 사용하여 결제한다.")
         void 결제_쿠폰이존재하지않을_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.paymentRequestWithCouponId(null);
+            PaymentRequestRequest request = PaymentStep.paymentRequestWithCouponId(null);
 
             // when
             ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
@@ -127,7 +126,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 결제_존재하지않는_유저일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.paymentRequestWithUserId(2L);
+            PaymentRequestRequest request = PaymentStep.paymentRequestWithUserId(2L);
 
             // when
             ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
@@ -140,7 +139,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 주문일 경우 OrderNotFoundException이 발생한다.")
         void 결제_존재하지않는_주문일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.paymentRequestWithOrderId(2L);
+            PaymentRequestRequest request = PaymentStep.paymentRequestWithOrderId(2L);
 
             // when
             ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
@@ -153,7 +152,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 주문상세일 경우 OrderItemNotFoundException이 발생한다.")
         void 결제_존재하지않는_주문상세일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.paymentRequestWithOrderItemId(2L);
+            PaymentRequestRequest request = PaymentStep.paymentRequestWithOrderItemId(2L);
 
             // when
             ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
@@ -166,7 +165,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 결제일 경우 PaymentNotFoundException이 발생한다.")
         void 결제_존재하지않는_결제일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.paymentRequestWithPaymentId(2L);
+            PaymentRequestRequest request = PaymentStep.paymentRequestWithPaymentId(2L);
 
             // when
             ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);
@@ -179,7 +178,7 @@ public class PaymentControllerTest {
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 결제_존재하지않는_상품일_경우() throws Exception {
             // givne
-            PaymentRequest request = PaymentStep.paymentRequestWithProductId(2L);
+            PaymentRequestRequest request = PaymentStep.paymentRequestWithProductId(2L);
 
             // when
             ResultActions result = PaymentStep.paymentRequest(mockMvc, objectMapper, request);

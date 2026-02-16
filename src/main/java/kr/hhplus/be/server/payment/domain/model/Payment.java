@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.payment.domain.model;
 
-import kr.hhplus.be.server.order.domain.model.OrderItem;
-import kr.hhplus.be.server.order.usecase.command.OrderItemCommand;
+import kr.hhplus.be.server.order.domain.model.Order;
+import kr.hhplus.be.server.order.usecase.command.OrderCommand;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,31 +17,28 @@ public class Payment {
     private PaymentStatus paymentStatus;
     private LocalDateTime createdAt;
     private long userId;
-    private long orderItemId;
+    private long orderId;
 
-    public void approve() {
-        this.paymentStatus = PaymentStatus.APPROVED;
-    }
-
-    public void validateStatus() {
-        if(this.paymentStatus.equals(PaymentStatus.APPROVED)){
-            throw new RuntimeException("이미 완료된 결제입니다.");
+    public void validateTossPaymentConsistency(Long amount) {
+        if(!this.amount.equals(amount)) {
+            throw new RuntimeException("결제 금액이 일치하지 않습니다.");
         }
     }
 
-    public void validateAmount(Long amount) {
-        if(!this.amount.equals(amount)){
-            throw new RuntimeException("결제하려는 금액과 일치하지 않습니다.");
+    public void requested(){
+        if(this.paymentStatus.equals(PaymentStatus.REQUESTED)){
+            throw new RuntimeException("이미 요청 중인 결제입니다.");
         }
+        this.paymentStatus = PaymentStatus.REQUESTED;
     }
 
-    public static Payment createBeforePayment(OrderItemCommand command, OrderItem orderItem) {
+    public static Payment createBeforePayment(OrderCommand command, Order order) {
         return Payment.builder()
-                        .amount(command.price())
-                        .paymentStatus(PaymentStatus.BEFORE_PAYMENT)
+                        .amount(order.getTotalPrice())
+                        .paymentStatus(PaymentStatus.PENDING)
                         .createdAt(LocalDateTime.now())
                         .userId(command.userId())
-                        .orderItemId(orderItem.getId())
+                        .orderId(order.getId())
                         .build();
     }
 }

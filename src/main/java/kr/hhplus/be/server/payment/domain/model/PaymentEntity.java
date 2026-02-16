@@ -21,7 +21,11 @@ public class PaymentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column
-    private long price;
+    private long amount;
+    @Column
+    private String tossOrderId;
+    @Column
+    private String tossPaymentKey;
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
     @Column
@@ -29,9 +33,5 @@ public class PaymentEntity {
     @Column
     private long userId;
     @Column
-    private long couponId;
-    @Column
-    private long orderItemId;
-    @Version
-    private long version;
+    private long orderId;
 }

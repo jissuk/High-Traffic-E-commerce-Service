@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.product.usecase.integration;
 
-
 import kr.hhplus.be.server.product.usecase.ClearProductSalesCacheUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,12 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.testcontainers.utility.TestcontainersConfiguration;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)

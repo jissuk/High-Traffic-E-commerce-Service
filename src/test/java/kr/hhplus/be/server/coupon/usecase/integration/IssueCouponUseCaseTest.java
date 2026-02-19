@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @Import(TestcontainersConfiguration.class)
 @DisplayName("쿠폰 관련 통합 테스트")
 public class IssueCouponUseCaseTest {
-    
     @Autowired
     private IssueCouponUseCase issueCouponUseCase;
     @Autowired
@@ -52,6 +51,7 @@ public class IssueCouponUseCaseTest {
     public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
     public static final String ISSUED_SUFFIX = ":issued";
     public static final String QUANTITY_SUFFIX = ":quantity";
+
     @BeforeEach
     void setUp() {
         clearTestDBData();
@@ -59,6 +59,7 @@ public class IssueCouponUseCaseTest {
         initTestDBData();
         initTestRedisData();
     }
+
     private void clearTestDBData(){
         jdbcTemplate.execute("TRUNCATE TABLE users;");
         jdbcTemplate.execute("TRUNCATE TABLE coupons;");
@@ -88,14 +89,13 @@ public class IssueCouponUseCaseTest {
         redis.opsForValue().setBit(issuedKey, 0, false);
     }
 
-
     @Nested
     @DisplayName("성공 케이스")
     class success {
 
         @Test
         @DisplayName("실시간 쿠폰 발급 Kafka 비동기 처리")
-        void 실시간쿠폰발급_비동기() throws JsonProcessingException, InterruptedException {
+        void 실시간쿠폰발급_비동기() throws InterruptedException {
             // given
             long couponId = 1L;
             long userCouponId = 1L;
@@ -105,7 +105,7 @@ public class IssueCouponUseCaseTest {
 
             // when
             issueCouponUseCase.execute(request);
-//            outboxRelayScheduler.relayMessages();
+            outboxRelayScheduler.relay();
 
             // then
             Long couponQuantity = redis.opsForValue().get(quantityKey);

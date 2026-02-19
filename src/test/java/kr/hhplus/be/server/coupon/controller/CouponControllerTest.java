@@ -28,10 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestcontainersConfiguration.class)
 @DisplayName("쿠폰 관련 테스트")
 public class CouponControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -40,13 +38,13 @@ public class CouponControllerTest {
     private JpaUserRepository jpaUserRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
     @Autowired
     private RedisTemplate<String, Long> redis;
 
     public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
     public static final String ISSUED_SUFFIX = ":issued";
     public static final String QUANTITY_SUFFIX = ":quantity";
+
     @BeforeEach
     void setUp() {
         clearTestData();
@@ -77,7 +75,6 @@ public class CouponControllerTest {
     @Nested
     @DisplayName("선착순 쿠폰 성공 케이스")
     class success{
-
         @Test
         @DisplayName("요청 데이터가 정상적이며 쿠폰 수량이 남아있을 경우 쿠폰을 발급한다.")
         void 선착순쿠폰발급() throws Exception {

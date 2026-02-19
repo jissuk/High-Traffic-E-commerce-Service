@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.coupon.domain.model.*;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequest;
-import kr.hhplus.be.server.user.domain.model.User;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -15,7 +14,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 public class CouponStep {
-
     private static String PATH_URL = "/coupons";
     private static final Long DEFAULT_USER_ID = 1L;
     private static final Long DEFAULT_COUPON_ID = 1L;
@@ -63,16 +61,6 @@ public class CouponStep {
                         .quantity(DEFAULT_COUPON_QUANTITY)
                         .expiredAt(LocalDateTime.now().plusMonths(3))
                         .build();
-    }
-
-    public static UserCoupon defaultUserCouponEntity(User user, Coupon coupon){
-        return UserCoupon.builder()
-                .discount(DEFAULT_COUPON_DISCOUNT)
-                .couponStatus(CouponStatus.ISSUED)
-                .description(DEFAULT_COUPON_DESCRIPTION)
-                .couponId(coupon.getId())
-                .userId(user.getId())
-                .build();
     }
 
     public static ResultActions issueCouponRequest(MockMvc mockMvc, ObjectMapper objectMapper, UserCouponRequest request) throws Exception {

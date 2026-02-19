@@ -22,13 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(TestcontainersConfiguration.class)
 @DisplayName("유저 쿠폰 관련 Repository 테스트")
 public class UserCouponRepositoryTest {
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private CouponRepository couponRepository;
-
     @Autowired
     private UserCouponRepository userCouponRepository;
 

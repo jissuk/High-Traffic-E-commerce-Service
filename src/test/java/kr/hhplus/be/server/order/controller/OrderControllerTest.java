@@ -22,25 +22,19 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 @DisplayName("주문 관련 테스트")
 public class OrderControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private JpaUserRepository jpaUserRepository;
-
     @Autowired
     private JpaProductRepository jpaProductRepository;
-
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -62,16 +56,14 @@ public class OrderControllerTest {
         jpaProductRepository.save(ProductStep.defaultProductEntity());
     }
 
-
     @Nested
     @DisplayName("주문 성공 케이스")
     class success{
-
         @Test
         @DisplayName("요청 데이터가 정상적일 경우 주문을 등록한다.")
         void 주문() throws Exception {
             // given
-            OrderRequest request = OrderStep.defaultOrderItemRequest();
+            OrderRequest request = OrderStep.defaultOrderRequest();
 
             // when
             ResultActions result = OrderStep.orderRequest(mockMvc, objectMapper, request);
@@ -79,17 +71,16 @@ public class OrderControllerTest {
             // then
             result.andExpect(status().isOk());
         }
-
     }
+
     @Nested
     @DisplayName("주문 실패 케이스")
     class fail{
-
         @Test
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 주문_존재하지않는_유저일_경우() throws Exception {
             // given
-            OrderRequest request = OrderStep.orderItemRequestWithUserId(2L);
+            OrderRequest request = OrderStep.orderRequestWithUserId(2L);
 
             // when
             ResultActions result = OrderStep.orderRequest(mockMvc, objectMapper, request);
@@ -102,7 +93,7 @@ public class OrderControllerTest {
         @DisplayName("존재하지 않는 상품일 경우 ProductNotFoundException이 발생한다.")
         void 주문_존재하지않는_상품일_경우() throws Exception {
             // given
-            OrderRequest request = OrderStep.orderItemRequestWithProductId(2L);
+            OrderRequest request = OrderStep.orderRequestWithProductId(2L);
 
             // when
             ResultActions result = OrderStep.orderRequest(mockMvc, objectMapper, request);

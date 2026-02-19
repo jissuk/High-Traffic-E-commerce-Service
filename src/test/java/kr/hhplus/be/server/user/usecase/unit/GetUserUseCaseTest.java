@@ -1,7 +1,10 @@
 package kr.hhplus.be.server.user.usecase.unit;
+
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
+import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
+import kr.hhplus.be.server.user.step.UserStep;
 import kr.hhplus.be.server.user.usecase.GetUserUseCase;
 import kr.hhplus.be.server.user.usecase.dto.UserResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -13,39 +16,35 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
 @DisplayName("유저 조회 테스트")
 @ExtendWith(MockitoExtension.class)
 public class GetUserUseCaseTest {
-
     @InjectMocks
     private GetUserUseCase getUserUseCase;
-
     @Mock
     private UserRepository userRepository;
-
     @Spy
     private UserResponseMapper userResponseMapper;
 
     @Nested
     @DisplayName("유저 조회 성공 케이스")
     class success{
-
         @Test
         @DisplayName("유저가 존재하면 정상적으로 유저를 조회한다.")
         void 유저조회(){
             // given
             long userId = 1L;
-            when(userRepository.findById(userId)).thenReturn(new User(1L, 10000L));
+            User user = UserStep.defualtUser();
+            when(userRepository.findById(userId)).thenReturn(user);
 
             // when
             UserResponse result = getUserUseCase.execute(userId);
+
             // then
             assertAll(
                 ()-> assertThat(result.userId())
@@ -53,7 +52,7 @@ public class GetUserUseCaseTest {
                         .isEqualTo(1L),
                 ()-> assertThat(result.point())
                         .as("유저 포인트 조회 확인")
-                        .isEqualTo(10000L)
+                        .isEqualTo(10_000L)
             );
         }
     }
@@ -61,7 +60,6 @@ public class GetUserUseCaseTest {
     @Nested
     @DisplayName("유저 조회 실패 케이스")
     class fail{
-
         @Test
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 유저조회_존재하지않는_유저일_경우(){

@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 public class UserStep {
-
     private static String PATH_URL = "/user";
 
     public static UserRequest defaultUserRequest(){
@@ -35,7 +34,7 @@ public class UserStep {
 
     public static User defualtUser(){
         return User.builder()
-                    .point(10000L)
+                    .point(10_000L)
                     .build();
     }
 

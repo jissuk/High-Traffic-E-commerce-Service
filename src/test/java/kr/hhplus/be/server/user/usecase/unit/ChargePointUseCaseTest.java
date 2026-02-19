@@ -17,16 +17,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.support.TransactionTemplate;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-
 @DisplayName("포인트 충전 테스트")
 @ExtendWith(MockitoExtension.class)
 public class ChargePointUseCaseTest {
-
     @InjectMocks
     private ChargePointUseCase chargePointUseCase;
     @Mock
@@ -39,11 +36,9 @@ public class ChargePointUseCaseTest {
     @Spy
     private UserResponseMapper userResponseMapper;
 
-
     @Nested
     @DisplayName("포인트 충전 성공 케이스")
     class success{
-
         @Test
         @DisplayName("유저가 존재할 경우 유저의 포인트를 충전한다.")
         void 포인트충전(){
@@ -62,7 +57,6 @@ public class ChargePointUseCaseTest {
     @Nested
     @DisplayName("포인트 충전 실패 케이스")
     class fail{
-
         @Test
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 포인트충전_존재하지않는_유저일_경우(){
@@ -75,5 +69,4 @@ public class ChargePointUseCaseTest {
                     .isInstanceOf(UserNotFoundException.class);
         }
     }
-
 }

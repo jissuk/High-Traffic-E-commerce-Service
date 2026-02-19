@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.user.usecase.unit;
+
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
-import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
+import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.usecase.CreateUserUseCase;
 import kr.hhplus.be.server.user.usecase.command.UserCommand;
@@ -18,28 +19,18 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Testcontainers
 @DisplayName("유저 생성 테스트")
 @ExtendWith(MockitoExtension.class)
 public class CreateUserUseCaseTest {
-
     @InjectMocks
     private CreateUserUseCase createUserUseCase;
-
     @Mock
     private UserRepository userRepository;
-    @Mock
-    private PointHistoryRepository pointHistoryRepository;
-
-    @Spy
-    private UserMapper userMapper;
     @Spy
     private UserResponseMapper userResponseMapper;
-    @Spy
-    private PointHistoryMapper pointHistoryMapper;
 
     @Nested
     @DisplayName("유저 생성 성공 케이스")
@@ -50,7 +41,10 @@ public class CreateUserUseCaseTest {
         void 유저생성(){
             // given
             UserCommand command = new UserCommand(null, 3000L);
-            User user = new User(1L, 3000L);
+            User user = User.builder()
+                            .id(1L)
+                            .point(3000L)
+                            .build();
             when(userRepository.save(any(User.class))).thenReturn(user);
 
             // when

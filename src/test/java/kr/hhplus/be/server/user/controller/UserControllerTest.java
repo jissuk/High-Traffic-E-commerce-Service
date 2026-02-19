@@ -19,31 +19,24 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 @DisplayName("유저 관련 테스트")
 public class UserControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private JpaUserRepository jpaUserRepository;
-
     @Autowired
     private JdbcTemplate jdbcTemplate ;
-
     @BeforeEach
     void setUp() {
         clearTestData();
         initTestData();
     }
-
     private void clearTestData() {
         jdbcTemplate.execute("TRUNCATE TABLE users;");
     }
@@ -52,11 +45,9 @@ public class UserControllerTest {
         jpaUserRepository.save(UserStep.defualtUserEntity());
     }
 
-
     @Nested
     @DisplayName("유저 포인트 충전 성공 케이스")
     class success{
-
         @Test
         @DisplayName("요청 데이터가 정상적일 경우 포인트를 충전한다.")
         void 포인트충전() throws Exception {
@@ -74,7 +65,6 @@ public class UserControllerTest {
     @Nested
     @DisplayName("유저 포인트 충전 실패 케이스")
     class fail{
-
         @Test
         @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
         void 포인트충전() throws Exception {

@@ -13,8 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
@@ -27,12 +25,11 @@ public class GetAllProductUseCaseTest {
     @Mock
     private ProductRepository productRepository;
     @Spy
-    private ProductResponseMapper productRseponseMapper;
+    private ProductResponseMapper productResponseMapper;
 
     @Nested
     @DisplayName("전체 상품 조회 성공 케이스")
     class success{
-
         @Test
         @DisplayName("상품이 존재 시 모든 상품 조회 시 예외가 발생하지 않는다.")
         void 전체상품조회 (){

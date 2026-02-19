@@ -15,9 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
@@ -40,21 +38,17 @@ public class ProductControllerTest {
         initTestData();
     }
 
-
     private void clearTestData() {
-        // MySql
         jdbcTemplate.execute("TRUNCATE TABLE products;");
 
     }
     private void initTestData() throws Exception {
-    // MySql
         jpaProductRepository.save(ProductStep.defaultProductEntity());
     }
 
     @Nested
     @DisplayName("상품 조회 성공 케이스")
     class success{
-
         @Test
         @DisplayName("요청 데이터가 정상적일 경우 단건의 상품을 조회한다.")
         void 상품조회() throws Exception {

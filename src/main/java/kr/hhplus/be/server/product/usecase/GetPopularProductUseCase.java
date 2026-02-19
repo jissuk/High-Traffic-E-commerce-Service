@@ -16,7 +16,6 @@ import java.util.Set;
 @UseCase
 @RequiredArgsConstructor
 public class GetPopularProductUseCase {
-
     private final ProductResponseMapper productResponseMapper;
     private final RedisTemplate<String, Long> redis;
     private final ProductRepository productRepository;
@@ -25,7 +24,6 @@ public class GetPopularProductUseCase {
     public static final long TOP_PRODUCT_SALES_LIMIT = 2;
 
     public List<ProductResponse> execute() throws JsonProcessingException {
-
         Set<Long> redisZSetData = redis.opsForZSet().reverseRange(PRODUCT_SALES_3DAYS_TOTAL, 0, TOP_PRODUCT_SALES_LIMIT);
 
         if (redisZSetData == null || redisZSetData.isEmpty()) {

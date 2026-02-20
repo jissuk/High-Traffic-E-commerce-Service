@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.user.usecase.unit;
 import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
+import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.step.UserStep;
@@ -44,7 +45,8 @@ public class ChargePointUseCaseTest {
         void 포인트충전(){
             // given
             UserCommand command = UserStep.defaultUserCommand(); // point: 3000L
-            when(userRepository.findById(command.userId())).thenReturn(new User(1L, 10_000L));
+            User user = UserStep.defualtUser();
+            when(userRepository.findById(command.userId())).thenReturn(user);
 
             // when
             UserResponse result = chargePointUseCase.execute(command);

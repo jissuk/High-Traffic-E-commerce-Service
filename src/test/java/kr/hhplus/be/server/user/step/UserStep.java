@@ -29,7 +29,7 @@ public class UserStep {
     }
 
     public static UserCommand defaultUserCommand() {
-        return new UserCommand(1L, 3000L);
+        return new UserCommand(1L, 10_000L);
     }
 
     public static User defualtUser(){

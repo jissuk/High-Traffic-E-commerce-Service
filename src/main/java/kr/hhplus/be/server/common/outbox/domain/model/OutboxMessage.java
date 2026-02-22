@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 public class OutboxMessage {
-
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +27,11 @@ public class OutboxMessage {
     private OutboxStatus status; // PENDING, PUBLISHED
     @Column
     private LocalDateTime createdAt;
+    @Column
+    private long retryCount;
+    @Column
+    private LocalDateTime nextRetryAt;
+    private long maxRetryCount = 5;
 
     public void processing(){
         this.status = OutboxStatus.PROCESSING;
@@ -41,12 +45,23 @@ public class OutboxMessage {
         this.status = OutboxStatus.FAILED;
     }
 
+    public void dead(){
+        this.status = OutboxStatus.DEAD;
+    }
+
     public static OutboxMessage of(String topic, String payload){
         return OutboxMessage.builder()
                             .topic(topic)
                             .payload(payload)
                             .status(OutboxStatus.PENDING)
                             .createdAt(LocalDateTime.now())
+                            .retryCount(0L)
                             .build();
+    }
+
+    public void retry(LocalDateTime nextRetryAt, long nextRetryCount) {
+        this.nextRetryAt = nextRetryAt;
+        this.retryCount = nextRetryCount;
+        this.status = OutboxStatus.FAILED;
     }
 }

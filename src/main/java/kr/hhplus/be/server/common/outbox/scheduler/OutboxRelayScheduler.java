@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -20,15 +21,17 @@ public class OutboxRelayScheduler {
     private final OutboxMessageRepository outboxMessageRepository;
     private final TransactionTemplate transactionTemplate;
 
-    private final long limit = 100;
-    
+    private static final long LIMIT = 100;
+    private static final long BASE_DELAY_SECONDS = 1;  // 초
+    private static final long MAX_DELAY_SECONDS = 300; // 5분
+
     /**
      * 비관적 락을 사용하기 위해서 Transaction을 사용
      * */
     @Scheduled(fixedDelay = 5000)
     public void relay(){
         List<OutboxMessage> messageList = transactionTemplate.execute(status -> {
-            List<OutboxMessage> list = outboxMessageRepository.lockPendingMessages(limit);
+            List<OutboxMessage> list = outboxMessageRepository.lockPendingMessages(LIMIT);
             list.forEach(OutboxMessage::processing);
             return list;
         });
@@ -67,7 +70,25 @@ public class OutboxRelayScheduler {
     private void updateFailed(Long messageId) {
         transactionTemplate.executeWithoutResult(status -> {
             OutboxMessage message = outboxMessageRepository.findById(messageId);
-            message.failed();
+
+            long currentRetryCount = message.getRetryCount();
+            long maxRetryCount = message.getMaxRetryCount();
+
+            if(maxRetryCount <= currentRetryCount){
+                message.dead();
+                return;
+            }
+
+            long nextRetryCount = currentRetryCount + 1;
+            LocalDateTime nextRetryAt = calculateNextRetryAt(nextRetryCount);
+
+            message.retry(nextRetryAt, nextRetryCount);
         });
+    }
+
+    private LocalDateTime calculateNextRetryAt(long nextRetryCount) {
+        long backoffDelay = BASE_DELAY_SECONDS * (1L << (nextRetryCount - 1)); // 1, 2, 4, 8....
+        long delay = Math.min(backoffDelay, MAX_DELAY_SECONDS);
+        return LocalDateTime.now().plusSeconds(delay);
     }
 }

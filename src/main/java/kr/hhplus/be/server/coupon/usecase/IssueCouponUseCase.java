@@ -70,7 +70,7 @@ public class IssueCouponUseCase {
 
     private void saveOutboxMessage(UserCouponCommand command) throws JsonProcessingException {
         String jsonCommand = objectMapper.writeValueAsString(command);
-        String issueCouponTopic = "issueCouponTopic";
+        String issueCouponTopic = "coupon.issue.requested";
         OutboxMessage outBoxMessage = OutboxMessage.builder()
                                                     .topic(issueCouponTopic)
                                                     .payload(jsonCommand)

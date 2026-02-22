@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.coupon.controller;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.step.CouponStep;

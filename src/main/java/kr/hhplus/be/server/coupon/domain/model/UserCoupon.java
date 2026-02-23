@@ -2,6 +2,7 @@ package kr.hhplus.be.server.coupon.domain.model;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.coupon.exception.InvalidCouponException;
+import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.user.domain.model.User;
 import lombok.*;
 
@@ -34,6 +35,13 @@ public class UserCoupon {
             throw new InvalidCouponException();
         };
         this.couponStatus = CouponStatus.USED;
+    }
+
+    public static UserCoupon of(UserCouponCommand command) {
+        return UserCoupon.builder()
+                .couponId(command.couponId())
+                .userId(command.userId())
+                .build();
     }
 
     public static UserCoupon createBeforeUserCoupon(Coupon coupon, User user) {

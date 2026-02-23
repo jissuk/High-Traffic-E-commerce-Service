@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.config.toss.TossProperties;
 import kr.hhplus.be.server.payment.event.PaymentRequestEvent;
+import kr.hhplus.be.server.payment.event.PaymentTopics;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentConfirmRequest;
 import kr.hhplus.be.server.payment.usecase.dto.TossPaymentConfirmResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class RequestPaymentListener {
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
-    @KafkaListener(topics = "payment-request-topic", groupId = "${kafka.consumer.group-id.payment-request}")
+    @KafkaListener(topics = PaymentTopics.PAYMENT_REQUEST_TOPIC, groupId = "${kafka.consumer.group-id.payment-request}")
     public void requestPayment(String message) throws JsonProcessingException {
         PaymentRequestEvent event = objectMapper.readValue(message, PaymentRequestEvent.class);
         TossPaymentConfirmResponse response = tossPaymentConfirmRequest(event);

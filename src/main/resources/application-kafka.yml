@@ -3,8 +3,3 @@ kafka:
     group-id:
       payment-request: request-payment-group
       coupon-issued: issued-coupon-group
-
-
-  topics:
-    payment-request: order.payment.request
-    coupon-issued: coupon.issue.requested

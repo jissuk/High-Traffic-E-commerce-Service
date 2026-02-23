@@ -1,12 +1,10 @@
 package kr.hhplus.be.server.coupon.usecase;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.annotation.DistributedLock;
 import kr.hhplus.be.server.common.annotation.UseCase;
-import kr.hhplus.be.server.common.outbox.domain.repository.OutboxMessageRepository;
-import kr.hhplus.be.server.common.outbox.domain.OutboxStatus;
-import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
+import kr.hhplus.be.server.common.outbox.service.OutboxService;
+import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
+import kr.hhplus.be.server.coupon.event.IssueCouponEvent;
 import kr.hhplus.be.server.coupon.exception.CouponOutOfStockException;
 import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
@@ -14,17 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.time.LocalDateTime;
-
 @UseCase
 @RequiredArgsConstructor
 public class IssueCouponUseCase {
-
-    private final OutboxMessageRepository outBoxMessageRepository;
-    private final ObjectMapper objectMapper;
-
+    private final OutboxService outboxService;
     private final TransactionTemplate transactionTemplate;
-
     private final RedisTemplate<String, Long> redis;
 
     public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
@@ -40,17 +32,11 @@ public class IssueCouponUseCase {
          * */
         validateDuplicateIssue(command);
         decrementQuantity(command);
-        transactionTemplate.executeWithoutResult(status -> {
-            try {
-                saveOutboxMessage(command);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        publishIssueUserCouponEvent(command);
     }
 
     private void validateDuplicateIssue(UserCouponCommand command) {
-        String issuedKey = COUPON_ISSUE_PREFIX + command.userId() + ISSUED_SUFFIX;
+        String issuedKey = COUPON_ISSUE_PREFIX + command.couponId() + ISSUED_SUFFIX;
         Boolean issuedResult = redis.opsForValue().getBit(issuedKey, command.userId());
 
         if(!issuedResult){
@@ -68,15 +54,9 @@ public class IssueCouponUseCase {
         }
     }
 
-    private void saveOutboxMessage(UserCouponCommand command) throws JsonProcessingException {
-        String jsonCommand = objectMapper.writeValueAsString(command);
-        String issueCouponTopic = "coupon.issue.requested";
-        OutboxMessage outBoxMessage = OutboxMessage.builder()
-                                                    .topic(issueCouponTopic)
-                                                    .payload(jsonCommand)
-                                                    .status(OutboxStatus.PENDING)
-                                                    .createdAt(LocalDateTime.now())
-                                                    .build();
-        outBoxMessageRepository.save(outBoxMessage);
+    private void publishIssueUserCouponEvent(UserCouponCommand command) {
+        UserCoupon userCoupon = UserCoupon.of(command);
+        IssueCouponEvent event = IssueCouponEvent.of(userCoupon);
+        outboxService.save(event);
     }
 }

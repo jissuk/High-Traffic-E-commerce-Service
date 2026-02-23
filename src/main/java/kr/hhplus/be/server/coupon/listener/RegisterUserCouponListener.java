@@ -6,6 +6,7 @@ import kr.hhplus.be.server.coupon.domain.model.Coupon;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.coupon.domain.repository.UserCouponRepository;
+import kr.hhplus.be.server.coupon.event.CouponTopics;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
@@ -22,10 +23,9 @@ public class RegisterUserCouponListener {
     private final UserRepository userRepository;
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
-
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "${kafka.topics.coupon-issued}", groupId = "${kafka.consumer.group-id.coupon-issued}")
+    @KafkaListener(topics = CouponTopics.COUPON_ISSUE, groupId = "${kafka.consumer.group-id.coupon-issued}")
     public void queueIssueCoupon(String message) throws JsonProcessingException {
         UserCouponCommand userCommand = objectMapper.readValue(message, UserCouponCommand.class);
 

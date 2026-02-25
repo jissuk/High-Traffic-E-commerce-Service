@@ -46,6 +46,18 @@ public class Payment {
         this.paymentStatus = PaymentStatus.REQUESTED;
     }
 
+    public void approved(){
+        this.paymentStatus = PaymentStatus.APPROVED;
+    }
+
+    public void failed(){
+        this.paymentStatus = PaymentStatus.FAILED;
+    }
+
+    public boolean isFinished(){
+        return this.paymentStatus.equals(PaymentStatus.APPROVED) || this.paymentStatus.equals(PaymentStatus.FAILED);
+    }
+
     public static Payment createBeforePayment(OrderCommand command, Order order) {
         return Payment.builder()
                 .amount(order.getTotalPrice())
@@ -54,5 +66,9 @@ public class Payment {
                 .userId(command.userId())
                 .orderId(order.getId())
                 .build();
+    }
+
+    public boolean isRequested() {
+        return this.paymentStatus.equals(PaymentStatus.REQUESTED);
     }
 }

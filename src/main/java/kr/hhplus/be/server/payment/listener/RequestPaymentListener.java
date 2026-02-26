@@ -3,6 +3,8 @@ package kr.hhplus.be.server.payment.listener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.config.toss.TossProperties;
+import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
+import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.payment.event.PaymentRequestEvent;
 import kr.hhplus.be.server.payment.event.PaymentTopics;
 import kr.hhplus.be.server.payment.usecase.dto.PaymentConfirmRequest;
@@ -21,6 +23,7 @@ import java.util.Base64;
 @Component
 @RequiredArgsConstructor
 public class RequestPaymentListener {
+    private final PaymentRepository paymentRepository;
     private final TossProperties tossProperties;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
@@ -28,7 +31,19 @@ public class RequestPaymentListener {
     @KafkaListener(topics = PaymentTopics.PAYMENT_REQUEST_TOPIC, groupId = "${kafka.consumer.group-id.payment-request}")
     public void requestPayment(String message) throws JsonProcessingException {
         PaymentRequestEvent event = objectMapper.readValue(message, PaymentRequestEvent.class);
+
+        if(!isRequestedPayment(event)){
+            log.info("이미 처리된 결제입니다");
+        }
+
         TossPaymentConfirmResponse response = tossPaymentConfirmRequest(event);
+
+        updatePaymentStatus(event, response);
+    }
+
+    private boolean isRequestedPayment(PaymentRequestEvent event) {
+        Payment payment = paymentRepository.findById(event.paymentId());
+        return payment.isRequested();
     }
 
     private TossPaymentConfirmResponse tossPaymentConfirmRequest(PaymentRequestEvent event) {
@@ -46,7 +61,21 @@ public class RequestPaymentListener {
                                                                                     entity,
                                                                                     TossPaymentConfirmResponse.class
         );
-
         return response.getBody();
+    }
+
+    private void updatePaymentStatus(PaymentRequestEvent event, TossPaymentConfirmResponse response) {
+        Payment payment = paymentRepository.findById(event.paymentId());
+
+        if(payment.isFinished()){
+            log.info("이미 처리된 결제입니다.");
+            return;
+        }
+
+        if(response.status().equals("DONE")){
+            payment.approved();
+        } else {
+            payment.failed();
+        }
     }
 }

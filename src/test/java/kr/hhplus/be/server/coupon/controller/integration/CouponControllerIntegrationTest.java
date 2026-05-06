@@ -15,40 +15,47 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
-@DisplayName("쿠폰 관련 테스트")
-public class CouponControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private JpaCouponRepository jpaCouponRepository;
-    @Autowired
-    private JpaUserRepository jpaUserRepository;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private RedisTemplate<String, Long> redis;
+@DisplayName("쿠폰 발급 통합 테스트")
+class CouponControllerTest {
 
-    public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
-    public static final String ISSUED_SUFFIX = ":issued";
-    public static final String QUANTITY_SUFFIX = ":quantity";
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private JpaCouponRepository jpaCouponRepository;
+    @Autowired private JpaUserRepository jpaUserRepository;
+    @Autowired private JdbcTemplate jdbcTemplate;
+    @Autowired private RedisTemplate<String, Long> redis;
 
     @BeforeEach
-    void setUp() {
+    void setUpIntegrationTestData() {
         clearTestData();
         initTestData();
         initTestRedisData();
+    }
+
+    @Test
+    @DisplayName("쿠폰 수량이 남아있으면 발급 성공")
+    void issueCoupon_success() throws Exception {
+        // given
+        UserCouponRequest request = CouponStep.defaultUserCouponRequest();
+
+        // when
+        ResultActions result = mockMvc.perform(post("/coupons/issue")
+                                        .content(objectMapper.writeValueAsString(request))
+                                        .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        result.andExpect(status().isOk());
     }
 
     private void clearTestData() {
@@ -64,26 +71,16 @@ public class CouponControllerTest {
     private void initTestRedisData(){
         long couponId = 1L;
         long userId = 1L;
-        String quantityKey = COUPON_ISSUE_PREFIX + couponId + QUANTITY_SUFFIX;
-        String issuedKey = COUPON_ISSUE_PREFIX + userId + ISSUED_SUFFIX;
 
-        redis.opsForValue().set(quantityKey , 10L);
-        redis.opsForValue().setBit(issuedKey, 0, false);
+        redis.opsForValue().set(getQuantityKey(couponId), 10L);
+        redis.opsForValue().setBit(getIssuedKey(userId), 0, false);
     }
 
-    @Nested
-    @DisplayName("선착순 쿠폰 성공 케이스")
-    class success{
-        @Test
-        @DisplayName("요청 데이터가 정상적이며 쿠폰 수량이 남아있을 경우 쿠폰을 발급한다.")
-        void 선착순쿠폰발급() throws Exception {
-            // given
-            UserCouponRequest request = CouponStep.defaultUserCouponRequest();
-            // when
-            ResultActions result = CouponStep.issueCouponRequest(mockMvc, objectMapper, request);
+    private String getQuantityKey(long couponId) {
+        return "coupon:issue:" + couponId + ":quantity";
+    }
 
-            // then
-            result.andExpect(status().isOk());
-        }
+    private String getIssuedKey(long userId) {
+        return "coupon:issue:" + userId + ":issued";
     }
 }

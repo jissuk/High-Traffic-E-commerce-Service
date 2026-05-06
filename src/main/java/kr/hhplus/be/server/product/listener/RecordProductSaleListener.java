@@ -9,7 +9,6 @@
 //import org.springframework.transaction.event.TransactionalEventListener;
 //
 //import java.time.LocalDate;
-//import java.time.ZoneId;
 //import java.util.concurrent.TimeUnit;
 //
 //@Component
@@ -23,7 +22,7 @@
 //    @Async
 //    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 //    public void recordProductSale(PaymentCompletedEvent event) {
-//        String zSetKey = PRODUCT_SALES_PREFIX + LocalDate.now(ZoneId.of("Asia/Seoul"));
+//        String zSetKey = PRODUCT_SALES_PREFIX + LocalDate.now();
 //        redis.opsForZSet().incrementScore(zSetKey, event.productId(), event.orderItemQuantity());
 //
 //        long baseTtlSeconds = TimeUnit.DAYS.toSeconds(5);

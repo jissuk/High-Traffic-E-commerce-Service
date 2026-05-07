@@ -26,7 +26,7 @@ public class GetProductUseCaseTest {
     @Mock
     private ProductRepository productRepository;
     @Spy
-    private ProductResponseMapper productRseponseMapper;
+    private ProductResponseMapper productResponseMapper;
 
     @Nested
     @DisplayName("상품 조회 성공 케이스")

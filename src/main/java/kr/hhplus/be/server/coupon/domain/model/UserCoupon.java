@@ -7,7 +7,15 @@ import kr.hhplus.be.server.user.domain.model.User;
 import lombok.*;
 
 @Entity
-@Table(name = "USER_COUPONS")
+@Table(
+        name = "USER_COUPONS",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_coupon_user",
+                        columnNames = {"coupon_id", "user_id"}
+                )
+        }
+)
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -10,13 +10,11 @@ import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @UseCase
 @RequiredArgsConstructor
 public class IssueCouponUseCase {
     private final OutboxService outboxService;
-    private final TransactionTemplate transactionTemplate;
     private final RedisTemplate<String, Long> redis;
 
     public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";

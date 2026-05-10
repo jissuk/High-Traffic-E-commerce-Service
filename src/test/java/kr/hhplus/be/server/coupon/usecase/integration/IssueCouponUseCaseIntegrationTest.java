@@ -1,15 +1,15 @@
 package kr.hhplus.be.server.coupon.usecase.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.hhplus.be.server.common.outbox.scheduler.OutboxRelayScheduler;
+import kr.hhplus.be.server.coupon.domain.model.Coupon;
 import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
-import kr.hhplus.be.server.coupon.step.CouponStep;
 import kr.hhplus.be.server.coupon.usecase.IssueCouponUseCase;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
+import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
-import kr.hhplus.be.server.user.step.UserStep;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,28 +30,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Import(TestcontainersConfiguration.class)
 @DisplayName("쿠폰 관련 통합 테스트")
-public class IssueCouponUseCaseTest {
-    @Autowired
-    private IssueCouponUseCase issueCouponUseCase;
-    @Autowired
-    private OutboxRelayScheduler outboxRelayScheduler;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private RedisTemplate<String, Long> redis;
-    @Autowired
-    private JpaUserRepository jpaUserRepository;
-    @Autowired
-    private JpaCouponRepository jpaCouponRepository;
-    @Autowired
-    private JpaUserCouponRepository jpaUserCouponRepository;
+public class IssueCouponUseCaseIntegrationTest {
+    @Autowired private IssueCouponUseCase issueCouponUseCase;
+    @Autowired private OutboxRelayScheduler outboxRelayScheduler;
+    @Autowired private JdbcTemplate jdbcTemplate;
+    @Autowired private RedisTemplate<String, Long> redis;
+    @Autowired private JpaUserRepository userRepository;
+    @Autowired private JpaCouponRepository couponRepository;
+    @Autowired private JpaUserCouponRepository userCouponRepository;
 
-    public static final String COUPON_ISSUE_PREFIX = "coupon:issue:";
-    public static final String ISSUED_SUFFIX = ":issued";
-    public static final String QUANTITY_SUFFIX = ":quantity";
+    private List<User> savedUser;
+    private Coupon savedCoupon;
 
     @BeforeEach
     void setUp() {
@@ -58,35 +52,6 @@ public class IssueCouponUseCaseTest {
         clearTestRedisData();
         initTestDBData();
         initTestRedisData();
-    }
-
-    private void clearTestDBData(){
-        jdbcTemplate.execute("TRUNCATE TABLE users;");
-        jdbcTemplate.execute("TRUNCATE TABLE coupons;");
-        jdbcTemplate.execute("TRUNCATE TABLE user_coupons;");
-    }
-
-    private void clearTestRedisData(){
-        Set<String> keys = redis.keys("*");
-        if (keys != null && !keys.isEmpty()) {
-            redis.delete(keys);
-        }
-    }
-    private void initTestDBData() {
-        for (int i = 1; i <= 10; i++) {
-            jpaUserRepository.save(UserStep.defualtUserEntity());
-        }
-        jpaCouponRepository.save(CouponStep.defaultCouponEntity());
-    }
-
-    private void initTestRedisData(){
-        long couponId = 1L;
-        long userId = 1L;
-        String quantityKey = COUPON_ISSUE_PREFIX +couponId + QUANTITY_SUFFIX;
-        String issuedKey = COUPON_ISSUE_PREFIX + userId + ISSUED_SUFFIX;
-
-        redis.opsForValue().set(quantityKey , 10L);
-        redis.opsForValue().setBit(issuedKey, 0, false);
     }
 
     @Nested
@@ -97,26 +62,26 @@ public class IssueCouponUseCaseTest {
         @DisplayName("실시간 쿠폰 발급 Kafka 비동기 처리")
         void 실시간쿠폰발급_비동기() throws InterruptedException {
             // given
-            long couponId = 1L;
-            long userCouponId = 1L;
+            long userId = savedUser.get(0).getId();
+            long couponId = savedCoupon.getId();
+            UserCouponCommand command = new UserCouponCommand(userId, couponId);
+            String quantityKey = getQuantityKey(savedCoupon.getId());
             long remainingCoupons = 9L;
-            UserCouponCommand request = CouponStep.defaultUserCouponCommand();
-            String quantityKey = COUPON_ISSUE_PREFIX +couponId + QUANTITY_SUFFIX;
 
             // when
-            issueCouponUseCase.execute(request);
+            issueCouponUseCase.execute(command);
             outboxRelayScheduler.relay();
 
             // then
-            Long couponQuantity = redis.opsForValue().get(quantityKey);
+            Thread.sleep(6000);
 
-            Thread.sleep(2000);
+            Long couponQuantity = redis.opsForValue().get(quantityKey);
 
             assertAll(
                 ()-> assertThat(couponQuantity)
                         .as("잔여 쿠폰 수")
                         .isEqualTo(remainingCoupons),
-                ()-> assertThat(jpaUserCouponRepository.findById(userCouponId))
+                ()-> assertThat(userCouponRepository.findByCouponIdAndUserId(couponId, userId))
                         .as("유저 쿠폰 등록 확인")
                         .isPresent()
             );
@@ -125,17 +90,22 @@ public class IssueCouponUseCaseTest {
         @Test
         @DisplayName("동시에 10건의 실시간쿠폰발급 요청을 보낼 경우 모두 성공")
         void 실시간쿠폰발급_분산락_동시성() throws Exception {
+            // given
+            long couponId = savedCoupon.getId();
             int threadCount = 10;
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
             CountDownLatch latch = new CountDownLatch(threadCount);
 
             List<Future<Void>> futures = new ArrayList<>();
 
-            for (long i = 0; i < threadCount; i++) {
-                long userId = i+1;
+            for (int i = 0; i < threadCount; i++) {
+                int userIndex = i;
                 futures.add(executor.submit(() -> {
+                    // when
                     try {
-                        issueCouponUseCase.execute(CouponStep.userCouponCommandWithUserId(userId));
+                        long userId = savedUser.get(userIndex).getId();
+                        UserCouponCommand command = new UserCouponCommand(userId, couponId);
+                        issueCouponUseCase.execute(command);
                         return null;
                     } finally {
                         latch.countDown();
@@ -162,10 +132,9 @@ public class IssueCouponUseCaseTest {
             }
 
             // then
-            long couponId = 1L;
-            String quantityKey = COUPON_ISSUE_PREFIX +couponId + QUANTITY_SUFFIX;
-
+            String quantityKey = getQuantityKey(couponId);
             Long couponQuantity = redis.opsForValue().get(quantityKey);
+
             assertAll(
                 ()-> assertThat(couponQuantity)
                         .as("잔여 쿠폰 개수 확인")
@@ -185,14 +154,68 @@ public class IssueCouponUseCaseTest {
     class fail {
         @Test
         @DisplayName("실시간 쿠폰 발급 동일 유저 발급")
-        void 실시간쿠폰발급_동일유저발급() throws JsonProcessingException {
+        void 실시간쿠폰발급_동일유저발급(){
             // given
-            UserCouponCommand request = CouponStep.defaultUserCouponCommand();
+            long userId = savedUser.get(0).getId();
+            long couponId = savedCoupon.getId();
+            UserCouponCommand request = new UserCouponCommand(userId, couponId);
             issueCouponUseCase.execute(request);
 
             // when & then
             assertThatThrownBy(() -> issueCouponUseCase.execute(request))
                     .isInstanceOf(DuplicateCouponIssueException.class);
         }
+    }
+
+    private void clearTestDBData(){
+        userRepository.deleteAll();
+        couponRepository.deleteAll();
+        userCouponRepository.deleteAll();
+        savedUser = new ArrayList<>();
+        savedCoupon = null;
+    }
+
+    private void clearTestRedisData(){
+        Set<String> keys = redis.keys("*");
+        if (keys != null && !keys.isEmpty()) {
+            redis.delete(keys);
+        }
+    }
+    private void initTestDBData() {
+        for (int i = 1; i <= 10; i++) {
+            User user = User.builder()
+                    .point(40000L)
+                    .build();
+            savedUser.add(userRepository.save(user));
+        }
+
+        long couponDiscount = 3000L;
+        long couponQuantity = 500L;
+        String couponDescription = "여름 특별 할인 쿠폰";
+        LocalDateTime expiration = LocalDateTime.now().plusMonths(3);
+        Coupon coupon = Coupon.builder()
+                .discount(couponDiscount)
+                .quantity(couponQuantity)
+                .description(couponDescription)
+                .expiredAt(expiration)
+                .build();
+        savedCoupon = couponRepository.save(coupon);
+    }
+
+    private void initTestRedisData(){
+        long couponId = savedCoupon.getId();
+        long quantity = 10L;
+        String quantityKey = getQuantityKey(couponId);
+        String issuedKey = getIssuedKey(couponId);
+        redis.opsForValue().set(quantityKey , quantity);
+        redis.opsForValue().setBit(issuedKey, 0, false);
+    }
+
+    private String getQuantityKey(long couponId) {
+        return "coupon:issue:" + couponId + ":quantity";
+    }
+
+    private String getIssuedKey(long couponId) {
+        return "coupon:issue:" + couponId + ":issued";
     }
 }

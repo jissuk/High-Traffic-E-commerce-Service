@@ -9,7 +9,6 @@ import kr.hhplus.be.server.coupon.usecase.IssueCouponUseCase;
 import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.usecase.dto.UserCouponRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +27,6 @@ public class CouponController {
         UserCouponCommand command = UserCouponCommand.from(request);
         registerUserCouponUseCase.execute(command);
 
-        return ResponseEntity
-                .ok()
-                .body(new CommonResponse(HttpStatus.NO_CONTENT, "success", null));
+        return ResponseEntity.noContent().build();
     }
 }

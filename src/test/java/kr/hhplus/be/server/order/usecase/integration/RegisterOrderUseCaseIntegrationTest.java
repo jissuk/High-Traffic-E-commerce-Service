@@ -1,8 +1,9 @@
-package kr.hhplus.be.server.order.usecase;
+package kr.hhplus.be.server.order.usecase.integration;
 
 import kr.hhplus.be.server.order.domain.repository.OrderItemRepository;
 import kr.hhplus.be.server.order.domain.repository.OrderRepository;
 import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.order.usecase.RegisterOrderUseCase;
 import kr.hhplus.be.server.order.usecase.command.OrderCommand;
 import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @SpringBootTest
 @DisplayName("주문 관련 테스트")
 @Import(TestcontainersConfiguration.class)
-public class RegisterOrderUseCaseTest {
+public class RegisterOrderUseCaseIntegrationTest {
     @Autowired
     private RegisterOrderUseCase registerOrderUseCase;
     @Autowired

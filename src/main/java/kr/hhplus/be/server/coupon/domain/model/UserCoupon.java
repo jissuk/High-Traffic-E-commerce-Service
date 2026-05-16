@@ -2,7 +2,7 @@ package kr.hhplus.be.server.coupon.domain.model;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.coupon.exception.InvalidCouponException;
-import kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand;
+import kr.hhplus.be.server.coupon.application.command.UserCouponCommand;
 import kr.hhplus.be.server.user.domain.model.User;
 import lombok.*;
 

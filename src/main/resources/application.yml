@@ -45,7 +45,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "kr.hhplus.*"
-        spring.json.value.default.type: "kr.hhplus.be.server.coupon.usecase.command.UserCouponCommand"
+        spring.json.value.default.type: "kr.hhplus.be.server.coupon.application.command.UserCouponCommand"
       enable-auto-commit: true
     admin:
       properties:

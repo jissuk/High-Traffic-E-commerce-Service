@@ -1,0 +1,81 @@
+package kr.hhplus.be.server.payment.infrastructure.kafka.consumer;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hhplus.be.server.config.toss.TossProperties;
+import kr.hhplus.be.server.payment.domain.Repository.PaymentRepository;
+import kr.hhplus.be.server.payment.domain.model.Payment;
+import kr.hhplus.be.server.payment.infrastructure.kafka.event.PaymentRequestEvent;
+import kr.hhplus.be.server.payment.infrastructure.kafka.PaymentTopics;
+import kr.hhplus.be.server.payment.presentation.dto.PaymentConfirmRequest;
+import kr.hhplus.be.server.payment.presentation.dto.TossPaymentConfirmResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.*;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class RequestPaymentConsumer {
+    private final PaymentRepository paymentRepository;
+    private final TossProperties tossProperties;
+    private final ObjectMapper objectMapper;
+    private final RestTemplate restTemplate;
+
+    @KafkaListener(topics = PaymentTopics.PAYMENT_REQUEST_TOPIC, groupId = "${kafka.consumer.group-id.payment-request}")
+    public void requestPayment(String message) throws JsonProcessingException {
+        PaymentRequestEvent event = objectMapper.readValue(message, PaymentRequestEvent.class);
+
+        if(!isRequestedPayment(event)){
+            log.info("이미 처리된 결제입니다");
+        }
+
+        TossPaymentConfirmResponse response = tossPaymentConfirmRequest(event);
+
+        updatePaymentStatus(event, response);
+    }
+
+    private boolean isRequestedPayment(PaymentRequestEvent event) {
+        Payment payment = paymentRepository.findById(event.paymentId());
+        return payment.isRequested();
+    }
+
+    private TossPaymentConfirmResponse tossPaymentConfirmRequest(PaymentRequestEvent event) {
+        String auth = tossProperties.secretApiKey() + ":";
+        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Basic " + encodedAuth);
+
+        PaymentConfirmRequest request = new PaymentConfirmRequest(event.tossOrderId(), event.tossPaymentKey(), event.amount());
+        HttpEntity<PaymentConfirmRequest> entity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<TossPaymentConfirmResponse> response = restTemplate.exchange(tossProperties.approveUrl(),
+                                                                                    HttpMethod.POST,
+                                                                                    entity,
+                                                                                    TossPaymentConfirmResponse.class
+        );
+        return response.getBody();
+    }
+
+    private void updatePaymentStatus(PaymentRequestEvent event, TossPaymentConfirmResponse response) {
+        Payment payment = paymentRepository.findById(event.paymentId());
+
+        if(payment.isFinished()){
+            log.info("이미 처리된 결제입니다.");
+            return;
+        }
+
+        if(response.status().equals("DONE")){
+            payment.approved();
+        } else {
+            payment.failed();
+        }
+    }
+}

@@ -1,0 +1,30 @@
+package kr.hhplus.be.server.order.presentation;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import kr.hhplus.be.server.common.response.CommonResponse;
+import kr.hhplus.be.server.order.application.usecase.RegisterOrderUseCase;
+import kr.hhplus.be.server.order.application.usecase.command.OrderCommand;
+import kr.hhplus.be.server.order.presentation.dto.OrderRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/orders")
+@Tag(name = "order", description = "주문 관련 API")
+public class OrderController {
+
+    private final RegisterOrderUseCase registerOrderUseCase;
+
+    @PostMapping
+    @Operation(summary = "상품 주문", description = "유저는 아직 재고가 남아있는 상품을 주문합니다.", tags = {"OrderController"})
+    public ResponseEntity<CommonResponse> createOrder(@RequestBody @Valid OrderRequest request) {
+        OrderCommand command = OrderCommand.from(request);
+        registerOrderUseCase.execute(command);
+
+        return ResponseEntity.ok().build();
+    }
+}

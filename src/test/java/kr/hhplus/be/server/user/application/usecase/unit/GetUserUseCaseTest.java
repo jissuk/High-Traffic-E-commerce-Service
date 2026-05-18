@@ -1,0 +1,80 @@
+package kr.hhplus.be.server.user.application.usecase.unit;
+
+import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
+import kr.hhplus.be.server.user.domain.model.User;
+import kr.hhplus.be.server.user.domain.repository.UserRepository;
+import kr.hhplus.be.server.user.exception.UserNotFoundException;
+import kr.hhplus.be.server.user.application.usecase.GetUserUseCase;
+import kr.hhplus.be.server.user.presentation.dto.UserResponse;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.when;
+
+@DisplayName("유저 조회 테스트")
+@ExtendWith(MockitoExtension.class)
+public class GetUserUseCaseTest {
+    @InjectMocks
+    private GetUserUseCase getUserUseCase;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Spy
+    private UserResponseMapper userResponseMapper;
+
+    @Nested
+    @DisplayName("유저 조회 성공 케이스")
+    class success{
+        @Test
+        @DisplayName("유저가 존재하면 정상적으로 유저를 조회한다.")
+        void 유저조회(){
+            // given
+            long userId = 1L;
+            long point = 10_000L;
+            User user = User.builder()
+                            .id(userId)
+                            .point(point)
+                            .build();
+            when(userRepository.findById(userId)).thenReturn(user);
+
+            // when
+            UserResponse result = getUserUseCase.execute(userId);
+
+            // then
+            assertAll(
+                ()-> assertThat(result.userId())
+                        .as("유저 조회 확인")
+                        .isEqualTo(userId),
+                ()-> assertThat(result.point())
+                        .as("유저 포인트 조회 확인")
+                        .isEqualTo(point)
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("유저 조회 실패 케이스")
+    class fail{
+        @Test
+        @DisplayName("존재하지 않는 유저일 경우 UserNotFoundException이 발생한다.")
+        void 유저조회_존재하지않는_유저일_경우(){
+            // given
+            long userId = 999L;
+            when(userRepository.findById(userId)).thenThrow(new UserNotFoundException());
+
+            // when & then
+            assertThatThrownBy(() -> getUserUseCase.execute(userId))
+                    .isInstanceOf(UserNotFoundException.class);
+        }
+    }
+}

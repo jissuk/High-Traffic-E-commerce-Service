@@ -2,7 +2,7 @@ package kr.hhplus.be.server.order.domain.model;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
-import kr.hhplus.be.server.order.usecase.command.OrderCommand;
+import kr.hhplus.be.server.order.application.usecase.command.OrderCommand;
 import kr.hhplus.be.server.product.domain.model.Product;
 import lombok.*;
 

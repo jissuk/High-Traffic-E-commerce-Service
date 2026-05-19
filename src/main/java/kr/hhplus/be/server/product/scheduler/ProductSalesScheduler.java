@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.product.scheduler;
 
-import kr.hhplus.be.server.product.usecase.ClearProductSalesCacheUseCase;
-import kr.hhplus.be.server.product.usecase.RegisterTop3DaysProductsUseCase;
+import kr.hhplus.be.server.product.application.usecase.ClearProductSalesCacheUseCase;
+import kr.hhplus.be.server.product.application.usecase.RegisterTop3DaysProductsUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

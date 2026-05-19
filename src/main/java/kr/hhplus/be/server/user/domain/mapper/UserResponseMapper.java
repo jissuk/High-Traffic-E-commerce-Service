@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.user.domain.mapper;
 
 import kr.hhplus.be.server.user.domain.model.User;
-import kr.hhplus.be.server.user.usecase.dto.UserResponse;
+import kr.hhplus.be.server.user.presentation.dto.UserResponse;
 import org.springframework.stereotype.Component;
 
 @Component

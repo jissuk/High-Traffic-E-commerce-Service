@@ -21,12 +21,6 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     }
 
     @Override
-    public UserCoupon findByCouponId(long id) {
-        return jpaUserCouponRepository.findByCouponId(id)
-                .orElseThrow(UserCouponNotFoundException::new);
-    }
-
-    @Override
     public UserCoupon save(UserCoupon userCoupon) {
         return jpaUserCouponRepository.save(userCoupon);
     }

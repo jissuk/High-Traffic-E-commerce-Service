@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.product.domain.mapper;
 
 import kr.hhplus.be.server.product.domain.model.Product;
-import kr.hhplus.be.server.product.usecase.dto.ProductResponse;
+import kr.hhplus.be.server.product.presentation.dto.ProductResponse;
 import org.springframework.stereotype.Component;
 
 @Component

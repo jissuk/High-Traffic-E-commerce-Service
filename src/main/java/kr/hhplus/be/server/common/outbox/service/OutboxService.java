@@ -4,17 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.outbox.domain.model.OutboxMessage;
 import kr.hhplus.be.server.common.outbox.domain.repository.OutboxMessageRepository;
-import kr.hhplus.be.server.coupon.event.CouponTopics;
-import kr.hhplus.be.server.coupon.event.IssueCouponEvent;
-import kr.hhplus.be.server.payment.event.PaymentRequestEvent;
-import kr.hhplus.be.server.payment.event.PaymentTopics;
+import kr.hhplus.be.server.coupon.infrastructure.kafka.CouponTopics;
+import kr.hhplus.be.server.coupon.infrastructure.kafka.event.IssueCouponEvent;
+import kr.hhplus.be.server.payment.infrastructure.kafka.event.PaymentRequestEvent;
+import kr.hhplus.be.server.payment.infrastructure.kafka.PaymentTopics;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
-/*
-* 공용 로직에서는 추상화를 잘 이용하자 ex) 분산락
-* */
 @Service
 @RequiredArgsConstructor
 public class OutboxService {

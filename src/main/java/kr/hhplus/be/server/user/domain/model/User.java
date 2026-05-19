@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import kr.hhplus.be.server.user.exception.InsufficientPointBalanceException;
 import kr.hhplus.be.server.user.exception.InvalidPointAmountException;
 import kr.hhplus.be.server.user.exception.PointLimitExceededException;
-import kr.hhplus.be.server.user.usecase.command.UserCommand;
+import kr.hhplus.be.server.user.application.usecase.command.UserCommand;
 import lombok.*;
 
 @Entity

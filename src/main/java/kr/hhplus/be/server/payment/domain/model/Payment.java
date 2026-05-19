@@ -2,7 +2,7 @@ package kr.hhplus.be.server.payment.domain.model;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.order.domain.model.Order;
-import kr.hhplus.be.server.order.usecase.command.OrderCommand;
+import kr.hhplus.be.server.order.application.usecase.command.OrderCommand;
 import lombok.*;
 
 import java.time.LocalDateTime;

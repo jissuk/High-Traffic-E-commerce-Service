@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @DisplayName("결제 관련 통합 테스트")
-public class RegisterPaymentUseCaseTest {
+public class RegisterPaymentUseCaseIntegrationTest {
     @Autowired private PaymentRequestUseCase registerPaymentUseCase;
     @Autowired private JpaUserRepository userRepository;
     @Autowired private JpaOrderRepository orderRepository;

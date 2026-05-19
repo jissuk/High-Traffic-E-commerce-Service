@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @DisplayName("상품 관련 테스트")
-public class ClearProductSalesCacheUseCaseTest {
+public class ClearProductSalesCacheUseCaseIntegrationTest {
     
     @Autowired private ClearProductSalesCacheUseCase clearProductSalesCacheUseCase;
     @Autowired private RedisTemplate<String, Long> redis;

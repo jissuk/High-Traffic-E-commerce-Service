@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("유저 조회 테스트")
 @ExtendWith(MockitoExtension.class)
-public class GetUserUseCaseTest {
+public class GetUserUseCaseUnitTest {
     @InjectMocks
     private GetUserUseCase getUserUseCase;
 

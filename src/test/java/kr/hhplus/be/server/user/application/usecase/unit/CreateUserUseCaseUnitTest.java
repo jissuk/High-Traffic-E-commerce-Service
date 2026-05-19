@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 @Testcontainers
 @DisplayName("유저 생성 테스트")
 @ExtendWith(MockitoExtension.class)
-public class CreateUserUseCaseTest {
+public class CreateUserUseCaseUnitTest {
     @InjectMocks
     private CreateUserUseCase createUserUseCase;
 

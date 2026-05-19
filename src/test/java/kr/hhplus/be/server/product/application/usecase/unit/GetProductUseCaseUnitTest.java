@@ -4,7 +4,6 @@ import kr.hhplus.be.server.product.domain.mapper.ProductResponseMapper;
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.product.exception.ProductNotFoundException;
-import kr.hhplus.be.server.product.step.ProductStep;
 import kr.hhplus.be.server.product.application.usecase.GetProductUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("상품 조회 테스트")
 @ExtendWith(MockitoExtension.class)
-public class GetProductUseCaseTest {
+public class GetProductUseCaseUnitTest {
     @InjectMocks
     private GetProductUseCase getProductUseCase;
 

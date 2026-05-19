@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @Import(TestcontainersConfiguration.class)
 @DisplayName("상품 관련 테스트")
 public class
-GetPopularProductUseCaseTest {
+GetPopularProductUseCaseIntegrationTest {
 
     @Autowired private GetPopularProductUseCase getPopularProductUseCase;
     @Autowired private RegisterTop3DaysProductsUseCase registerTop3DaysProductsUsecase;

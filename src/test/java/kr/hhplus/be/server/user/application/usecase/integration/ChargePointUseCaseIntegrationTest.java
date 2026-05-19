@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @DisplayName("유저 관련 통합 테스트")
-public class ChargePointUseCaseTest {
+public class ChargePointUseCaseIntegrationTest {
 
     @Autowired private ChargePointUseCase chargePointUseCase;
     @Autowired private JpaUserRepository userRepository;

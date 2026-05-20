@@ -3,7 +3,6 @@ package kr.hhplus.be.server.payment.presentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import kr.hhplus.be.server.common.response.CommonResponse;
 import kr.hhplus.be.server.payment.application.usecase.PaymentRequestUseCase;
 import kr.hhplus.be.server.payment.application.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.payment.presentation.dto.PaymentRequest;
@@ -21,10 +20,10 @@ public class PaymentController {
 
     @PostMapping("/register")
     @Operation(summary = "결제 요청", description = "유저는 취소되지 않은 주문에 대해 포인트를 사용하여 결제를 요청할 수 있습니다.")
-    public ResponseEntity<CommonResponse> requestPayment(@RequestBody @Valid PaymentRequest request){
+    public ResponseEntity<Void> requestPayment(@RequestBody @Valid PaymentRequest request){
         PaymentCommand command = PaymentCommand.from(request);
         paymentRequestUseCase.execute(command);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

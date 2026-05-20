@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import kr.hhplus.be.server.common.response.CommonResponse;
 import kr.hhplus.be.server.coupon.application.usecase.IssueCouponUseCase;
 import kr.hhplus.be.server.coupon.application.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.presentation.dto.UserCouponRequest;
@@ -22,7 +21,7 @@ public class CouponController {
 
     @PostMapping("/issue")
     @Operation(summary = "선착순 쿠폰 발급", description = "유저는 선착순으로 제공되는 쿠폰을 발급 받아 등록합니다.", tags = {"CouponController"})
-    public ResponseEntity<CommonResponse> issueCoupon(@RequestBody @Valid UserCouponRequest request) throws JsonProcessingException {
+    public ResponseEntity<Void> issueCoupon(@RequestBody @Valid UserCouponRequest request) throws JsonProcessingException {
 
         UserCouponCommand command = UserCouponCommand.from(request);
         registerUserCouponUseCase.execute(command);

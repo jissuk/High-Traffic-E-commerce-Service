@@ -3,7 +3,6 @@ package kr.hhplus.be.server.order.presentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import kr.hhplus.be.server.common.response.CommonResponse;
 import kr.hhplus.be.server.order.application.usecase.RegisterOrderUseCase;
 import kr.hhplus.be.server.order.application.usecase.command.OrderCommand;
 import kr.hhplus.be.server.order.presentation.dto.OrderRequest;
@@ -21,10 +20,10 @@ public class OrderController {
 
     @PostMapping
     @Operation(summary = "상품 주문", description = "유저는 아직 재고가 남아있는 상품을 주문합니다.", tags = {"OrderController"})
-    public ResponseEntity<CommonResponse> createOrder(@RequestBody @Valid OrderRequest request) {
+    public ResponseEntity<Void> createOrder(@RequestBody @Valid OrderRequest request) {
         OrderCommand command = OrderCommand.from(request);
         registerOrderUseCase.execute(command);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

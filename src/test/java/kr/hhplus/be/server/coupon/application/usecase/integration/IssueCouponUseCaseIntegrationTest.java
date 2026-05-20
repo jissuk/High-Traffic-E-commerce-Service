@@ -7,6 +7,7 @@ import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
 import kr.hhplus.be.server.coupon.application.usecase.IssueCouponUseCase;
 import kr.hhplus.be.server.coupon.application.command.UserCouponCommand;
+import kr.hhplus.be.server.coupon.infrastructure.redis.CouponRedisKey;
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +64,7 @@ public class IssueCouponUseCaseIntegrationTest {
             long userId = savedUser.get(0).getId();
             long couponId = savedCoupon.getId();
             UserCouponCommand command = new UserCouponCommand(userId, couponId);
-            String quantityKey = getQuantityKey(savedCoupon.getId());
+            String quantityKey = CouponRedisKey.getQuantityKey(savedCoupon.getId());
             long remainingCoupons = 9L;
 
             // when
@@ -130,7 +131,7 @@ public class IssueCouponUseCaseIntegrationTest {
             }
 
             // then
-            String quantityKey = getQuantityKey(couponId);
+            String quantityKey = CouponRedisKey.getQuantityKey(couponId);
             Long couponQuantity = redis.opsForValue().get(quantityKey);
 
             assertAll(
@@ -203,17 +204,9 @@ public class IssueCouponUseCaseIntegrationTest {
     private void initTestRedisData(){
         long couponId = savedCoupon.getId();
         long quantity = 10L;
-        String quantityKey = getQuantityKey(couponId);
-        String issuedKey = getIssuedKey(couponId);
+        String quantityKey = CouponRedisKey.getQuantityKey(couponId);
+        String issuedKey = CouponRedisKey.getIssuedKey(couponId);
         redis.opsForValue().set(quantityKey , quantity);
         redis.opsForValue().setBit(issuedKey, 0, false);
-    }
-
-    private String getQuantityKey(long couponId) {
-        return "coupon:issue:" + couponId + ":quantity";
-    }
-
-    private String getIssuedKey(long couponId) {
-        return "coupon:issue:" + couponId + ":issued";
     }
 }

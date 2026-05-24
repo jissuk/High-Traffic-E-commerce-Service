@@ -21,7 +21,7 @@ public class CouponController {
 
     @PostMapping("/issue")
     @Operation(summary = "선착순 쿠폰 발급", description = "유저는 선착순으로 제공되는 쿠폰을 발급 받아 등록합니다.", tags = {"CouponController"})
-    public ResponseEntity<Void> issueCoupon(@RequestBody @Valid UserCouponRequest request) throws JsonProcessingException {
+    public ResponseEntity<Void> issueCoupon(@RequestBody @Valid UserCouponRequest request){
 
         UserCouponCommand command = UserCouponCommand.from(request);
         registerUserCouponUseCase.execute(command);

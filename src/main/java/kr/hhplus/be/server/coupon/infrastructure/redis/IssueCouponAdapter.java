@@ -16,7 +16,7 @@ public class IssueCouponAdapter implements IssueCouponPort {
 
     @Override
     public void validateDuplicateIssue(UserCouponCommand command) {
-        String issuedKey = getIssuedKey(command.couponId());
+        String issuedKey = CouponRedisKey.getIssuedKey(command.couponId());
         Boolean issuedResult = redis.opsForValue().getBit(issuedKey, command.userId());
 
         if(!issuedResult){
@@ -28,18 +28,10 @@ public class IssueCouponAdapter implements IssueCouponPort {
 
     @Override
     public void decrementQuantity(UserCouponCommand command) {
-        String quantityKey = getQuantityKey(command.couponId());
+        String quantityKey = CouponRedisKey.getQuantityKey(command.couponId());
         Long quantity = redis.opsForValue().decrement(quantityKey);
         if(quantity == null || quantity < 0){
             throw new CouponOutOfStockException();
         }
-    }
-
-    private String getIssuedKey(Long couponId){
-        return CouponRedisKey.getIssuedKey(couponId);
-    }
-
-    private String getQuantityKey(Long couponId){
-        return CouponRedisKey.getQuantityKey(couponId);
     }
 }

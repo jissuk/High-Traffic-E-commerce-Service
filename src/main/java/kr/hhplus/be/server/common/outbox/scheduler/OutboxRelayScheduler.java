@@ -32,6 +32,7 @@ public class OutboxRelayScheduler {
     public void relay(){
         List<OutboxMessage> messageList = transactionTemplate.execute(status -> {
             List<OutboxMessage> list = outboxMessageRepository.lockPendingMessages(LIMIT);
+            // 중복 발행을 방지하기 위해
             list.forEach(OutboxMessage::processing);
             return list;
         });

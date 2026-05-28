@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @Import(TestcontainersConfiguration.class)
 @DisplayName("쿠폰 관련 통합 테스트")
 public class IssueCouponUseCaseIntegrationTest {
+
     @Autowired private IssueCouponUseCase issueCouponUseCase;
     @Autowired private OutboxRelayScheduler outboxRelayScheduler;
     @Autowired private RedisTemplate<String, Long> redis;
@@ -175,10 +176,10 @@ public class IssueCouponUseCaseIntegrationTest {
     }
 
     private void clearTestRedisData(){
-        Set<String> keys = redis.keys("*");
-        if (keys != null && !keys.isEmpty()) {
-            redis.delete(keys);
-        }
+        redis.getConnectionFactory()
+                .getConnection()
+                .serverCommands()
+                .flushDb();
     }
     private void initTestDBData() {
         for (int i = 1; i <= 10; i++) {

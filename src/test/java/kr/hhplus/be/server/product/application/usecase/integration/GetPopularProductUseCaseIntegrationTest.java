@@ -52,12 +52,51 @@ GetPopularProductUseCaseIntegrationTest {
         initTestDBData();
     }
 
-    private void clearTestRedisData() {
-        // Redis
-        Set<String> keys = redis.keys("*");
-        if (keys != null && !keys.isEmpty()) {
-            redis.delete(keys);
+    @Nested
+    @DisplayName("인기 판매 상품 조회 성공 케이스")
+    class success{
+        @Test
+        @DisplayName("최근 3일 판매량이 높은 상위 3개의 제품을 Redis의 캐시에서 조회한다.")
+        void 인기판매상품조회_Redis() throws Exception {
+            // given
+            initTestRedisData();
+            registerTop3DaysProductsUsecase.execute();
+
+            // when
+            List<ProductResponse> result = getPopularProductUseCase.execute();
+
+            // then
+            assertAll(
+                ()-> assertThat(result).as("조회 데이터 개수").hasSize(3),
+                ()-> assertThat(result.get(0).id()).as("1순위").isEqualTo(2L),
+                ()-> assertThat(result.get(1).id()).as("2순위").isEqualTo(1L),
+                ()-> assertThat(result.get(2).id()).as("3순위").isEqualTo(3L)
+            );
         }
+
+//        @Test
+//        @DisplayName("최근 3일 판매량이 높은 상위 3개의 제품을 Mysql에서 조회한다.")
+//        void 인기판매상품조회_Mysql() throws Exception {
+//            // given
+//
+//            // when
+//            List<ProductResponse> result = getPopularProductUseCase.execute();
+//            // then
+//            assertAll(
+//                ()-> assertThat(result).as("조회 데이터 개수").hasSize(3),
+//                ()-> assertThat(result.get(0).id()).as("1순위").isEqualTo(4L),
+//                ()-> assertThat(result.get(1).id()).as("2순위").isEqualTo(2L),
+//                ()-> assertThat(result.get(2).id()).as("3순위").isEqualTo(1L)
+//            );
+//        }
+
+    }
+
+    private void clearTestRedisData() {
+        redis.getConnectionFactory()
+                .getConnection()
+                .serverCommands()
+                .flushDb();
     }
 
     void clearTestDBData() {
@@ -67,15 +106,10 @@ GetPopularProductUseCaseIntegrationTest {
     }
 
     void initTestDBData(){
-        Product product = Product.builder()
-                                    .productName("기본 상품")
-                                    .price(2000L)
-                                    .quantity(5L)
-                                    .build();
-        Product product1 = productRepository.save(product);
-        Product product2 = productRepository.save(product);
-        Product product3 = productRepository.save(product);
-        Product product4 = productRepository.save(product);
+        Product product1 = productRepository.save(ProductStep.productWithProductId(0));
+        Product product2 = productRepository.save(ProductStep.productWithProductId(0));
+        Product product3 = productRepository.save(ProductStep.productWithProductId(0));
+        Product product4 = productRepository.save(ProductStep.productWithProductId(0));
 
         /**
          * 예상 스코어
@@ -135,64 +169,22 @@ GetPopularProductUseCaseIntegrationTest {
         String salesKeyD4 = PRODUCT_SALES_PREFIX + toDay.minusDays(4);
 
         /*
-        * product1 : 예상 스코어 5
-        * product2 : 예상 스코어 6
-        * product3 : 예상 스코어 4
-        * product4 : 예상 스코어 1
-        * */
+         * product1 : 예상 스코어 5
+         * product2 : 예상 스코어 6
+         * product3 : 예상 스코어 4
+         * product4 : 예상 스코어 1
+         * */
         redis.opsForZSet().incrementScore(salesKeyD1, product1.getId(), 5);
+        redis.opsForZSet().incrementScore(salesKeyD1, product2.getId(), 3);
+        redis.opsForZSet().incrementScore(salesKeyD2, product2.getId(), 3);
+        redis.opsForZSet().incrementScore(salesKeyD2, product3.getId(), 2);
+        redis.opsForZSet().incrementScore(salesKeyD3, product3.getId(), 2);
+        redis.opsForZSet().incrementScore(salesKeyD1,product4.getId(),1);
 
         // 4일전 => 집계되지 않음
         redis.opsForZSet().incrementScore(salesKeyD4, product1.getId(), 5);
 
-        redis.opsForZSet().incrementScore(salesKeyD1, product2.getId(), 3);
-        redis.opsForZSet().incrementScore(salesKeyD2, product2.getId(), 3);
-
-        redis.opsForZSet().incrementScore(salesKeyD2, product3.getId(), 2);
-        redis.opsForZSet().incrementScore(salesKeyD3, product3.getId(), 2);
-
-        redis.opsForZSet().incrementScore(salesKeyD1,product4.getId(),1);
-
         // 예상 순위 인기 상품 3개
         // product2 -> product1 -> product3 -> product4(탈락)
-    }
-
-    @Nested
-    @DisplayName("인기 판매 상품 조회 성공 케이스")
-    class success{
-        @Test
-        @DisplayName("최근 3일 판매량이 높은 상위 3개의 제품을 Redis의 캐시에서 조회한다.")
-        void 인기판매상품조회_Redis() throws Exception {
-            // given
-            initTestRedisData();
-            registerTop3DaysProductsUsecase.execute();
-
-            // when
-            List<ProductResponse> result = getPopularProductUseCase.execute();
-
-            // then
-            assertAll(
-                ()-> assertThat(result).as("조회 데이터 개수").hasSize(3),
-                ()-> assertThat(result.get(0).id()).as("1순위").isEqualTo(2L),
-                ()-> assertThat(result.get(1).id()).as("2순위").isEqualTo(1L),
-                ()-> assertThat(result.get(2).id()).as("3순위").isEqualTo(3L)
-            );
-        }
-
-//        @Test
-//        @DisplayName("최근 3일 판매량이 높은 상위 3개의 제품을 Mysql에서 조회한다.")
-//        void 인기판매상품조회_Mysql() throws Exception {
-//            // given
-//
-//            // when
-//            List<ProductResponse> result = getPopularProductUseCase.execute();
-//            // then
-//            assertAll(
-//                ()-> assertThat(result).as("조회 데이터 개수").hasSize(3),
-//                ()-> assertThat(result.get(0).id()).as("1순위").isEqualTo(4L),
-//                ()-> assertThat(result.get(1).id()).as("2순위").isEqualTo(2L),
-//                ()-> assertThat(result.get(2).id()).as("3순위").isEqualTo(1L)
-//            );
-//        }
     }
 }

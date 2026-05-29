@@ -1,10 +1,10 @@
-package kr.hhplus.be.server.order.step;
+package kr.hhplus.be.server.order.fixture;
 
 import kr.hhplus.be.server.order.domain.model.OrderItem;
 
-public class OrderStep {
+public class OrderItemFixture {
 
-    public static OrderItem orderItemWithProductIdAndQuantity(long productId, long quantity) {
+    public static OrderItem withProductIdAndQuantity(long productId, long quantity) {
         return OrderItem.builder()
                 .productId(productId)
                 .quantity(quantity)

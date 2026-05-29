@@ -2,13 +2,13 @@ package kr.hhplus.be.server.product.application.usecase.integration;
 
 import kr.hhplus.be.server.order.domain.model.OrderItem;
 import kr.hhplus.be.server.order.infrastructure.jpa.JpaOrderItemRepository;
-import kr.hhplus.be.server.order.step.OrderStep;
+import kr.hhplus.be.server.order.fixture.OrderItemFixture;
 import kr.hhplus.be.server.payment.domain.model.Payment;
 import kr.hhplus.be.server.payment.infrastructure.jpa.JpaPaymentRepository;
-import kr.hhplus.be.server.payment.step.PaymentStep;
+import kr.hhplus.be.server.payment.fixture.PaymentFixture;
 import kr.hhplus.be.server.product.domain.model.Product;
 import kr.hhplus.be.server.product.infrastructure.jpa.JpaProductRepository;
-import kr.hhplus.be.server.product.step.ProductStep;
+import kr.hhplus.be.server.product.fixture.ProductFixture;
 import kr.hhplus.be.server.product.application.usecase.GetPopularProductUseCase;
 import kr.hhplus.be.server.product.application.usecase.RegisterTop3DaysProductsUseCase;
 import kr.hhplus.be.server.product.presentation.dto.ProductResponse;
@@ -24,7 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -106,10 +105,11 @@ GetPopularProductUseCaseIntegrationTest {
     }
 
     void initTestDBData(){
-        Product product1 = productRepository.save(ProductStep.productWithProductId(0));
-        Product product2 = productRepository.save(ProductStep.productWithProductId(0));
-        Product product3 = productRepository.save(ProductStep.productWithProductId(0));
-        Product product4 = productRepository.save(ProductStep.productWithProductId(0));
+        // 0으로 설정하지 않기
+        Product product1 = productRepository.save(ProductFixture.create());
+        Product product2 = productRepository.save(ProductFixture.create());
+        Product product3 = productRepository.save(ProductFixture.create());
+        Product product4 = productRepository.save(ProductFixture.create());
 
         /**
          * 예상 스코어
@@ -118,12 +118,12 @@ GetPopularProductUseCaseIntegrationTest {
          * product3 : 1
          * product4 : 5
          * */
-        OrderItem orderItem1 = OrderStep.orderItemWithProductIdAndQuantity(product1.getId(), 3L);
-        OrderItem orderItem2 = OrderStep.orderItemWithProductIdAndQuantity(product2.getId(), 2L);
-        OrderItem orderItem3 = OrderStep.orderItemWithProductIdAndQuantity(product3.getId(), 1L);
-        OrderItem orderItem4 = OrderStep.orderItemWithProductIdAndQuantity(product2.getId(), 2L);
-        OrderItem orderItem5 = OrderStep.orderItemWithProductIdAndQuantity(product1.getId(), 3L);
-        OrderItem orderItem6 = OrderStep.orderItemWithProductIdAndQuantity(product4.getId(), 5L);
+        OrderItem orderItem1 = OrderItemFixture.withProductIdAndQuantity(product1.getId(), 3L);
+        OrderItem orderItem2 = OrderItemFixture.withProductIdAndQuantity(product2.getId(), 2L);
+        OrderItem orderItem3 = OrderItemFixture.withProductIdAndQuantity(product3.getId(), 1L);
+        OrderItem orderItem4 = OrderItemFixture.withProductIdAndQuantity(product2.getId(), 2L);
+        OrderItem orderItem5 = OrderItemFixture.withProductIdAndQuantity(product1.getId(), 3L);
+        OrderItem orderItem6 = OrderItemFixture.withProductIdAndQuantity(product4.getId(), 5L);
 
         orderItemRepository.save(orderItem1);
         orderItemRepository.save(orderItem2);
@@ -134,13 +134,13 @@ GetPopularProductUseCaseIntegrationTest {
 
         LocalDateTime nowDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
-        Payment payment1 = PaymentStep.paymentWithCreatedAt(nowDateTime.minusDays(2));
-        Payment payment2 = PaymentStep.paymentWithCreatedAt(nowDateTime.minusDays(1));
-        Payment payment3 = PaymentStep.paymentWithCreatedAt(nowDateTime.minusDays(3));
-        Payment payment4 = PaymentStep.paymentWithCreatedAt(nowDateTime.minusDays(3));
+        Payment payment1 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(2));
+        Payment payment2 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(1));
+        Payment payment3 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(3));
+        Payment payment4 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(3));
         // 카운트 x
-        Payment payment5 = PaymentStep.paymentWithCreatedAt(nowDateTime.minusDays(4));
-        Payment payment6 = PaymentStep.paymentWithCreatedAt(nowDateTime.minusDays(1));
+        Payment payment5 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(4));
+        Payment payment6 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(1));
 
         paymentRepository.save(payment1);
         paymentRepository.save(payment2);
@@ -156,10 +156,10 @@ GetPopularProductUseCaseIntegrationTest {
     }
 
     void initTestRedisData(){
-        Product product1 = ProductStep.productWithProductId(1);
-        Product product2 = ProductStep.productWithProductId(2);
-        Product product3 = ProductStep.productWithProductId(3);
-        Product product4 = ProductStep.productWithProductId(4);
+        Product product1 = ProductFixture.withProductId(1);
+        Product product2 = ProductFixture.withProductId(2);
+        Product product3 = ProductFixture.withProductId(3);
+        Product product4 = ProductFixture.withProductId(4);
 
         LocalDate toDay = LocalDate.now();
 

@@ -4,7 +4,7 @@ import kr.hhplus.be.server.user.domain.mapper.UserResponseMapper;
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.PointHistoryRepository;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
-import kr.hhplus.be.server.user.application.usecase.CreateUserUseCase;
+import kr.hhplus.be.server.user.application.usecase.RegisterUserUseCase;
 import kr.hhplus.be.server.user.application.usecase.command.UserCommand;
 import kr.hhplus.be.server.user.presentation.dto.UserResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -20,14 +20,14 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 @Testcontainers
 @DisplayName("유저 생성 테스트")
 @ExtendWith(MockitoExtension.class)
-public class CreateUserUseCaseUnitTest {
+public class RegisterUserUseCaseUnitTest {
     @InjectMocks
-    private CreateUserUseCase createUserUseCase;
+    private RegisterUserUseCase useCase;
 
     @Mock
     private UserRepository userRepository;
@@ -51,10 +51,10 @@ public class CreateUserUseCaseUnitTest {
                             .id(1L)
                             .point(3000L)
                             .build();
-            when(userRepository.save(any(User.class))).thenReturn(user);
+            given(userRepository.save(any(User.class))).willReturn(user);
 
             // when
-            UserResponse result = createUserUseCase.execute(command);
+            UserResponse result = useCase.execute(command);
 
             // then
             assertAll(

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
 @RequiredArgsConstructor
-public class CreateUserUseCase {
+public class RegisterUserUseCase {
 
     private final UserRepository userRepository;
     private final PointHistoryRepository pointHistoryRepository;

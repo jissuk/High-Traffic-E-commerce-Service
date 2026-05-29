@@ -12,14 +12,10 @@ import lombok.RequiredArgsConstructor;
 @UseCase
 @RequiredArgsConstructor
 public class IssueCouponUseCase {
+
     private final OutboxService outboxService;
     private final IssueCouponPort port;
 
-    /**
-     * 1. 중복 쿠폰 발급 여부 (Redis 캐시)
-     * 2. 쿠폰 수량 차감     (Redis 캐시)
-     * 3. 쿠폰 발급
-     * */
     @DistributedLock
     public void execute(UserCouponCommand command) {
         port.validateDuplicateIssue(command);

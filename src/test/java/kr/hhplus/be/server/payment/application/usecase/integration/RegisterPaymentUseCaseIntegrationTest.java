@@ -11,6 +11,7 @@ import kr.hhplus.be.server.payment.infrastructure.jpa.JpaPaymentRepository;
 import kr.hhplus.be.server.payment.application.usecase.PaymentRequestUseCase;
 import kr.hhplus.be.server.payment.application.usecase.command.PaymentCommand;
 import kr.hhplus.be.server.user.domain.model.User;
+import kr.hhplus.be.server.user.fixture.UserFixture;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,9 +120,7 @@ public class RegisterPaymentUseCaseIntegrationTest {
     }
 
     private void initTestData() {
-        User user = User.builder()
-                .point(10_000L)
-                .build();
+        User user = UserFixture.create();
         savedUser = userRepository.save(user);
 
         Order order = Order.builder()

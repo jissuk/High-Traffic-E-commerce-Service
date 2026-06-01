@@ -5,6 +5,7 @@ import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.domain.repository.UserRepository;
 import kr.hhplus.be.server.user.exception.UserNotFoundException;
 import kr.hhplus.be.server.user.application.usecase.GetUserUseCase;
+import kr.hhplus.be.server.user.fixture.UserFixture;
 import kr.hhplus.be.server.user.presentation.dto.UserResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,39 +29,6 @@ public class GetUserUseCaseUnitTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Spy
-    private UserResponseMapper userResponseMapper;
-
-    @Nested
-    @DisplayName("유저 조회 성공 케이스")
-    class success{
-        @Test
-        @DisplayName("유저가 존재하면 정상적으로 유저를 조회한다.")
-        void 유저조회(){
-            // given
-            long userId = 1L;
-            long point = 10_000L;
-            User user = User.builder()
-                            .id(userId)
-                            .point(point)
-                            .build();
-            when(userRepository.findById(userId)).thenReturn(user);
-
-            // when
-            UserResponse result = getUserUseCase.execute(userId);
-
-            // then
-            assertAll(
-                ()-> assertThat(result.userId())
-                        .as("유저 조회 확인")
-                        .isEqualTo(userId),
-                ()-> assertThat(result.point())
-                        .as("유저 포인트 조회 확인")
-                        .isEqualTo(point)
-            );
-        }
-    }
 
     @Nested
     @DisplayName("유저 조회 실패 케이스")

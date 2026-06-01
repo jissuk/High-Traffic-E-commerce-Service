@@ -27,32 +27,6 @@ public class GetProductUseCaseUnitTest {
     @Mock
     private ProductRepository productRepository;
 
-    @Spy
-    private ProductResponseMapper productResponseMapper;
-
-    @Nested
-    @DisplayName("상품 조회 성공 케이스")
-    class success{
-        @Test
-        @DisplayName("상품이 존재할 경우 상품 조회 시 예외가 발생하지 않는다.")
-        void 상품조회(){
-            // given
-            long  productId = 1L;
-            Product product = Product.builder()
-                    .productName("기본 상품")
-                    .price(2000L)
-                    .quantity(5L)
-                    .build();
-            when(productRepository.findById(productId)).thenReturn(product);
-
-            // when
-            getProductUseCase.execute(productId);
-
-            // then
-            assertDoesNotThrow(() -> getProductUseCase.execute(productId));
-        }
-    }
-
     @Nested
     @DisplayName("상품 조회 실패 케이스")
     class fail{

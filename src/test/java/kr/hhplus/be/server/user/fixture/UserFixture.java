@@ -5,7 +5,7 @@ import kr.hhplus.be.server.user.domain.model.User;
 public class UserFixture {
     public static User create() {
         return User.builder()
-                .point(40000L)
+                .point(40_000L)
                 .build();
     }
 }

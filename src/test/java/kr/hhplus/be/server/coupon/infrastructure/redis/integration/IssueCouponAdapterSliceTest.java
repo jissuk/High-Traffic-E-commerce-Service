@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.coupon.intrastructure.redis.integration;
+package kr.hhplus.be.server.coupon.infrastructure.redis.integration;
 
 import kr.hhplus.be.server.config.redis.RedisProperties;
 import kr.hhplus.be.server.config.redis.SpringRedisConfig;

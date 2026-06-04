@@ -8,6 +8,7 @@ import kr.hhplus.be.server.coupon.domain.model.UserCoupon;
 import kr.hhplus.be.server.coupon.infrastructure.kafka.event.IssueCouponEvent;
 import kr.hhplus.be.server.coupon.application.command.UserCouponCommand;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
 @RequiredArgsConstructor
@@ -16,7 +17,7 @@ public class IssueCouponUseCase {
     private final OutboxService outboxService;
     private final IssueCouponPort port;
 
-    @DistributedLock
+    @Transactional
     public void execute(UserCouponCommand command) {
         port.validateDuplicateIssue(command);
         port.decrementQuantity(command);

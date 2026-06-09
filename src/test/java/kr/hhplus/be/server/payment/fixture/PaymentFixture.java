@@ -7,11 +7,38 @@ import java.time.LocalDateTime;
 
 public class PaymentFixture {
 
-    public static Payment withCreatedAt(LocalDateTime localDateTime) {
+    private Long amount;
+    private PaymentStatus paymentStatus;
+    private LocalDateTime createdAt;
+
+    private PaymentFixture(){
+        this.amount = 50_000L;
+        this.paymentStatus = PaymentStatus.PENDING;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public static PaymentFixture builder(){
+        return new PaymentFixture();
+    }
+
+    public PaymentFixture createdAt(LocalDateTime createdAt){
+        this.createdAt = createdAt;
+        return this;
+    }
+
+    public Payment build(){
         return Payment.builder()
-                .amount(50_000L)
-                .paymentStatus(PaymentStatus.PENDING)
-                .createdAt(localDateTime)
+                .amount(amount)
+                .paymentStatus(paymentStatus)
+                .createdAt(createdAt)
                 .build();
     }
+
+//    public static Payment withCreatedAt(LocalDateTime localDateTime) {
+//        return Payment.builder()
+//                .amount(50_000L)
+//                .paymentStatus(PaymentStatus.PENDING)
+//                .createdAt(localDateTime)
+//                .build();
+//    }
 }

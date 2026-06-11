@@ -106,10 +106,15 @@ GetPopularProductUseCaseIntegrationTest {
 
     void initTestDBData(){
         // 0으로 설정하지 않기
-        Product product1 = productRepository.save(ProductFixture.create());
-        Product product2 = productRepository.save(ProductFixture.create());
-        Product product3 = productRepository.save(ProductFixture.create());
-        Product product4 = productRepository.save(ProductFixture.create());
+//        Product product1 = productRepository.save(ProductFixture.create());
+//        Product product2 = productRepository.save(ProductFixture.create());
+//        Product product3 = productRepository.save(ProductFixture.create());
+//        Product product4 = productRepository.save(ProductFixture.create());
+
+        Product product1 = productRepository.save(ProductFixture.builder().build());
+        Product product2 = productRepository.save(ProductFixture.builder().build());
+        Product product3 = productRepository.save(ProductFixture.builder().build());
+        Product product4 = productRepository.save(ProductFixture.builder().build());
 
         /**
          * 예상 스코어
@@ -118,12 +123,19 @@ GetPopularProductUseCaseIntegrationTest {
          * product3 : 1
          * product4 : 5
          * */
-        OrderItem orderItem1 = OrderItemFixture.withProductIdAndQuantity(product1.getId(), 3L);
-        OrderItem orderItem2 = OrderItemFixture.withProductIdAndQuantity(product2.getId(), 2L);
-        OrderItem orderItem3 = OrderItemFixture.withProductIdAndQuantity(product3.getId(), 1L);
-        OrderItem orderItem4 = OrderItemFixture.withProductIdAndQuantity(product2.getId(), 2L);
-        OrderItem orderItem5 = OrderItemFixture.withProductIdAndQuantity(product1.getId(), 3L);
-        OrderItem orderItem6 = OrderItemFixture.withProductIdAndQuantity(product4.getId(), 5L);
+        OrderItem orderItem1 = OrderItemFixture.builder().productId(product1.getId()).quantity(3L).build();
+        OrderItem orderItem2 = OrderItemFixture.builder().productId(product2.getId()).quantity(2L).build();
+        OrderItem orderItem3 = OrderItemFixture.builder().productId(product3.getId()).quantity(1L).build();
+        OrderItem orderItem4 = OrderItemFixture.builder().productId(product2.getId()).quantity(2L).build();
+        OrderItem orderItem5 = OrderItemFixture.builder().productId(product1.getId()).quantity(3L).build();
+        OrderItem orderItem6 = OrderItemFixture.builder().productId(product4.getId()).quantity(5L).build();
+
+//        OrderItem orderItem1 = OrderItemFixture.withProductIdAndQuantity(product1.getId(), 3L);
+//        OrderItem orderItem2 = OrderItemFixture.withProductIdAndQuantity(product2.getId(), 2L);
+//        OrderItem orderItem3 = OrderItemFixture.withProductIdAndQuantity(product3.getId(), 1L);
+//        OrderItem orderItem4 = OrderItemFixture.withProductIdAndQuantity(product2.getId(), 2L);
+//        OrderItem orderItem5 = OrderItemFixture.withProductIdAndQuantity(product1.getId(), 3L);
+//        OrderItem orderItem6 = OrderItemFixture.withProductIdAndQuantity(product4.getId(), 5L);
 
         orderItemRepository.save(orderItem1);
         orderItemRepository.save(orderItem2);
@@ -134,13 +146,21 @@ GetPopularProductUseCaseIntegrationTest {
 
         LocalDateTime nowDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
-        Payment payment1 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(2));
-        Payment payment2 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(1));
-        Payment payment3 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(3));
-        Payment payment4 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(3));
+        Payment payment1 = PaymentFixture.builder().createdAt(nowDateTime.minusDays(2)).build();
+        Payment payment2 = PaymentFixture.builder().createdAt(nowDateTime.minusDays(1)).build();
+        Payment payment3 = PaymentFixture.builder().createdAt(nowDateTime.minusDays(3)).build();
+        Payment payment4 = PaymentFixture.builder().createdAt(nowDateTime.minusDays(3)).build();
         // 카운트 x
-        Payment payment5 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(4));
-        Payment payment6 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(1));
+        Payment payment5 = PaymentFixture.builder().createdAt(nowDateTime.minusDays(4)).build();
+        Payment payment6 = PaymentFixture.builder().createdAt(nowDateTime.minusDays(1)).build();
+
+//        Payment payment1 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(2));
+//        Payment payment2 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(1));
+//        Payment payment3 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(3));
+//        Payment payment4 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(3));
+        // 카운트 x
+//        Payment payment5 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(4));
+//        Payment payment6 = PaymentFixture.withCreatedAt(nowDateTime.minusDays(1));
 
         paymentRepository.save(payment1);
         paymentRepository.save(payment2);
@@ -156,10 +176,15 @@ GetPopularProductUseCaseIntegrationTest {
     }
 
     void initTestRedisData(){
-        Product product1 = ProductFixture.withProductId(1);
-        Product product2 = ProductFixture.withProductId(2);
-        Product product3 = ProductFixture.withProductId(3);
-        Product product4 = ProductFixture.withProductId(4);
+        Product product1 = ProductFixture.builder().id(1L).build();
+        Product product2 = ProductFixture.builder().id(2L).build();
+        Product product3 = ProductFixture.builder().id(3L).build();
+        Product product4 = ProductFixture.builder().id(4L).build();
+
+//        Product product1 = ProductFixture.withId(1);
+//        Product product2 = ProductFixture.withId(2);
+//        Product product3 = ProductFixture.withId(3);
+//        Product product4 = ProductFixture.withId(4);
 
         LocalDate toDay = LocalDate.now();
 

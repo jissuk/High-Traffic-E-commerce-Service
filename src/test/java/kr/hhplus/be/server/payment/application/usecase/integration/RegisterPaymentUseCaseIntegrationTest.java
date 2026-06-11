@@ -120,7 +120,8 @@ public class RegisterPaymentUseCaseIntegrationTest {
     }
 
     private void initTestData() {
-        User user = UserFixture.create();
+//        User user = UserFixture.create();
+        User user = UserFixture.builder().build();
         savedUser = userRepository.save(user);
 
         Order order = Order.builder()

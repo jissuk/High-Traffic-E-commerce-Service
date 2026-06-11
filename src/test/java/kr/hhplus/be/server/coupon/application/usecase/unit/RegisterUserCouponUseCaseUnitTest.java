@@ -18,6 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -41,8 +43,10 @@ public class RegisterUserCouponUseCaseUnitTest {
         @Test
         void 쿠폰을_발급하면_UserCoupon이_저장된다(){
             // given
-            User user = UserFixture.create();
-            Coupon coupon = CouponFixture.create(); // quantity: 500
+//            User user = UserFixture.create();
+//            Coupon coupon = CouponFixture.create(); // quantity: 500
+            User user = UserFixture.builder().build();
+            Coupon coupon = CouponFixture.builder().build();
             UserCouponCommand command = new UserCouponCommand(user.getId(), coupon.getId());
             given(userRepository.findById(user.getId())).willReturn(user);
             given(couponRepository.findById(coupon.getId())).willReturn(coupon);

@@ -86,13 +86,15 @@ public class RegisterOrderUseCaseIntegrationTest {
     }
 
     private void initTestDBData(){
-        Product product = ProductFixture.create(); // quantity : 5
+//        Product product = ProductFixture.create(); // quantity : 5
+        Product product = ProductFixture.builder().build(); // quantity : 5
         savedProduct = productRepository.save(product);
 
-        User user = UserFixture.create();
+//        User user = UserFixture.create();
+        User user = UserFixture.builder().build();
         savedUser = userRepository.save(user);
 
-        Coupon coupon = CouponFixture.create();
+        Coupon coupon = CouponFixture.builder().build();
         savedCoupon = couponRepository.save(coupon);
 
         UserCoupon userCoupon = UserCoupon.builder()

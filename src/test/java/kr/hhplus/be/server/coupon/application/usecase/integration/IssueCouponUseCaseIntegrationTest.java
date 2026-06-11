@@ -60,7 +60,7 @@ public class IssueCouponUseCaseIntegrationTest {
 
         @Test
         @DisplayName("실시간 쿠폰 발급 Kafka 비동기 처리")
-        void 실시간쿠폰발급_비동기() throws InterruptedException {
+        void 쿠폰발급요청시_비동기적으로_유저쿠폰이_생성된다(){
             // given
             long userId = savedUser.get(0).getId();
             long couponId = savedCoupon.getId();
@@ -73,7 +73,9 @@ public class IssueCouponUseCaseIntegrationTest {
             outboxRelayScheduler.relay();
 
             // then
-            Thread.sleep(6000);
+//            Thread.sleep(6000);
+            // 분명 Batch 로직을 임의로 실행하였는데 왜 sleep을 적용해야 로직이 성공하는걸까?
+            // 이유는 바로 Kafka의 Consumer가 이벤트를 읽고 처리하는 동작을 기다려 주지 않았기 때문이다.
 
             Long couponQuantity = redis.opsForValue().get(quantityKey);
 

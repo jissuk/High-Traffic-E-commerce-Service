@@ -21,6 +21,7 @@ public class RegisterUserCouponUseCase {
     private final UserCouponRepository userCouponRepository;
 
     @Transactional
+    @DistributedLock
     public void execute(UserCouponCommand command){
         Coupon coupon = couponRepository.findById(command.couponId());
         User user = userRepository.findById(command.userId());

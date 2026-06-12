@@ -112,8 +112,7 @@ RepositoryImpl은 Repository 인터페이스를 실제 데이터베이스 맞게
 
 ## DB설계
 ### ERD
-![ERD이미지](https://github.com/user-attachments/assets/9f50c2c2-30a8-4114-90f0-8b16fb0425f5)
-
+![ERD이미지](https://github.com/user-attachments/assets/c6e56a1f-0fa7-41e1-af5e-6ba5a283c135)
 
 ### 적용된 Index 목록
 ```

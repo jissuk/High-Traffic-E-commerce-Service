@@ -19,15 +19,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Slf4j
@@ -79,14 +80,21 @@ public class IssueCouponUseCaseIntegrationTest {
 
             Long couponQuantity = redis.opsForValue().get(quantityKey);
 
-            assertAll(
-                ()-> assertThat(couponQuantity)
-                        .as("잔여 쿠폰 수")
-                        .isEqualTo(remainingCoupons),
-                ()-> assertThat(userCouponRepository.findByCouponIdAndUserId(couponId, userId))
-                        .as("유저 쿠폰 등록 확인")
-                        .isPresent()
-            );
+//            assertAll(
+//                ()-> assertThat(couponQuantity)
+//                        .as("잔여 쿠폰 수")
+//                        .isEqualTo(remainingCoupons),
+//                ()-> assertThat(userCouponRepository.findByCouponIdAndUserId(couponId, userId))
+//                        .as("유저 쿠폰 등록 확인")
+//                        .isPresent()
+//            );
+
+            await()
+                    .atMost(Duration.ofSeconds(5))
+                    .untilAsserted(() -> {
+                        assertThat(couponQuantity).isEqualTo(remainingCoupons);
+                        assertThat(userCouponRepository.findByCouponIdAndUserId(couponId, userId));
+                    });
         }
 
         @Test

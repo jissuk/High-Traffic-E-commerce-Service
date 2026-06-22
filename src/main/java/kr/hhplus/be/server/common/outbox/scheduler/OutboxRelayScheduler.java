@@ -25,14 +25,10 @@ public class OutboxRelayScheduler {
     private static final long BASE_DELAY_SECONDS = 1;  // 초
     private static final long MAX_DELAY_SECONDS = 300; // 5분
 
-    /**
-     * 비관적 락을 사용하기 위해서 Transaction을 사용
-     * */
     @Scheduled(fixedDelay = 5000)
     public void relay(){
         List<OutboxMessage> messageList = transactionTemplate.execute(status -> {
             List<OutboxMessage> list = outboxMessageRepository.lockPendingMessages(LIMIT);
-            // 중복 발행을 방지하기 위해
             list.forEach(OutboxMessage::processing);
             return list;
         });

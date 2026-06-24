@@ -1,4 +1,7 @@
 package kr.hhplus.be.server.order.domain.model;
 
-public class OrderAction {
+public enum OrderAction {
+
+    COMPLETE,
+    CANCEL
 }

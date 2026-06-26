@@ -40,6 +40,7 @@ public class OutboxRelayScheduler {
 
     public void publish(OutboxMessage message) {
         try {
+            // Kafka에 메시지를 전달하지 못한 상황
             kafka.send(message.getTopic(), message.getPayload())
                     .whenComplete((res, ex) -> {
                         if (ex == null) {

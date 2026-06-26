@@ -2,7 +2,9 @@ package kr.hhplus.be.server.payment.exception;
 
 import kr.hhplus.be.server.payment.domain.model.RefundAction;
 import kr.hhplus.be.server.payment.domain.model.RefundStatus;
+import lombok.Getter;
 
+@Getter
 public class InvalidRefundStateException extends PaymentOperationException {
 
     private final RefundStatus currentStatus;
@@ -20,13 +22,5 @@ public class InvalidRefundStateException extends PaymentOperationException {
                 currentStatus,
                 action
         );
-    }
-
-    public RefundStatus getCurrentStatus() {
-        return currentStatus;
-    }
-
-    public RefundAction getAction() {
-        return action;
     }
 }

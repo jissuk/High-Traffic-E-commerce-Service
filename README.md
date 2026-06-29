@@ -6,13 +6,13 @@
 - [아키텍처](#아키텍처)
   - [아키텍처 선택 이유](#아키텍처-선택-이유)
 - [DB설계](#db설계)
-  - [ERD](ERD)
-  - [적용된 Index 목록](적용된_index_목록)
-- **[API 구현 로직 설명](#api-구현-로직-설명)**
+  - [ERD](#ERD)
+  - [적용된 Index 목록](#적용된_index_목록)
+- [API 구현 로직 설명](#api-구현-로직-설명)
   - [공통 부분](#공통-부분)
   - [테스트 케이스 정리](#테스트-케이스-정리)
-  - **[선착순 쿠폰 발급](#선착순-쿠폰-발급)**
-  - **[인기 판매 상품 조회(3일)](#인기-판매-상품-조회3일)**
+  - [선착순 쿠폰 발급](#선착순-쿠폰-발급)
+  - [인기 판매 상품 조회(3일)](#인기-판매-상품-조회3일)
 </br>
 
 ---
@@ -64,17 +64,17 @@
 </br>
 
 # 아키텍처
-해당 프로젝트는 **Clean Architecture**를 적용하였습니다.  
-- UseCase 중심 설계와 DIP(Dependency Inversion Principle)를 활용하여 **확장성과 유지보수성**을 보장하도록 구현하였습니다.  
-- 서로 다른 도메인의 로직 처리 필요 시에는 **DomainService**에서 담당하도록 분리하였습니다.
+해당 프로젝트는 Clean Architecture를 적용하였습니다.  
+- UseCase 중심 설계와 DIP를 활용하여 확장성과 유지보수성을 보장하도록 구현하였습니다.  
+- 서로 다른 도메인의 로직 처리 필요 시에는 DomainService에서 담당하도록 분리하였습니다.
 
 </br>
 
 ### 아키텍처 선택 이유
-많은 프로젝트에서 널리 사용되는 Layered Architecture 대신 **Clean Architecture**를 선택한 이유는 아래와 같습니다.  
-- UseCase를 **도메인 기능 단위로 구성**하여 **SRP(단일 책임 원칙)**을 철저히 준수할 수 있습니다.
-- 외부 의존성을 최소화하여 **애플리케이션의 범용성과 유지보수성**을 향상이 됩니다.  
-- 이러한 이유로 Clean Architecture가 Layered Architecture보다 **우수한 설계 방식**이라고 판단했습니다.
+많은 프로젝트에서 널리 사용되는 Layered Architecture 대신 Clean Architecture를 선택한 이유는 아래와 같습니다.  
+- UseCase를 도메인 기능 단위로 구성하여 SRP(단일 책임 원칙)을 철저히 준수할 수 있습니다.
+- 외부 의존성을 최소화하여 애플리케이션의 범용성과 유지보수성을 향상이 됩니다.  
+
 
 </br>
 
@@ -166,38 +166,59 @@ Product 예시
 # API 구현 로직 설명
 ## 공통 부분
 ### TestContainer를 활용한 테스트 코드 실행
-테스트 코드는 **Junit5**와 **AssertJ**를 활용하여 작성하였습니다.  
-테스트는 **단위 테스트**와 **통합 테스트**로 구분하여, 각 레이어의 특성에 따라 아래 기준으로 설계했습니다.
+테스트 코드는 Junit5와 AssertJ를 활용하여 작성하였습니다.  
+테스트는 단위 테스트와 통합 테스트로 구분하여, 각 레이어의 특성에 따라 아래 기준으로 설계했습니다.
 
-- **Controller 계층 [통합 테스트]**  
+- Controller 계층 [통합 테스트(Slice Test)]
   실제 요청과 응답을 검증하는 것이 목적이므로 통합 테스트로 진행하였습니다.  
   - 사용 도구: `@WebMvcTest`, `MockMvc`
 
-- **Service 계층 [단위/통합 테스트]**  
-  트랜잭션(DB 의존성)이 필요한 경우 외부 의존성이 강하다고 판단하여 통합 테스트로,  
-  그렇지 않은 경우는 단위 테스트로 진행하였습니다.  
+- Service 계층 [단위/통합 테스트]  
+  트랜잭션(DB 의존성)이 필요한 경우 외부 의존성이 강하다고 판단하여 통합 테스트로, 그렇지 않은 경우는 단위 테스트로 진행하였습니다.  
   - 사용 도구: `@ExtendWith(MockitoExtension.class)`, `@InjectMocks`, `@Mock`
 
-- **Repository 계층 [통합 테스트]**  
+- Repository 계층 [통합 테스트(Slice Test)]  
   DB와의 안정적인 상호작용을 검증하는 것이 주 목적이므로 통합 테스트로 진행하였습니다.  
   - 사용 도구: `@DataJpaTest` (JPA), `@MybatisTest` (MyBatis)
 
 </br>
 
-### 테스트 객체 팩토리 (Step 클래스)
-테스트 코드의 가독성과 재사용성을 높이기 위해, 테스트 전용 팩토리 클래스(`Step`)를 정의하였습니다.
+### 테스트 객체 팩토리 (Fixture 클래스)
+테스트 코드의 가독성과 재사용성을 높이기 위해, 테스트 전용 팩토리 클래스(`Fixture`)를 정의하였습니다.
 
 ```java
-public class CouponStep {
-    private static final Long DEFAULT_USER_ID = 1L;
-    private static final Long DEFAULT_COUPON_ID = 1L;
+public class CouponFixture {
 
-    public static UserCouponCommand defaultUserCouponCommand() {
-        return new UserCouponCommand(DEFAULT_USER_ID, DEFAULT_COUPON_ID);
+    private Long discount;
+    private Long quantity;
+    private String description;
+    private LocalDateTime expiredAt;
+
+    // 객체가 생성될 때 기본 값 주입
+    private CouponFixture() {
+        this.discount = 3000L;
+        this.quantity = 500L;
+        this.description = "여름 특별 할인 쿠폰";
+        this.expiredAt = LocalDateTime.now().plusMonths(3);
     }
 
-    public static UserCouponCommand userCouponCommandWithUserId(Long userId) {
-        return new UserCouponCommand(userId, DEFAULT_COUPON_ID);
+    public static CouponFixture builder() {
+        return new CouponFixture();
+    }
+
+    // 특정 값을 주입해야 하는 경우 사용
+    public CouponFixture quantity(Long quantity) {
+        this.quantity = quantity;
+        return this;
+    }
+
+    public Coupon build() {
+        return Coupon.builder()
+                .discount(discount)
+                .quantity(quantity)
+                .description(description)
+                .expiredAt(expiredAt)
+                .build();
     }
 }
 ```
@@ -207,7 +228,7 @@ public class CouponStep {
 
 ###  Redis 분산 락을 AOP 기반으로 구현하여 동시성 문제 해결
 초기에는 **비관적 락**을 통해 동시성 문제를 해결했으나, 이는 DB에 부하를 줄 수 있다고 판단하여 **Redis 기반 분산 락**으로 전환하였습니다.  
-또한, 분산 락을 **AOP로 구현**함으로써 핵심 비지니스 로직과의 **관심사 분리**와 함께 로직 중복 문제를 해결하였습니다.
+또한, 분산 락을 AOP로 구현함으로써 핵심 비지니스 로직과 공통된 부가 로직을 분리하여 중복 문제를 해결하고 관심사를 분리하였습니다.
 ```java
 
 public class DistributedLockAspect {

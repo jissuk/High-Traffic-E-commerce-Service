@@ -1,69 +1,32 @@
 spring:
   application:
     name: hhplus
-  profiles:
-    active: local
+
   datasource:
-    name: HangHaePlusDataSource
-    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
     hikari:
       maximum-pool-size: 10
       connection-timeout: 10000
       max-lifetime: 60000
-    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     open-in-view: false
     generate-ddl: false
     show-sql: false
+
     hibernate:
       ddl-auto: update
+
     properties:
-      hibernate.timezone.default_storage: NORMALIZE_UTC
       hibernate.jdbc.time_zone: UTC
-
----
-
-spring.config.activate.on-profile: local, test
-
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
-    username: application
-    password: application
-  data:
-    redis:
-      host: localhost
-      port: 6379
-  kafka:
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    consumer:
-      group-id: registerUserCoupon-service
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "kr.hhplus.*"
-        spring.json.value.default.type: "kr.hhplus.be.server.coupon.application.command.UserCouponCommand"
-      enable-auto-commit: true
-    admin:
-      properties:
-        topic:
-          configs:
-            retention.ms: 86400000 # 메시지 보관 시간: 1일
-            cleanup.policy: "delete"
-    bootstrap-servers: localhost:9092
-  config:
-    import:
-      - optional:application-toss.yml
-      - optional:application-kafka.yml
-
+      hibernate.timezone.default_storage: NORMALIZE_UTC
 
 springdoc:
   api-docs:
     enabled: true
     path: /v3/api-docs.yaml
+
   swagger-ui:
     enabled: true
 

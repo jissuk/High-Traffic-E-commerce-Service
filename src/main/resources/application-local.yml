@@ -1,0 +1,36 @@
+spring:
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/hhplus
+    username: application
+    password: application
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: registerUserCoupon-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "kr.hhplus.*"
+        spring.json.value.default.type: "kr.hhplus.be.server.coupon.application.command.UserCouponCommand"
+      enable-auto-commit: true
+    admin:
+      properties:
+        topic:
+          configs:
+            retention.ms: 86400000 # 메시지 보관 시간: 1일
+            cleanup.policy: "delete"
+    bootstrap-servers: localhost:9092
+  config:
+    import:
+      - optional:application-toss.yml
+      - optional:application-kafka.yml

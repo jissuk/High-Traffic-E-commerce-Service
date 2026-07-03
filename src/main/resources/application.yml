@@ -21,6 +21,10 @@ spring:
     properties:
       hibernate.jdbc.time_zone: UTC
       hibernate.timezone.default_storage: NORMALIZE_UTC
+  config:
+    import:
+      - optional:application-toss.yml
+      - optional:application-kafka.yml
 
 springdoc:
   api-docs:

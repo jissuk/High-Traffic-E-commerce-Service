@@ -23,6 +23,7 @@ spring:
       hibernate.timezone.default_storage: NORMALIZE_UTC
   config:
     import:
+      - optional:application-test.yml
       - optional:application-toss.yml
       - optional:application-kafka.yml
 

@@ -12,3 +12,7 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
+
+toss:
+  approveUrl: test
+  secretApiKey: test

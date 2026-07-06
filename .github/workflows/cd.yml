@@ -13,13 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH into EC2
-        uses: appleboy/ssh-action@v1.2.0
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose to EC2
+        uses: appleboy/scp-action@v0.1.7
+
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
-            echo "Connected!"
-            hostname
-            pwd
+
+          source: "docker-compose.prod.yml"
+
+          target: ${{ secrets.EC2_PATH }}

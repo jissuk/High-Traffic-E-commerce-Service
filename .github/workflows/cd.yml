@@ -46,8 +46,12 @@ jobs:
             MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
             SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}
             EOF
-
+            
             docker compose -f docker-compose.prod.yml pull
+            
+            docker compose -f docker-compose.prod.yml down
+  
+            docker image prune -af
 
             docker compose -f docker-compose.prod.yml up -d
 

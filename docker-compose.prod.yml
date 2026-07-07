@@ -6,9 +6,9 @@ services:
     restart: unless-stopped
 
     environment:
-      MYSQL_DATABASE: hhplus
-      MYSQL_USER: application
-      MYSQL_PASSWORD: application
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: root
 
     ports:
@@ -61,7 +61,7 @@ services:
       - "8080:8080"
 
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
 
 volumes:
   mysql-data:

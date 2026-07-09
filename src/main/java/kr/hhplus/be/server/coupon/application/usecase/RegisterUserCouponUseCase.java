@@ -26,9 +26,7 @@ public class RegisterUserCouponUseCase {
         Coupon coupon = couponRepository.findById(command.couponId());
         User user = userRepository.findById(command.userId());
 
-        coupon.decreaseQuantity();
         UserCoupon userCoupon = UserCoupon.createBeforeUserCoupon(coupon, user);
-
         userCouponRepository.save(userCoupon);
     }
 }

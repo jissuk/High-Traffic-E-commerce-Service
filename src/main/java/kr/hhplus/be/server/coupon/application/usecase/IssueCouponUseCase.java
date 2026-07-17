@@ -17,6 +17,7 @@ public class IssueCouponUseCase {
     private final OutboxService outboxService;
     private final IssueCouponPort port;
 
+    @DistributedLock
     @Transactional
     public void execute(UserCouponCommand command) {
         port.validateDuplicateIssue(command);

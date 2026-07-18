@@ -116,7 +116,7 @@ C --> D[Kafka]
 
 D --> E[Consumer]
 
-E --> F[External Payment]
+E --> F[Toss Payments]
 
 F -->|Success| G[(Complete)]
 

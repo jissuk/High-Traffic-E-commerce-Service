@@ -1,6 +1,7 @@
 ## 프로젝트 소개
-
-대규모 트래픽 환경에서의 동시성 이슈와 데이터 정합성을 고려하여 Redis, Kafka, 분산 락을 적용한 이커머스 백엔드 프로젝트입니다.
+이커머스 서비스의 핵심 비즈니스 기능을 구현하고 실제 서비스 환경을 고려해 설계한 백엔드 프로젝트입니다.
+<br>
+대규모 트래픽 상황에서 발생하는 동시성 이슈와 데이터 정합성 문제를 해결하기 위한 아키텍처를 적용했습니다.
 
 </br>
 
@@ -22,10 +23,26 @@
 </br>
 </br>
 
-
+ 
 ## 핵심 기술
 
 ### 선착순 쿠폰 발급
+
+```mermaid
+flowchart LR
+
+A[Client]
+--> B[Coupon API]
+
+B --> C[Redis Distributed Lock]
+C --> D[Redis]
+
+D -->|발급 가능| E[Kafka]
+D -->|발급 불가| X[Fail]
+
+E --> F[Consumer]
+F --> G[(MySQL)]
+```
 
 대규모 트래픽 환경에서 동시에 발생하는 쿠폰 발급 요청을 안정적으로 처리하기 위해 Redis와 Kafka를 활용한 비동기 처리 구조를 적용했습니다.
 
@@ -38,6 +55,27 @@
 
 ### 인기 판매 상품 조회
 
+```mermaid
+flowchart TB
+
+subgraph AGG[판매 데이터 집계]
+direction LR
+    P[Payment] --> S[Redis Sorted Set] --> B[Batch] --> C[Popular Products Cache]
+end
+
+subgraph QUERY[인기 상품 조회]
+direction LR
+    U[Client] --> API[Product API]
+    API -->|상품 ID 조회| CACHE[Popular Products Cache]
+    API -->|상품 상세 조회| DB[(MySQL)]
+    DB --> R[Response]
+end
+
+C -.-> CACHE
+```
+
+
+
 최근 3일간 판매량 기준 인기 상품 조회 시 반복적인 집계 쿼리로 인한 DB 부하를 개선하기 위해 Redis Sorted Set을 활용했습니다.
 
 - 결제 완료 시 판매 데이터를 Redis Sorted Set에 저장했습니다.
@@ -47,7 +85,26 @@
 
 </br>
 
-### 결제 처리
+### 결제(Toss Payments)
+
+```mermaid 
+flowchart LR
+
+A[Client]
+--> B[Payment API]
+
+B --> C[Outbox]
+
+C --> D[Kafka]
+
+D --> E[Consumer]
+
+E --> F[External Payment]
+
+F -->|Success| G[(Complete)]
+
+F -->|Fail| H[(Failed)]
+```
 
 외부 결제 시스템의 TPS 제한으로 인한 병목을 개선하기 위해 Kafka 기반 비동기 처리 구조를 적용하여 안정적인 결제 처리 시스템을 구현했습니다.
 
@@ -107,23 +164,39 @@ CREATE INDEX idx_payment_status_createat_orderitem ON tbl_payment(create_at, pay
 
 쿠폰 발급 API는 특정 시간대에 요청이 집중되는 상황을 고려하여 부하 테스트를 진행했습니다.
 
-- 테스트 환경
+- 테스트 조건
   - Virtual User: 1,000
   - Requests: 1,000 RPS
   - Duration: 60s
-  - Total Requests: 60,000건
+
+- 성능 검증 지표
+  - 총 요청 수 : 60,001건
+  - TPS : 999.98 req/s (목표 TPS 1,000 달성)
+  - 평균 응답 시간 : 91.23ms
+  - p95 응답 시간 : 354.61ms
+  - 최대 응답 시간 : 515.79ms
 
 - 검증 결과
-  - Redis를 활용한 재고 관리와 Kafka 기반 비동기 처리를 통해 대량 요청 상황에서도 초과 발급 없이 데이터 정합성을 유지했습니다.
+  - Redis를 활용한 재고 관리와 Kafka 기반 비동기 처리를 통해 목표 TPS를 유지하면서도 초과 발급 없이 데이터 정합성을 보장했습니다.
 
+<br>
 
 ### 인기 판매 상품 조회
 
-기존에는 판매 데이터를 조회할 때마다 DB 집계 쿼리를 수행하여 조회 성능 저하가 발생했습니다.
+Redis Sorted Set 기반 집계 캐시 적용 전후로 부하 테스트를 진행하여 성능 개선 효과를 검증했습니다.
 
-Redis Sorted Set 기반 집계 캐시를 적용한 후 다음과 같은 성능 개선을 확인했습니다.
+- 테스트 목적
+  - 기능 개선에 따른 성능을 측정하고, 부하 조건에서 성능 향상 여부를 확인하기 위해 수행
 
-- 평균 응답 시간: 568.15ms → 10.51ms (약 54배 개선)
-- 처리량: 20,966 TPS → 59,717 TPS (약 2.8배 증가)
+- 테스트 조건
+  - Virtual User: 100
+  - Requests: 1,000 RPS
+  - Duration: 60s
 
-이를 통해 반복적인 집계 연산을 Redis로 분리하고, 조회 성능을 개선했습니다.
+- 성능 검증 지표 (개선 전 → 후)
+  - 처리량 : 20,966 TPS → 59,717 TPS (약 2.85배 증가)
+  - 평균 응답 시간 : 568.15ms → 10.51ms (약 54배 단축)
+  - 최대 응답 시간 : 3.76s → 513.95ms (약 7배 단축)
+
+- 검증 결과
+  - 반복적인 집계 연산을 Redis Sorted Set으로 분리하여 조회 성능을 크게 개선했으며, 부하 상황에서도 안정적인 응답 시간을 유지했습니다.

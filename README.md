@@ -166,7 +166,7 @@ F -->|Fail| H[(Failed)]
 ![ERD이미지](https://github.com/user-attachments/assets/c6e56a1f-0fa7-41e1-af5e-6ba5a283c135)
 
 ### Index 설계
-결제 조회 성능 개선을 위해 Payment 테이블에 복합 인덱스를 적용했습니다.
+인기 판매 상품 조회 기능의 DB Fallback 쿼리 성능을 개선하기 위해 Payment 테이블에 복합 인덱스를 적용했습니다.
 ```
 CREATE INDEX idx_payment_status_createat_orderitem ON tbl_payment(create_at, payment_status, order_item_id);
 ```

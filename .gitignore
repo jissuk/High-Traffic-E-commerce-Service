@@ -46,3 +46,8 @@ src/main/resources/paymentTest.html
 
 ### http ###
 http/**
+
+# Environment
+.env
+.env.*
+!.env.example

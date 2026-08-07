@@ -61,6 +61,33 @@ E --> F[Consumer]
 F --> G[(MySQL)]
 ```
 
+``` mermaid
+sequenceDiagram
+
+  participant CouponController
+  participant IssueCouponUseCase
+  participant Redis
+  participant Kafka
+  participant RegisterUserCouponListener
+  participant UserCouponRepository
+
+CouponController ->> IssueCouponUseCase: 선착순 쿠폰 발급 요청
+IssueCouponUseCase ->> Redis: 쿠폰 남은 발급 수량 조회
+Redis ->> IssueCouponUseCase: 조회 결과 반환
+IssueCouponUseCase ->> IssueCouponUseCase: 발급 가능 수량 확인
+IssueCouponUseCase ->> Redis: 유저 중복 쿠폰 발급 여부 조회
+Redis ->> IssueCouponUseCase: 조회 결과 반환
+IssueCouponUseCase ->> IssueCouponUseCase: 중복 발급 여부 확인
+IssueCouponUseCase -) Kafka: 유저 쿠폰 등록 이벤트 메시지 발행
+Note right of Kafka: 비동기 처리 시작
+IssueCouponUseCase ->> CouponController: 쿠폰 발급 결과 반환
+RegisterUserCouponListener ->> Kafka: Poll 메시지
+Kafka ->> RegisterUserCouponListener: 메시지 반환
+RegisterUserCouponListener ->> UserCouponRepository: 유저 쿠폰 등록
+UserCouponRepository ->> RegisterUserCouponListener: 저장 완료
+
+```
+
 대규모 트래픽 환경에서 동시에 발생하는 쿠폰 발급 요청을 안정적으로 처리하기 위해 Redis와 Kafka를 활용한 비동기 처리 구조를 적용했습니다.
 
 - Redis를 활용하여 쿠폰 잔여 수량과 중복 발급 여부를 관리했습니다.
@@ -91,6 +118,40 @@ end
 C -.-> CACHE
 ```
 
+```mermaid
+sequenceDiagram
+
+    participant RegisterPaymentUsecase
+    participant RegisterTop3DaysProductsUsecase
+    participant ProductController
+    participant GetPopularProductUseCase
+    participant Redis
+    participant ProductRepository
+
+    RegisterPaymentUsecase ->> RegisterPaymentUsecase: 결제 완료 처리
+    RegisterPaymentUsecase ->> Redis: 판매된 상품 ID를 Sorted Set에 주입
+    note right of Redis: Key: product:sales:YYYY-MM-DD<br>Value: 상품 ID<br>Score: 주문 수량 (누적)
+alt 매일 00:05, 최근 3일 데이터 집계
+    RegisterTop3DaysProductsUsecase ->> Redis: 최근 3일 상품/주문 정보 조회
+    Redis ->> RegisterTop3DaysProductsUsecase: 조회 결과 반환
+    RegisterTop3DaysProductsUsecase ->> RegisterTop3DaysProductsUsecase: Score 기준으로 집계
+    RegisterTop3DaysProductsUsecase ->> Redis: 집계 결과 저장
+    note right of Redis: Key: product:sales:3days:total<br>Score 역순으로 인기 상품 조회 가능
+    Redis ->> RegisterTop3DaysProductsUsecase: 저장 완료
+end
+    ProductController ->> GetPopularProductUseCase: 인기 상품 조회 요청
+    GetPopularProductUseCase ->> Redis: 집계된 인기 상품 ID 조회
+    note right of Redis: Key: product:sales:3days:total
+    Redis ->> GetPopularProductUseCase: 상품 ID 리스트 반환
+alt Redis 캐시 존재
+    GetPopularProductUseCase ->> ProductRepository: ID 기반 상품 상세 정보 조회
+    ProductRepository ->> GetPopularProductUseCase: 조회 결과 반환
+else Redis 캐시 없음
+    GetPopularProductUseCase ->> ProductRepository: 인기 상품 직접 조회
+    ProductRepository ->> GetPopularProductUseCase: 조회 결과 반환
+end
+    GetPopularProductUseCase ->> ProductController: 인기 상품 정보 반환
+```
 
 
 최근 3일간 판매량 기준 인기 상품 조회 시 반복적인 집계 쿼리로 인한 DB 부하를 개선하기 위해 Redis Sorted Set을 활용했습니다.
@@ -121,6 +182,37 @@ E --> F[Toss Payments]
 F -->|Success| G[(Complete)]
 
 F -->|Fail| H[(Failed)]
+```
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant PaymentAPI as Payment API
+    participant DB as RDBMS
+    participant Scheduler as OutboxRelayScheduler
+    participant Kafka
+    participant Consumer as Payment Consumer
+    participant PG as Toss Payments (PG)
+
+    Client->>PaymentAPI: 결제 요청
+    PaymentAPI->>DB: Payment + Outbox 저장 (트랜잭션)
+    PaymentAPI-->>Client: 요청 접수
+    Scheduler->>DB: Outbox Polling
+    Scheduler->>Kafka: payment-requested 발행
+    Kafka-->>Consumer: 이벤트 수신
+    Consumer->>DB: Payment 상태 조회
+
+    alt status == REQUESTED
+        Consumer->>PG: 결제 승인 요청
+        PG-->>Consumer: 결과 응답
+        alt 성공
+            Consumer->>DB: SUCCESS 업데이트
+        else 실패
+            Consumer->>DB: FAILED 업데이트
+        end
+    else 이미 처리됨
+        Consumer-->>Consumer: 중복 처리 방지 (Skip)
+    end
 ```
 
 외부 결제 시스템의 TPS 제한으로 인한 병목을 개선하기 위해 Kafka 기반 비동기 처리 구조를 적용하여 안정적인 결제 처리 시스템을 구현했습니다.

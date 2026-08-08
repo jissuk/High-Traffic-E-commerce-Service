@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.coupon.infrastructure.redis;
+package kr.hhplus.be.server.coupon.infrastructure.redis.keys;
 
 public class CouponRedisKey {
 

@@ -47,6 +47,10 @@ dependencies {
 	// Swagger
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 
+	// Local Cache
+	implementation ("org.springframework.boot:spring-boot-starter-cache")
+	implementation ("com.github.ben-manes.caffeine:caffeine")
+
 	// redis
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.redisson:redisson:3.31.0")

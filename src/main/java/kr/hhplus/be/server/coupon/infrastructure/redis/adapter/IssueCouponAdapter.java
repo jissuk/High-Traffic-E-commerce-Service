@@ -1,9 +1,10 @@
-package kr.hhplus.be.server.coupon.infrastructure.redis;
+package kr.hhplus.be.server.coupon.infrastructure.redis.adapter;
 
 import kr.hhplus.be.server.coupon.application.command.UserCouponCommand;
 import kr.hhplus.be.server.coupon.application.port.out.IssueCouponPort;
 import kr.hhplus.be.server.coupon.exception.CouponOutOfStockException;
 import kr.hhplus.be.server.coupon.exception.DuplicateCouponIssueException;
+import kr.hhplus.be.server.coupon.infrastructure.redis.keys.CouponRedisKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;

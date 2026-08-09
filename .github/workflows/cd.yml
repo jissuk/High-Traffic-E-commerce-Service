@@ -1,58 +1,58 @@
-name: CD Pipeline
-
-on:
-  workflow_run:
-    workflows:
-      - CI Pipeline
-    types:
-      - completed
-
-jobs:
-  deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Copy docker-compose.prod.yml to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "docker-compose.prod.yml"
-          target: ${{ secrets.EC2_PATH }}
-
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-
-          script: |
-            cd ${{ secrets.EC2_PATH }}
-
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
-              -u "${{ secrets.DOCKER_USERNAME }}" \
-              --password-stdin
-
-            cat > .env <<EOF
-            MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
-            MYSQL_USER=${{ secrets.MYSQL_USER }}
-            MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-            SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}
-            EOF
-            
-            docker compose -f docker-compose.prod.yml pull
-            
-            docker compose -f docker-compose.prod.yml down
-  
-            docker image prune -af
-
-            docker compose -f docker-compose.prod.yml up -d
-
-            docker compose -f docker-compose.prod.yml ps
+#name: CD Pipeline
+#
+#on:
+#  workflow_run:
+#    workflows:
+#      - CI Pipeline
+#    types:
+#      - completed
+#
+#jobs:
+#  deploy:
+#    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Copy docker-compose.prod.yml to EC2
+#        uses: appleboy/scp-action@v0.1.7
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USERNAME }}
+#          key: ${{ secrets.EC2_PRIVATE_KEY }}
+#          source: "docker-compose.prod.yml"
+#          target: ${{ secrets.EC2_PATH }}
+#
+#      - name: Deploy to EC2
+#        uses: appleboy/ssh-action@v1.2.0
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USERNAME }}
+#          key: ${{ secrets.EC2_PRIVATE_KEY }x}
+#
+#          script: |
+#            cd ${{ secrets.EC2_PATH }}
+#
+#            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
+#              -u "${{ secrets.DOCKER_USERNAME }}" \
+#              --password-stdin
+#
+#            cat > .env <<EOF
+#            MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+#            MYSQL_USER=${{ secrets.MYSQL_USER }}
+#            MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+#            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+#            SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}
+#            EOF
+#
+#            docker compose -f docker-compose.prod.yml pull
+#
+#            docker compose -f docker-compose.prod.yml down
+#
+#            docker image prune -af
+#
+#            docker compose -f docker-compose.prod.yml up -d
+#
+#            docker compose -f docker-compose.prod.yml ps

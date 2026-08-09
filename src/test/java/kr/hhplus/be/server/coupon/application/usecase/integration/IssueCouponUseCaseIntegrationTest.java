@@ -7,7 +7,7 @@ import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaCouponRepository;
 import kr.hhplus.be.server.coupon.infrastructure.jpa.JpaUserCouponRepository;
 import kr.hhplus.be.server.coupon.application.usecase.IssueCouponUseCase;
 import kr.hhplus.be.server.coupon.application.command.UserCouponCommand;
-import kr.hhplus.be.server.coupon.infrastructure.redis.CouponRedisKey;
+import kr.hhplus.be.server.coupon.infrastructure.redis.keys.CouponRedisKey;
 import kr.hhplus.be.server.user.domain.model.User;
 import kr.hhplus.be.server.user.infrastructure.jpa.JpaUserRepository;
 import lombok.extern.slf4j.Slf4j;
